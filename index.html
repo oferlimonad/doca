@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title id="pageTitle">מנהל תבניות דינמי: מרפאה גניקולוגית</title>
+    <!-- טעינת Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'accent-primary': '#0084a6',
+                        'accent-primary-hover': '#006b85',
+                        'accent-secondary': '#10b981',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'IBM Plex Sans Hebrew', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- קישור לקובץ CSS חיצוני -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#0a0a0a]">
+
+    <!-- Navigation Header - Fixed Top -->
+    <nav id="mainNavigation" class="sticky top-0 z-40 bg-[#0a0a0a]/95 backdrop-blur-sm border-b border-[#262626]">
+        <div class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6 py-4 sm:py-5 relative">
+                <!-- Logo/Brand - Right side (original position in RTL) -->
+                <div class="flex items-center gap-3">
+                    <a href="#" onclick="navigateToHome(); return false;" class="flex items-center gap-3 group">
+                        <div class="text-[#0084a6] group-hover:text-[#006b85] transition-colors duration-150">
+                            <svg class="w-7 h-7 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6C5.44772 2 5 2.44772 5 3V21C5 21.5523 5.44772 22 6 22H18C18.5523 22 19 21.5523 19 21V8L14 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M14 2V8H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 11H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M8 15H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <rect x="15" y="14" width="2.5" height="2.5" rx="0.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                <path d="M8 19H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <span class="text-xl sm:text-2xl font-semibold text-[#e5e5e5] group-hover:text-[#0084a6] transition-colors duration-150">מנהל תבניות</span>
+                    </a>
+                        </div>
+                
+                <!-- Navigation Links - Centered horizontally on desktop, normal on mobile -->
+                <div class="flex items-center gap-1 sm:gap-2 sm:absolute sm:left-1/2 sm:-translate-x-1/2">
+                    <a href="#" onclick="navigateToHome(); return false;" id="nav-home" class="nav-link px-4 py-2 rounded-lg text-sm sm:text-base font-medium text-[#a3a3a3] hover:text-[#e5e5e5] hover:bg-[#1a1a1a] transition-all duration-150">
+                        בית
+                    </a>
+                    <a href="#" onclick="navigateToCategories(); return false;" id="nav-categories" class="nav-link px-4 py-2 rounded-lg text-sm sm:text-base font-medium text-[#a3a3a3] hover:text-[#e5e5e5] hover:bg-[#1a1a1a] transition-all duration-150">
+                        קטגוריות
+                    </a>
+                        </div>
+                
+                <!-- Auth Buttons - Left side (opposite to logo in RTL) -->
+                <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    <button class="px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base font-semibold text-[#e5e5e5] border border-[#262626] rounded-lg hover:bg-[#1a1a1a] hover:border-[#404040] transition-all duration-150">
+                        התחברות
+                                    </button>
+                    <button class="px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base font-semibold text-white bg-[#0084a6] rounded-lg hover:bg-[#006b85] transition-all duration-150 shadow-sm">
+                        הרשמה
+                            </button>
+                        </div>
+                    </div>
+                </div>
+    </nav>
+
+    <!-- Main Content Wrapper with Padding -->
+    <div class="flex-1 p-4 sm:p-6 md:p-8 lg:p-12 xl:p-16 pt-6 sm:pt-8">
+    <!-- מיכל עליון של כותרות וניווט -->
+    <div id="headerContainer" class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto mb-6 sm:mb-8 text-right px-4 sm:px-6 lg:px-8">
+        <!-- נתיב ניווט (Breadcrumb) -->
+        <nav id="breadcrumb" class="text-sm font-medium text-[#737373] mb-4 sm:mb-6"></nav>
+
+        <!-- כותרת ראשית (תשתנה לפי העמוד) -->
+        <h1 id="mainTitle" class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#e5e5e5] mb-6 sm:mb-8"></h1>
+                                </div>
+
+    <!-- תוכן דינמי: כאן יוצגו כרטיסיות הקטגוריות, תתי-הקטגוריות או עורך התבניות -->
+    <!-- ה-appContainer הוא המיכל הראשי לכל העמודים -->
+    <div id="appContainer" class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center p-10 text-[#737373]">טוען...</div>
+                        </div>
+
+    <!-- Modal Structure (Hidden by default) -->
+    <!-- משמש לכל פעולות ה-Add/Edit וה-Confirmation -->
+    <div id="crudModal" class="fixed inset-0 bg-[#0a0a0a] bg-opacity-80 backdrop-blur-sm hidden items-center justify-center p-4 sm:p-6 md:p-8 z-50 transition-opacity duration-200" onclick="closeModal()">
+        <div class="bg-[#111111] rounded-xl shadow-md p-6 sm:p-8 lg:p-10 w-full max-w-lg xl:max-w-2xl mx-auto border border-[#262626]" onclick="event.stopPropagation()">
+            <h3 id="modalTitle" class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#e5e5e5] mb-4 sm:mb-6 border-b border-[#262626] pb-3"></h3>
+            <div id="modalContent" class="mb-6 sm:mb-8 space-y-4 sm:space-y-5 max-h-[70vh] overflow-y-auto text-sm sm:text-base scrollable-content">
+                <!-- Dynamic content (input, confirmation text, or element editor) goes here -->
+                    </div>
+            <!-- ה-Footer עם כפתורי שמירה/אישור/ביטול -->
+            <div id="modalFooter" class="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 space-x-reverse pt-4 sm:pt-5 border-t border-[#262626]">
+                <button id="modalCancelButton" onclick="closeModal()" class="py-2.5 px-5 sm:py-2.5 sm:px-6 border border-[#262626] rounded-lg text-[#a3a3a3] hover:bg-[#1a1a1a] hover:border-[#404040] transition-all duration-150 text-sm sm:text-base font-medium w-full sm:w-auto">ביטול</button>
+                <!-- כפתור Save/Confirm יתווסף דינמית כאן -->
+                </div>
+                        </div>
+                        </div>
+    <!-- End Main Content Wrapper -->
+                    </div>
+
+    <!-- Global Footer -->
+    <footer id="globalFooter" class="border-t border-[#262626] bg-[#0a0a0a] mt-16 sm:mt-20 lg:mt-24">
+        <div class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+            <!-- Footer Columns -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 mb-8 sm:mb-12">
+                
+                <!-- Column 1: Product (תבניות) - Rightmost in RTL -->
+                <div class="text-right">
+                    <h3 class="text-base sm:text-lg font-semibold text-[#737373] mb-4 sm:mb-5">תבניות</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" onclick="navigateToCategories(); return false;" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">קטגוריות</a></li>
+                        <li><a href="#" onclick="navigateToHome(); return false;" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">יצירת תבנית</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">תבניות מועדפות</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">כל התבניות</a></li>
+                    </ul>
+                </div>
+                            
+                <!-- Column 2: Resources (משאבים) -->
+                <div class="text-right">
+                    <h3 class="text-base sm:text-lg font-semibold text-[#737373] mb-4 sm:mb-5">משאבים</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">שאלות נפוצות</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">מדריכים</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">מרכז ידע</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">עדכונים</a></li>
+                    </ul>
+                        </div>
+
+                <!-- Column 3: Company (חברה) -->
+                <div class="text-right">
+                    <h3 class="text-base sm:text-lg font-semibold text-[#737373] mb-4 sm:mb-5">חברה</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">אודות</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">בלוג</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">יצירת קשר</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">קריירה</a></li>
+                                </ul>
+                            </div>
+                
+                <!-- Column 4: Legal (משפטי) - Leftmost in RTL -->
+                <div class="text-right">
+                    <h3 class="text-base sm:text-lg font-semibold text-[#737373] mb-4 sm:mb-5">משפטי</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">מדיניות פרטיות</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">תנאי שימוש</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">מדיניות נתונים</a></li>
+                        <li><a href="#" class="text-sm sm:text-base text-[#e5e5e5] hover:text-[#0084a6] transition-colors duration-150">נגישות</a></li>
+                                </ul>
+                            </div>
+                        </div>
+            
+            <!-- Footer Bottom Bar -->
+            <div class="border-t border-[#262626] pt-6 sm:pt-8">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6 text-right">
+                    <!-- Copyright -->
+                    <div class="text-sm sm:text-base text-[#737373]">
+                        © 2025 מנהל תבניות. כל הזכויות שמורות.
+                                </div>
+                    
+                    <!-- Status/Icon Items -->
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="flex items-center gap-2 text-[#737373] text-xs sm:text-sm">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            <span>מערכת פעילה</span>
+                                </div>
+                        <div class="w-1 h-1 rounded-full bg-[#10b981]"></div>
+                            </div>
+                                </div>
+                            </div>
+                                </div>
+    </footer>
+
+    <!-- קישור לקובץ JavaScript חיצוני -->
+    <script src="script.js"></script>
+</body>
+</html>

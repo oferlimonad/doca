@@ -1,0 +1,544 @@
+/* ============================================
+   DARK MODE TECH/IDE AESTHETIC
+   Professional, Elegant, Minimalist
+   Developer-Focused Design System
+   ============================================ */
+
+/* --- Typography with Hebrew Support --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@300;400;500;600;700&display=swap&subset=hebrew');
+
+:root {
+    /* Dark Mode Color Palette - Tech/IDE Aesthetic */
+    --bg-primary: #0a0a0a;           /* Near-black background */
+    --bg-secondary: #111111;         /* Slightly lighter for cards */
+    --bg-tertiary: #1a1a1a;         /* Even lighter for nested elements */
+    --bg-hover: #1f1f1f;            /* Hover states */
+    
+    /* Text Colors - High Contrast */
+    --text-primary: #e5e5e5;         /* Primary text */
+    --text-secondary: #a3a3a3;      /* Secondary text */
+    --text-tertiary: #737373;       /* Tertiary/muted text */
+    --text-disabled: #404040;       /* Disabled text */
+    
+    /* Accent Colors - Subtle Tech Colors */
+    --accent-primary: #0084a6;      /* Darker cyan - primary accent */
+    --accent-primary-hover: #006b85; /* Darker cyan for hover - improved contrast */
+    --accent-secondary: #10b981;    /* Green - success/secondary accent */
+    --accent-secondary-hover: #059669;
+    
+    /* Semantic Colors - Muted for Dark Mode */
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.1);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.1);
+    --error: #ef4444;
+    --error-bg: rgba(239, 68, 68, 0.1);
+    --info: var(--accent-primary);
+    --info-bg: rgba(0, 217, 255, 0.1);
+    
+    /* Borders - Subtle */
+    --border-primary: #262626;    /* Main borders */
+    --border-secondary: #1f1f1f;     /* Subtle borders */
+    --border-hover: #404040;          /* Hover borders */
+    
+    /* Spacing System - Increased for Minimalism (8px base) */
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-8: 2rem;      /* 32px */
+    --space-10: 2.5rem;   /* 40px */
+    --space-12: 3rem;     /* 48px */
+    --space-16: 4rem;     /* 64px */
+    --space-20: 5rem;     /* 80px */
+    --space-24: 6rem;     /* 96px */
+    
+    /* Border Radius - Minimal */
+    --radius-sm: 0.25rem;    /* 4px */
+    --radius-md: 0.5rem;     /* 8px */
+    --radius-lg: 0.75rem;    /* 12px */
+    --radius-xl: 1rem;       /* 16px */
+    --radius-2xl: 1.5rem;    /* 24px */
+    --radius-full: 9999px;
+    
+    /* Shadows - Subtle for Dark Mode */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+    --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+    
+    /* Transitions - Minimal, Fast */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: 'Inter', 'IBM Plex Sans Hebrew', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 400;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    line-height: 1.6;
+    direction: rtl;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Message Notifications --- */
+.copy-message {
+    transition: opacity var(--transition-base), transform var(--transition-base);
+    opacity: 0;
+    z-index: 100;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    pointer-events: none;
+    min-width: 300px;
+    max-width: 90vw;
+}
+
+.copy-message.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* --- Checkboxes - Minimal Dark Style --- */
+.template-item input[type="checkbox"] {
+    margin-right: var(--space-2);
+    margin-left: var(--space-3);
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--accent-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.template-item input[type="checkbox"]:checked + label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.template-item input[type="checkbox"]:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+/* --- Dynamic Elements (Inputs, Selects) - Dark Mode --- */
+.dynamic-element {
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    display: inline-block;
+    height: 32px;
+    vertical-align: middle;
+    transition: all var(--transition-fast);
+    font-family: inherit;
+}
+
+/* --- Template Item Line Height - Increased spacing within wrapped sentences --- */
+.template-item label {
+    line-height: calc(1.5em + 5px) !important;
+}
+
+.template-item label span {
+    line-height: calc(1.5em + 5px) !important;
+}
+
+.template-item label span span {
+    line-height: calc(1.5em + 5px) !important;
+}
+
+.dynamic-element:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(0, 217, 255, 0.2);
+}
+
+.dynamic-element:hover:not(:disabled) {
+    border-color: var(--border-hover);
+    background: var(--bg-tertiary);
+}
+
+/* Responsive dynamic elements */
+@media (min-width: 640px) {
+    .dynamic-element {
+        font-size: 0.9375rem;
+        padding: 0.4375rem 0.75rem;
+        height: 34px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .dynamic-element {
+        font-size: 1rem;
+        padding: 0.5rem 0.875rem;
+        height: 36px;
+    }
+}
+
+/* --- CRUD Buttons - Minimalist Icon Buttons --- */
+.crud-btn {
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    line-height: 1;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.crud-btn:hover {
+    background-color: var(--bg-hover);
+}
+
+.crud-btn:active {
+    transform: scale(0.95);
+}
+
+.crud-btn-delete {
+    color: var(--error);
+}
+
+.crud-btn-delete:hover {
+    background-color: var(--error-bg);
+    color: var(--error);
+}
+
+.crud-btn-delete:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.crud-btn-edit {
+    color: var(--accent-primary);
+}
+
+.crud-btn-edit:hover {
+    background-color: var(--info-bg);
+    color: var(--accent-primary);
+}
+
+.crud-btn-edit:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 217, 255, 0.2);
+}
+
+/* --- Scrollbar - Minimalist Dark --- */
+.scrollable-content::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+    background-color: var(--border-primary);
+    border-radius: var(--radius-full);
+    transition: background-color var(--transition-fast);
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+    background-color: var(--border-hover);
+}
+
+/* --- Hero Section Background - Dark, Minimal --- */
+.hero-medical-static {
+    position: relative;
+    overflow-x: hidden;
+    width: 100%;
+    background: var(--bg-secondary);
+}
+
+.hero-medical-static::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: var(--bg-secondary);
+    width: 100vw;
+    left: 50%;
+    margin-left: -50vw;
+    z-index: 0;
+    border-radius: inherit;
+}
+
+.hero-medical-static > div {
+    position: relative;
+    z-index: 1;
+}
+
+/* --- Section Backgrounds - Uniform Dark --- */
+.section-bg-1,
+.section-bg-2,
+.section-bg-3,
+.section-bg-4,
+.section-bg-5,
+.section-bg-6 {
+    position: relative;
+    overflow-x: hidden;
+    width: 100%;
+    background: var(--bg-secondary);
+}
+
+.section-bg-1::before,
+.section-bg-2::before,
+.section-bg-3::before,
+.section-bg-4::before,
+.section-bg-5::before,
+.section-bg-6::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100vw;
+    left: 50%;
+    margin-left: -50vw;
+    z-index: 0;
+    border-radius: inherit;
+    background: var(--bg-secondary);
+}
+
+.section-bg-1 > div,
+.section-bg-2 > div,
+.section-bg-3 > div,
+.section-bg-4 > div,
+.section-bg-5 > div,
+.section-bg-6 > div {
+    position: relative;
+    z-index: 1;
+}
+
+/* --- Navigation Cards - Minimal Hover --- */
+.nav-card {
+    transition: all var(--transition-base);
+}
+
+.nav-card:hover {
+    background-color: var(--bg-hover);
+}
+
+/* --- Template Items - Minimal Transitions --- */
+.template-item {
+    transition: background-color var(--transition-fast);
+}
+
+/* --- Input Focus States - Dark Mode --- */
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    transition: all var(--transition-fast);
+    border: 1px solid var(--border-primary);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(0, 217, 255, 0.2);
+    background: var(--bg-tertiary);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 640px) {
+    .template-item {
+        padding: 0.75rem !important;
+    }
+    
+    .crud-btn {
+        padding: 0.375rem;
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+}
+
+/* --- Remove All Decorative Animations --- */
+/* Minimal animations removed for clean tech aesthetic */
+
+/* Smooth transitions for interactive elements - Minimal */
+a, button, input, select, textarea {
+    transition: all var(--transition-fast);
+}
+
+/* Ensure RTL is properly maintained */
+[dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+}
+
+[dir="rtl"] .space-x-reverse > * + * {
+    margin-right: 0.5rem;
+    margin-left: 0;
+}
+
+/* --- Navigation Header --- */
+#mainNavigation {
+    transition: all var(--transition-fast);
+    margin-bottom: var(--space-6);
+}
+
+#mainNavigation .nav-link {
+    position: relative;
+    text-decoration: none;
+}
+
+#mainNavigation .nav-link:hover {
+    text-decoration: none;
+}
+
+#mainNavigation .nav-link.active {
+    color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+}
+
+#mainNavigation .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 2px;
+    background-color: var(--accent-primary);
+    border-radius: 2px 2px 0 0;
+}
+
+/* Sticky header backdrop blur support */
+@supports (backdrop-filter: blur(8px)) {
+    #mainNavigation {
+        background-color: rgba(10, 10, 10, 0.8);
+    }
+}
+
+/* Mobile navigation adjustments */
+@media (max-width: 640px) {
+    #mainNavigation {
+        border-bottom-width: 1px;
+    }
+    
+    #mainNavigation .nav-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* --- Global Footer --- */
+#globalFooter {
+    margin-top: auto;
+    flex-shrink: 0;
+    background-color: var(--bg-primary);
+}
+
+/* Footer titles - soft gray for calm, precision, trust */
+#globalFooter h3 {
+    margin-bottom: var(--space-5);
+    font-weight: 600;
+    color: var(--text-tertiary); /* #737373 - soft gray */
+}
+
+#globalFooter ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#globalFooter ul li {
+    margin: 0;
+    padding: 0;
+}
+
+/* Footer links - crisp off-white */
+#globalFooter a {
+    display: block;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    color: var(--text-primary); /* #e5e5e5 - crisp off-white */
+}
+
+#globalFooter a:hover {
+    text-decoration: none;
+    color: var(--accent-primary); /* #0084a6 - darker cyan accent */
+}
+
+/* Consistent spacing between items for calm, precision, trust */
+/* Note: spacing is handled by Tailwind's space-y-3 class in HTML */
+
+/* Footer responsive adjustments */
+@media (max-width: 640px) {
+    #globalFooter {
+        padding-top: var(--space-8);
+        padding-bottom: var(--space-8);
+        margin-top: var(--space-12);
+    }
+    
+    #globalFooter .grid {
+        gap: var(--space-6);
+    }
+    
+    #globalFooter h3 {
+        margin-bottom: var(--space-3);
+        font-size: 0.9375rem;
+    }
+}
+
+/* Ensure footer links have proper RTL spacing and hover */
+#globalFooter ul li a {
+    padding: 0.25rem 0;
+    display: block;
+}
+
+/* Subtle hover effect - no transform for calm, precision */
+#globalFooter ul li a:hover {
+    transform: none;
+}
+
+/* Footer bottom bar responsive */
+@media (max-width: 640px) {
+    #globalFooter .border-t {
+        padding-top: var(--space-4);
+    }
+    
+    #globalFooter .flex-col {
+        text-align: center;
+    }
+    
+    #globalFooter .flex-col .text-right {
+        text-align: center;
+    }
+}
+
+/* Ensure footer maintains RTL layout */
+[dir="rtl"] #globalFooter {
+    direction: rtl;
+    text-align: right;
+}
+
+[dir="rtl"] #globalFooter .grid {
+    direction: rtl;
+}
