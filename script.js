@@ -145,7 +145,14 @@ const mainNavigation = document.getElementById('mainNavigation');
 let messageDisplay; // הגדרה גלובלית להודעות סטטוס
 
 // משתנה גלובלי לניהול האלמנטים הנערכים בתוך המודל
-let currentSessionElements = []; 
+let currentSessionElements = [];
+
+// Cache for template structure lookups (performance optimization)
+const templateStructureCache = new Map();
+
+// Debounce timer for preview updates
+let previewUpdateTimer = null;
+const PREVIEW_DEBOUNCE_MS = 50; // 50ms debounce for smooth typing 
 
 // --- פונקציות עזר כלליות ---
 
@@ -357,26 +364,26 @@ function createElementHtml(element, tempId, elementIndex) {
             // שדה קלט - מוצג כ-input עם רוחב מותאם
             // הרוחב מחושב כדי להיות יחסי למספר התווים + מרווח
             // הסר mx-1 כי הרווחים יתווספו ב-join
+            // הסר inline oninput - נשתמש ב-event delegation עם debouncing
             const widthChars = element.width || 8;
             const safePlaceholder = escapeAttr(element.placeholder || '');
             const safeValue = escapeAttr(element.value || '');
             return `<input type="text" id="${uniqueElementId}" 
                         data-temp-id="${tempId}" data-index="${elementIndex}" data-type="input"
-                        class="dynamic-element text-center" 
+                        class="dynamic-element text-center template-input" 
                         style="width: ${widthChars * 0.75 + 1.5}rem; min-width: 50px;" 
                         placeholder="${safePlaceholder}" 
-                        value="${safeValue}"
-                        oninput="updatePreview(true)" />`;
+                        value="${safeValue}" />`;
         case 'select':
             // רשימה נפתחת - מוצגת כ-select
             // הסר mx-1 כי הרווחים יתווספו ב-join
+            // הסר inline onchange - נשתמש ב-event delegation
             const optionsHtml = (element.options || []).map(opt => 
                 `<option value="${escapeAttr(opt)}" ${element.value === opt ? 'selected' : ''}>${escapeHtml(opt)}</option>`
             ).join('');
             return `<select id="${uniqueElementId}" 
                         data-temp-id="${tempId}" data-index="${elementIndex}" data-type="select"
-                        class="dynamic-element"
-                        onchange="updatePreview(true)">
+                        class="dynamic-element template-select">
                         ${optionsHtml}
                     </select>`;
         default:
@@ -545,6 +552,9 @@ function renderTemplateEditorPage(categoryKey, subKey) {
             </div>
         </div>
     `;
+    
+    // Clear cache when page is rendered (in case data changed)
+    templateStructureCache.clear();
     
     initTemplateEditorEvents();
     updatePreview();
@@ -835,10 +845,24 @@ function initTemplateEditorEvents() {
 
     if (!templateList) return; 
 
-    // אירוע שינוי: עוקב אחר כל השינויים בתוך רשימת התבניות
+    // Event delegation for checkboxes - immediate update (no debounce)
     templateList.addEventListener('change', (event) => {
         if (event.target.type === 'checkbox') {
-            updatePreview();
+            updatePreview(false, true); // immediate update for checkboxes
+        }
+    });
+    
+    // Event delegation for input fields - debounced updates
+    templateList.addEventListener('input', (event) => {
+        if (event.target.classList.contains('template-input')) {
+            updatePreview(true, false); // debounced update for inputs
+        }
+    });
+    
+    // Event delegation for select dropdowns - immediate update
+    templateList.addEventListener('change', (event) => {
+        if (event.target.classList.contains('template-select')) {
+            updatePreview(true, true); // immediate update for selects
         }
     });
     
@@ -855,7 +879,10 @@ function initTemplateEditorEvents() {
         }
     }, 100);
     
-    updatePreview(); // קריאה ראשונית לאכלוס התצוגה המקדימה
+    // Clear cache when page is rendered (in case data changed)
+    templateStructureCache.clear();
+    
+    updatePreview(false, true); // קריאה ראשונית לאכלוס התצוגה המקדימה
 }
 
 // --- פונקציות ליבה של עורך התבניות (העתקה ותצוגה מקדימה) ---
@@ -869,22 +896,26 @@ function getTemplateDataFromDom(templateId) {
     const templateContainer = document.querySelector(`.template-item[data-template-id="${templateId}"]`);
     if (!templateContainer) return null;
 
-    // מצא את התבנית המקורית כדי לקבל את הסדר הנכון של האלמנטים
-    let originalTemplate = null;
-    for (const categoryKey in templatesData) {
-        const category = templatesData[categoryKey];
-        for (const subKey in category.subcategories) {
-            const subcategory = category.subcategories[subKey];
-            for (const group of subcategory.groups) {
-                const found = group.templates.find(t => t.id === templateId);
-                if (found) {
-                    originalTemplate = found;
-                    break;
+    // Cache lookup for template structure (performance optimization)
+    let originalTemplate = templateStructureCache.get(templateId);
+    if (!originalTemplate) {
+        // מצא את התבנית המקורית כדי לקבל את הסדר הנכון של האלמנטים
+        for (const categoryKey in templatesData) {
+            const category = templatesData[categoryKey];
+            for (const subKey in category.subcategories) {
+                const subcategory = category.subcategories[subKey];
+                for (const group of subcategory.groups) {
+                    const found = group.templates.find(t => t.id === templateId);
+                    if (found) {
+                        originalTemplate = found;
+                        templateStructureCache.set(templateId, found);
+                        break;
+                    }
                 }
+                if (originalTemplate) break;
             }
             if (originalTemplate) break;
         }
-        if (originalTemplate) break;
     }
     
     if (!originalTemplate) return null;
@@ -895,26 +926,23 @@ function getTemplateDataFromDom(templateId) {
     const contentContainer = templateContainer.querySelector('label > span.block');
     if (!contentContainer) return null;
     
-    // יוצר מפה של כל האלמנטים לפי data-index (גם input וגם select)
-    // משתמש ב-querySelector עם data-index ספציפי כדי למנוע בעיות RTL
+    // Optimize DOM queries: query all elements once instead of per-element queries
+    const allDynamicElements = contentContainer.querySelectorAll('[data-index]');
     const elementMap = new Map();
-    for (let i = 0; i < originalTemplate.elements.length; i++) {
-        const element = originalTemplate.elements[i];
-        if (element.type === 'input' || element.type === 'select') {
-            // מצא את האלמנט ב-DOM לפי data-index המדויק
-            const domElement = contentContainer.querySelector(`[data-index="${i}"]`);
-            if (domElement) {
-                elementMap.set(i, domElement);
-            }
-        }
-    }
     
-    // יוצר מפה של כל ה-SPANs לפי המיקום שלהם ב-DOM
-    // אבל נשתמש בהם לפי הסדר המקורי של האלמנטים
+    // Build map of dynamic elements (input/select) by their data-index
+    allDynamicElements.forEach(el => {
+        const index = parseInt(el.getAttribute('data-index'), 10);
+        if (!isNaN(index) && (el.tagName === 'INPUT' || el.tagName === 'SELECT')) {
+            elementMap.set(index, el);
+        }
+    });
+    
+    // Optimize text span queries: get all spans once
     const allSpans = Array.from(contentContainer.querySelectorAll('span.whitespace-pre-wrap'));
     const textSpanMap = new Map();
     
-    // מנסה להתאים את ה-SPANs לאלמנטי הטקסט לפי התוכן
+    // Map text spans to their element indices (assumes order matches)
     let spanIndex = 0;
     for (let i = 0; i < originalTemplate.elements.length; i++) {
         if (originalTemplate.elements[i].type === 'text') {
@@ -995,7 +1023,18 @@ function generateTextToCopy() {
     return textToCopy.trim();
 }
 
-function updatePreview(isFromDynamicElement = false) {
+function updatePreview(isFromDynamicElement = false, immediate = false) {
+    // Debounce preview updates for input events (but allow immediate updates for checkboxes)
+    if (!immediate && isFromDynamicElement) {
+        if (previewUpdateTimer) {
+            clearTimeout(previewUpdateTimer);
+        }
+        previewUpdateTimer = setTimeout(() => {
+            updatePreview(true, true);
+        }, PREVIEW_DEBOUNCE_MS);
+        return;
+    }
+
     const previewContent = document.getElementById('previewContent');
     const previewCopyIcon = document.getElementById('previewCopyIcon');
 
