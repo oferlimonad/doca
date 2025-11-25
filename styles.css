@@ -150,6 +150,44 @@ body {
     font-family: inherit;
 }
 
+/* Dropdown (select) specific styling - Modern, clean design */
+select.dynamic-element,
+.template-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%230084a6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 0.625rem center;
+    padding-left: 2rem;
+    padding-right: 0.625rem;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+select.dynamic-element:focus,
+.template-select:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(0, 132, 166, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-tertiary);
+}
+
+select.dynamic-element:hover:not(:disabled),
+.template-select:hover:not(:disabled) {
+    border-color: var(--border-hover);
+    background-color: var(--bg-tertiary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* RTL support for dropdown arrow */
+[dir="rtl"] select.dynamic-element,
+[dir="rtl"] .template-select {
+    background-position: right 0.625rem center;
+    padding-right: 2rem;
+    padding-left: 0.625rem;
+}
+
 /* --- Template Item Line Height - Increased spacing within wrapped sentences --- */
 .template-item label {
     line-height: calc(1.5em + 5px) !important;
@@ -217,12 +255,15 @@ body {
 }
 
 .crud-btn-delete {
-    color: var(--accent-primary);
+    color: var(--text-tertiary); /* #737373 - darker, less prominent */
+    opacity: 0.7;
+    transition: all var(--transition-fast);
 }
 
 .crud-btn-delete:hover {
+    color: var(--accent-primary); /* #0084a6 - brighten on hover */
+    opacity: 1;
     background-color: var(--bg-tertiary);
-    color: var(--accent-primary-hover);
 }
 
 .crud-btn-delete:focus {
@@ -231,12 +272,15 @@ body {
 }
 
 .crud-btn-edit {
-    color: var(--accent-primary);
+    color: var(--text-tertiary); /* #737373 - darker, less prominent */
+    opacity: 0.7;
+    transition: all var(--transition-fast);
 }
 
 .crud-btn-edit:hover {
+    color: var(--accent-primary); /* #0084a6 - brighten on hover */
+    opacity: 1;
     background-color: var(--bg-tertiary);
-    color: var(--accent-primary-hover);
 }
 
 .crud-btn-edit:focus {

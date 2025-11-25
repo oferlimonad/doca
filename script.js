@@ -467,12 +467,12 @@ function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
                     </label>
     </div>
                 <div class="flex space-x-1 space-x-reverse text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0">
-                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#0084a6] transition-all duration-150" 
+                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" 
                             onclick="event.stopPropagation(); handleEditTemplate('${categoryKey}', '${subKey}', ${groupIndex}, ${tempIndex})" 
                             title="עריכת מבנה המשפט">
                         ${getIcon('edit', 'w-4 h-4 sm:w-5 sm:h-5')}
                     </button>
-                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#0084a6] transition-all duration-150" 
+                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" 
                             onclick="event.stopPropagation(); handleDeleteTemplate('${categoryKey}', '${subKey}', ${groupIndex}, ${tempIndex})" 
                             title="מחיקת משפט">
                         ${getIcon('trash', 'w-4 h-4 sm:w-5 sm:h-5')}
@@ -489,17 +489,17 @@ function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
                 ${escapeHtml(group.title)}
                 </h3>
                 <div class="flex space-x-2 space-x-reverse text-sm">
-                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#262626] text-[#0084a6] transition-all duration-150 cursor-pointer" 
+                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#262626] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150 cursor-pointer" 
                             onclick="handleGroupEdit('${categoryKey}', '${subKey}', ${groupIndex})" 
                             title="עריכת שם קבוצה">
                         ${getIcon('edit', 'w-4 h-4 sm:w-5 sm:h-5')}
                     </button>
-                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#262626] text-[#0084a6] transition-all duration-150 cursor-pointer" 
+                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#262626] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150 cursor-pointer" 
                             onclick="handleGroupDelete('${categoryKey}', '${subKey}', ${groupIndex})" 
                             title="מחיקת קבוצה">
                         ${getIcon('trash', 'w-4 h-4 sm:w-5 sm:h-5')}
                     </button>
-                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#262626] text-[#0084a6] transition-all duration-150 cursor-pointer" 
+                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#262626] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150 cursor-pointer" 
                             onclick="handleAddTemplate('${categoryKey}', '${subKey}', ${groupIndex})" 
                         title="הוספת משפט חדש">
                     ${getIcon('plus', 'w-4 h-4 sm:w-5 sm:h-5')}
@@ -550,14 +550,14 @@ function renderTemplateEditorPage(categoryKey, subKey) {
                                 </h2>
                             <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                                 <!-- כפתור הוספת תבנית מוגדרת מראש -->
-                                <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#0084a6] transition-all duration-150"
+                                <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150"
                                         onclick="handlePredefinedTemplateSelect('${categoryKey}', '${subKey}')"
                                         title="הוסף תבנית מוגדרת מראש"
                                         aria-label="הוסף תבנית מוגדרת מראש">
                                     ${getIcon('file-text', 'w-4 h-4 sm:w-5 sm:h-5')}
                                 </button>
                                 <!-- כפתור הוספת קבוצה חדשה -->
-                                <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#0084a6] transition-all duration-150"
+                                <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150"
                                         onclick="handleGroupAdd('${categoryKey}', '${subKey}')"
                                         title="הוסף קבוצת תבניות"
                                         aria-label="הוסף קבוצת תבניות">
@@ -659,9 +659,9 @@ function renderElementManagerHtml(elements) {
                     ${detailsHtml}
                 </div>
                 <div class="flex flex-row sm:flex-col space-x-1 sm:space-x-0 space-y-0 sm:space-y-1 mr-0 sm:mr-4 self-end sm:self-auto">
-                    <button onclick="moveElement(${index}, 'up')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#0084a6] transition-all duration-150" title="הזז למעלה">${getIcon('arrow-up', 'w-4 h-4')}</button>
-                    <button onclick="moveElement(${index}, 'down')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#0084a6] transition-all duration-150" title="הזז למטה">${getIcon('arrow-down', 'w-4 h-4')}</button>
-                    <button onclick="deleteElement(${index})" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#0084a6] transition-all duration-150" title="מחק אלמנט">${getIcon('error', 'w-4 h-4')}</button>
+                    <button onclick="moveElement(${index}, 'up')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="הזז למעלה">${getIcon('arrow-up', 'w-4 h-4')}</button>
+                    <button onclick="moveElement(${index}, 'down')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="הזז למטה">${getIcon('arrow-down', 'w-4 h-4')}</button>
+                    <button onclick="deleteElement(${index})" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="מחק אלמנט">${getIcon('error', 'w-4 h-4')}</button>
                 </div>
             </li>
         `;
