@@ -1735,8 +1735,7 @@ function renderSubcategoriesPage(categoryKey) {
         cardsHtml += `
             <div class="${cardClasses}" onclick="navigateToTemplateEditor('${categoryKey}', '${subKey}')">
                 <div class="flex-1 min-w-0">
-                    <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#e5e5e5] mb-1">${escapeHtml(subcategory.name)}</h3>
-                    <p class="text-sm sm:text-base text-[#737373]">${totalTemplates} תבניות זמינות</p>
+                    <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#e5e5e5]">${escapeHtml(subcategory.name)}</h3>
                 </div>
                 <div class="flex items-center space-x-2 space-x-reverse z-10 flex-shrink-0">
                     <button class="crud-btn crud-btn-edit" 
