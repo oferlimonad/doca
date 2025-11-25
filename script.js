@@ -506,7 +506,7 @@ function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
                 </button>
     </div>
         </div>
-        <div class="space-y-0 sm:space-y-0 mt-3">
+        <div class="space-y-0 sm:space-y-0 mt-2">
             ${templatesHtml.length > 0 ? templatesHtml : `<p class="text-[#737373] text-sm p-3 flex items-center gap-2">אין משפטים בקבוצה זו. לחץ ${getIcon('plus', 'w-4 h-4 inline')} להוספה.</p>`}
         </div>
     </div>
