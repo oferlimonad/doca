@@ -458,6 +458,11 @@ select.dynamic-element:hover:not(:disabled),
 /* --- Template Items - Minimal Transitions --- */
 .template-item {
     transition: background-color var(--transition-fast);
+    margin-bottom: 0.4rem; /* Reduced vertical spacing between sentence containers by ~20% */
+}
+
+.template-item:last-child {
+    margin-bottom: 0; /* Remove margin from last item */
 }
 
 /* --- Input Focus States - Dark Mode --- */
@@ -788,7 +793,7 @@ a, button, input, select, textarea {
     /* Template editor sentences - optimize for single line on mobile */
     .template-item {
         padding: 0.75rem !important;
-        margin-bottom: 0.5rem !important;
+        margin-bottom: 0.4rem !important; /* Reduced by ~20% from 0.5rem */
     }
     
     .template-item label {
