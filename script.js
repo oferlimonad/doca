@@ -519,7 +519,27 @@ function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
 function renderTemplateEditorPage(categoryKey, subKey) {
     const category = templatesData[categoryKey];
     const subcategory = category?.subcategories[subKey];
-    if (!category || !subcategory || !subcategory.groups) return navigateToHome();
+    
+    if (!category || !subcategory) {
+        // Render static structure even if data not found, then navigate
+        mainTitle.textContent = "עורך תבניות";
+        pageTitle.textContent = "תבניות";
+        breadcrumb.innerHTML = '';
+        headerContainer.classList.remove('hidden');
+        updateNavigationState('categories');
+        appContainer.innerHTML = `
+            <div class="flex flex-col lg:grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 xl:gap-12 p-4 sm:p-6 lg:p-6">
+                <div class="lg:col-span-2 w-full">
+                    <div class="p-4 sm:p-6 lg:p-8 bg-[#111111] rounded-2xl shadow-sm border border-[#262626]">
+                        <p class="text-[#737373] text-center py-10">קטגוריה או תת-קטגוריה לא נמצאה. מעבר לדף הבית...</p>
+            </div>
+            </div>
+        </div>
+        `;
+        setTimeout(() => navigateToHome(), 1000);
+        return;
+    }
+    
     const safeCategoryName = escapeHtml(category.name);
     const safeSubName = escapeHtml(subcategory.name);
 
@@ -529,13 +549,8 @@ function renderTemplateEditorPage(categoryKey, subKey) {
     headerContainer.classList.remove('hidden');
     updateNavigationState('categories');
 
-    // יצירת HTML עבור כל קבוצות התבניות
-    const allGroupsHtml = subcategory.groups.map((group, index) => 
-        generateTemplateGroupHtml(group, categoryKey, subKey, index)
-    ).join('<div class="h-[6px] sm:h-[14px] lg:h-[22px]"></div>');
-
-    // מבנה עמוד עורך התבניות (דו-עמודתי)
-    appContainer.innerHTML = `
+    // Render static content immediately (layout structure, headers, preview panel)
+    const staticStructureHtml = `
         <div class="flex flex-col lg:grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 xl:gap-12 p-4 sm:p-6 lg:p-6">
             
             <!-- 2/3 שמאלי: מנהל התבניות (החלק הגדול) -->
@@ -568,8 +583,8 @@ function renderTemplateEditorPage(categoryKey, subKey) {
                         <p class="text-sm sm:text-base text-[#a3a3a3] text-right">
                             סמן את המשפטים, מלא את השדות הדינמיים, והצפייה המקדימה תתעדכן מיידית.
                         </p>
-        </div>
-                    
+    </div>
+
                     <!-- רשימת התבניות - גלילה (flex-grow) -->
                     <div id="templateList" class="space-y-[2px] sm:space-y-[6px] lg:space-y-[14px] overflow-y-auto pr-2 sm:pr-4 flex-grow scrollable-content">
                         ${allGroupsHtml.length > 0 ? allGroupsHtml : '<p class="text-center text-[#737373] mt-10">אין קבוצות תבניות. לחץ על "הוסף קבוצת תבניות" כדי להתחיל.</p>'}
@@ -601,13 +616,6 @@ function renderTemplateEditorPage(categoryKey, subKey) {
                 </div>
             </div>
         </div>
-    `;
-    
-    // Clear cache when page is rendered (in case data changed)
-    templateStructureCache.clear();
-    
-    initTemplateEditorEvents();
-    updatePreview();
 }
 
 
@@ -797,7 +805,7 @@ async function handleAddTemplate(categoryKey, subKey, groupIndex) {
             
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage(`משפט חדש נוסף לקבוצה "${group.title}".`, 'success');
-            renderTemplateEditorPage(categoryKey, subKey);
+            renderTemplateGroups(categoryKey, subKey); // Update only the dynamic template groups, not the whole page
         } catch (error) {
             console.error('Error creating template:', error);
             showMessage('שגיאה בהוספת המשפט. נסה שוב.', 'error');
@@ -827,7 +835,7 @@ async function handleDeleteTemplate(categoryKey, subKey, groupIndex, tempIndex) 
             
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage('המשפט נמחק בהצלחה.', 'success');
-            renderTemplateEditorPage(categoryKey, subKey);
+            renderTemplateGroups(categoryKey, subKey); // Update only the dynamic template groups, not the whole page
         } catch (error) {
             console.error('Error deleting template:', error);
             showMessage('שגיאה במחיקת המשפט. נסה שוב.', 'error');
@@ -857,7 +865,7 @@ async function handleEditTemplate(categoryKey, subKey, groupIndex, tempIndex) {
             
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage('מבנה המשפט עודכן בהצלחה.', 'success');
-            renderTemplateEditorPage(categoryKey, subKey);
+            renderTemplateGroups(categoryKey, subKey); // Update only the dynamic template groups, not the whole page
         } catch (error) {
             console.error('Error updating template:', error);
             showMessage('שגיאה בעדכון המשפט. נסה שוב.', 'error');
@@ -876,18 +884,66 @@ function router() {
     // Check if we need Supabase data for this page
     const needsSupabaseData = category || hash === 'categories';
     
-    if (needsSupabaseData && !supabaseDataLoaded) {
-        // Show loading state and wait for data
-        if (appContainer) {
-            appContainer.innerHTML = '<div class="text-center py-20"><p class="text-[#737373] text-lg">טוען...</p></div>';
+    if (needsSupabaseData) {
+        // Render static structure immediately, then load data and render dynamic content
+        renderPageStatic(category, sub, hash);
+        
+        // Load data in background and update dynamic content
+        if (!supabaseDataLoaded) {
+            loadSupabaseDataIfNeeded().then(() => {
+                renderPageDynamic(category, sub, hash);
+            });
+        } else {
+            // Data already loaded, render dynamic content immediately
+            renderPageDynamic(category, sub, hash);
         }
-        loadSupabaseDataIfNeeded().then(() => {
-            renderPage(category, sub, hash);
-        });
-        return;
+    } else {
+        // Homepage - no Supabase needed
+        renderPage(category, sub, hash);
     }
-    
-    renderPage(category, sub, hash);
+}
+
+function renderPageStatic(category, sub, hash) {
+    // Render static structure immediately without waiting for Supabase
+    if (category && sub) {
+        // Template editor page - render static structure
+        mainTitle.textContent = "עורך תבניות";
+        pageTitle.textContent = "תבניות";
+        breadcrumb.innerHTML = '';
+        headerContainer.classList.remove('hidden');
+        updateNavigationState('categories');
+        
+        // Static structure will be rendered in renderTemplateEditorPage
+    } else if (category) {
+        // Subcategories page - render static structure
+        mainTitle.textContent = "תת-קטגוריות";
+        pageTitle.textContent = "תבניות";
+        breadcrumb.innerHTML = '';
+        headerContainer.classList.remove('hidden');
+        updateNavigationState('categories');
+        
+        // Static structure will be rendered in renderSubcategoriesPage
+    } else if (hash === 'categories') {
+        // Categories page - render static structure
+        mainTitle.textContent = "מנהל תבניות: קטגוריות ראשיות";
+        pageTitle.textContent = "מנהל תבניות: קטגוריות";
+        breadcrumb.innerHTML = '';
+        headerContainer.classList.remove('hidden');
+        updateNavigationState('categories');
+        
+        // Static structure will be rendered in renderCategoriesPage
+    }
+}
+
+function renderPageDynamic(category, sub, hash) {
+    // Render dynamic content after data is loaded
+    if (category && sub) {
+        renderTemplateEditorPage(category, sub);
+    } else if (category) {
+        renderSubcategoriesPage(category);
+    } else if (hash === 'categories') {
+        renderCategoriesPage();
+    }
 }
 
 function renderPage(category, sub, hash) {
@@ -1273,7 +1329,7 @@ async function handleCategoryAdd() {
             }
             
             showMessage(`קטגוריה "${name}" נוספה בהצלחה.`, 'success');
-            router();
+            renderCategoriesCards(); // Update only the dynamic cards, not the whole page
         } catch (error) {
             console.error('Error creating category:', error);
             showMessage('שגיאה בהוספת הקטגוריה. נסה שוב.', 'error');
@@ -1341,7 +1397,7 @@ async function handleCategoryDelete(key) {
             // Reload data from Supabase
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage(`קטגוריה "${name}" נמחקה בהצלחה.`, 'success');
-            router();
+            renderCategoriesCards(); // Update only the dynamic cards, not the whole page
         } catch (error) {
             console.error('Error deleting category:', error);
             showMessage('שגיאה במחיקת הקטגוריה. נסה שוב.', 'error');
@@ -1371,7 +1427,7 @@ async function handleSubcategoryAdd(categoryKey) {
             
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage(`תת-קטגוריה "${name}" נוספה בהצלחה.`, 'success');
-            renderSubcategoriesPage(categoryKey);
+            renderSubcategoriesCards(categoryKey); // Update only the dynamic cards, not the whole page
         } catch (error) {
             console.error('Error creating subcategory:', error);
             showMessage('שגיאה בהוספת תת-הקטגוריה. נסה שוב.', 'error');
@@ -1406,7 +1462,7 @@ async function handleSubcategoryEdit(categoryKey, subKey) {
             
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage(`שם תת-הקטגוריה שונה ל- "${newName}".`, 'success');
-            renderSubcategoriesPage(categoryKey);
+            renderSubcategoriesCards(categoryKey); // Update only the dynamic cards, not the whole page
         } catch (error) {
             console.error('Error updating subcategory:', error);
             showMessage('שגיאה בעדכון תת-הקטגוריה. נסה שוב.', 'error');
@@ -1434,7 +1490,7 @@ async function handleSubcategoryDelete(categoryKey, subKey) {
             
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage(`תת-קטגוריה "${name}" נמחקה בהצלחה.`, 'success');
-            renderSubcategoriesPage(categoryKey);
+            renderSubcategoriesCards(categoryKey); // Update only the dynamic cards, not the whole page
         } catch (error) {
             console.error('Error deleting subcategory:', error);
             showMessage('שגיאה במחיקת תת-הקטגוריה. נסה שוב.', 'error');
@@ -1467,7 +1523,7 @@ async function handleGroupEdit(categoryKey, subKey, groupIndex) {
             
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage(`שם הקבוצה שונה ל- "${newTitle}".`, 'success');
-            renderTemplateEditorPage(categoryKey, subKey);
+            renderTemplateGroups(categoryKey, subKey); // Update only the dynamic template groups, not the whole page
         } catch (error) {
             console.error('Error updating group:', error);
             showMessage('שגיאה בעדכון הקבוצה. נסה שוב.', 'error');
@@ -1493,7 +1549,7 @@ async function handleGroupDelete(categoryKey, subKey, groupIndex) {
             
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage(`קבוצה "${title}" נמחקה בהצלחה.`, 'success');
-            renderTemplateEditorPage(categoryKey, subKey);
+            renderTemplateGroups(categoryKey, subKey); // Update only the dynamic template groups, not the whole page
         } catch (error) {
             console.error('Error deleting group:', error);
             showMessage('שגיאה במחיקת הקבוצה. נסה שוב.', 'error');
@@ -1591,7 +1647,7 @@ function handlePredefinedTemplateSelect(categoryKey, subKey) {
             
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage(`תבנית "${selectedTemplate.name}" נוספה בהצלחה לקבוצה "${group.title}".`, 'success');
-            renderTemplateEditorPage(categoryKey, subKey);
+            renderTemplateGroups(categoryKey, subKey); // Update only the dynamic template groups, not the whole page
         } catch (error) {
             console.error('Error adding predefined template:', error);
             showMessage('שגיאה בהוספת התבנית. נסה שוב.', 'error');
@@ -1643,7 +1699,7 @@ async function handleGroupAdd(categoryKey, subKey) {
             
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
             showMessage(`קבוצת תבניות "${title}" נוספה בהצלחה.`, 'success');
-            renderTemplateEditorPage(categoryKey, subKey);
+            renderTemplateGroups(categoryKey, subKey); // Update only the dynamic template groups, not the whole page
         } catch (error) {
             console.error('Error creating group:', error);
             showMessage('שגיאה בהוספת הקבוצה. נסה שוב.', 'error');
@@ -1661,36 +1717,8 @@ function renderCategoriesPage() {
     headerContainer.classList.remove('hidden');
     updateNavigationState('categories');
 
-    const cardClasses = "group nav-card bg-[#111111] p-4 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-[#262626] hover:bg-[#1a1a1a] transition-all duration-200 cursor-pointer text-right flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0";
-
-    let cardsHtml = '';
-    
-    Object.keys(templatesData).forEach(key => {
-        const category = templatesData[key];
-        const subtitle = category.subtitle || '';
-        cardsHtml += `
-            <div class="${cardClasses}" onclick="navigateToSubcategories('${key}')">
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#e5e5e5] mb-1">${escapeHtml(category.name)}</h3>
-                    ${subtitle ? `<p class="text-sm sm:text-base text-[#737373]">${escapeHtml(subtitle)}</p>` : ''}
-                </div>
-                <div class="flex items-center space-x-2 space-x-reverse z-10 flex-shrink-0">
-                    <button class="crud-btn crud-btn-edit" 
-                            onclick="event.stopPropagation(); handleCategoryEdit('${key}')" 
-                            title="עריכת שם קטגוריה">
-                        ${getIcon('edit', 'w-5 h-5')}
-                    </button>
-                    <button class="crud-btn crud-btn-delete" 
-                            onclick="event.stopPropagation(); handleCategoryDelete('${key}')" 
-                            title="מחיקת קטגוריה">
-                        ${getIcon('trash', 'w-5 h-5')}
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-    
-    appContainer.innerHTML = `
+    // Render static content immediately (header, layout structure)
+    const staticHeaderHtml = `
         <div class="text-right mb-8 sm:mb-10 lg:mb-12 p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
             <div class="flex-1">
                 <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#e5e5e5] pb-1 text-right">
@@ -1707,15 +1735,81 @@ function renderCategoriesPage() {
             </button>
         </div>
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-10 p-4 sm:p-6">
-            ${cardsHtml}
+        <div id="categoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-10 p-4 sm:p-6">
+            <div class="text-center py-10">
+                <p class="text-[#737373] text-lg">טוען קטגוריות...</p>
+            </div>
         </div>
     `;
+    
+    appContainer.innerHTML = staticHeaderHtml;
+    
+    // Render dynamic content (categories cards) after data is available
+    renderCategoriesCards();
+}
+
+function renderCategoriesCards() {
+    const categoriesGrid = document.getElementById('categoriesGrid');
+    if (!categoriesGrid) return;
+    
+    const cardClasses = "group nav-card bg-[#111111] p-4 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-[#262626] hover:bg-[#1a1a1a] transition-all duration-200 cursor-pointer text-right flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0";
+
+    let cardsHtml = '';
+    
+    if (Object.keys(templatesData).length === 0) {
+        cardsHtml = '<div class="col-span-full text-center py-10"><p class="text-[#737373] text-base">אין קטגוריות. לחץ על "הוסף קטגוריה חדשה" כדי להתחיל.</p></div>';
+    } else {
+        Object.keys(templatesData).forEach(key => {
+            const category = templatesData[key];
+            const subtitle = category.subtitle || '';
+            cardsHtml += `
+                <div class="${cardClasses}" onclick="navigateToSubcategories('${key}')">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#e5e5e5] mb-1">${escapeHtml(category.name)}</h3>
+                        ${subtitle ? `<p class="text-sm sm:text-base text-[#737373]">${escapeHtml(subtitle)}</p>` : ''}
+                    </div>
+                    <div class="flex items-center space-x-2 space-x-reverse z-10 flex-shrink-0">
+                        <button class="crud-btn crud-btn-edit" 
+                                onclick="event.stopPropagation(); handleCategoryEdit('${key}')" 
+                                title="עריכת שם קטגוריה">
+                            ${getIcon('edit', 'w-5 h-5')}
+                        </button>
+                        <button class="crud-btn crud-btn-delete" 
+                                onclick="event.stopPropagation(); handleCategoryDelete('${key}')" 
+                                title="מחיקת קטגוריה">
+                            ${getIcon('trash', 'w-5 h-5')}
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    categoriesGrid.innerHTML = cardsHtml;
 }
 
 function renderSubcategoriesPage(categoryKey) {
     const category = templatesData[categoryKey];
-    if (!category) return navigateToHome();
+    if (!category) {
+        // Render static structure even if category not found, then navigate
+        mainTitle.textContent = "תת-קטגוריות";
+        pageTitle.textContent = "תבניות";
+        breadcrumb.innerHTML = '';
+        headerContainer.classList.remove('hidden');
+        updateNavigationState('categories');
+        appContainer.innerHTML = `
+            <div class="text-right mb-8 sm:mb-10 lg:mb-12 p-4 sm:p-6">
+                <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#e5e5e5] pb-1 text-right">
+                    בחירת תת-קטגוריה
+                </h2>
+                <p class="text-sm sm:text-base text-[#a3a3a3] mt-2">
+                    קטגוריה לא נמצאה. מעבר לדף הבית...
+                </p>
+            </div>
+        `;
+        setTimeout(() => navigateToHome(), 1000);
+        return;
+    }
 
     mainTitle.textContent = `תת-קטגוריות: ${category.name}`;
     pageTitle.textContent = `תבניות: ${category.name}`;
@@ -1723,57 +1817,78 @@ function renderSubcategoriesPage(categoryKey) {
     headerContainer.classList.remove('hidden');
     updateNavigationState('categories');
 
+    // Render static content immediately (header, layout structure)
+    const staticHeaderHtml = `
+        <div class="text-right mb-8 sm:mb-10 lg:mb-12 p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
+            <div class="flex-1">
+                <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#e5e5e5] pb-1 text-right">
+                    בחירת תת-קטגוריה
+                </h2>
+                <p class="text-sm sm:text-base text-[#a3a3a3] mt-2">
+                    לחץ על תת-קטגוריה כדי להתחיל לערוך תבניות או נהל את התת-קטגוריות הקיימות.
+                </p>
+            </div>
+            <button class="w-full sm:w-auto py-2.5 px-5 sm:py-2.5 sm:px-6 bg-[#0084a6] text-white font-semibold rounded-lg shadow-sm hover:bg-[#006b85] transition-all duration-150 flex items-center justify-center space-x-2 space-x-reverse"
+                    onclick="handleSubcategoryAdd('${categoryKey}')">
+                ${getIcon('plus', 'w-5 h-5')}
+                <span>הוסף תת-קטגוריה חדשה</span>
+            </button>
+        </div>
+        
+        <div id="subcategoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-10 p-4 sm:p-6">
+            <div class="text-center py-10">
+                <p class="text-[#737373] text-lg">טוען תת-קטגוריות...</p>
+            </div>
+        </div>
+    `;
+    
+    appContainer.innerHTML = staticHeaderHtml;
+    
+    // Render dynamic content (subcategories cards) after data is available
+    renderSubcategoriesCards(categoryKey);
+}
 
+function renderSubcategoriesCards(categoryKey) {
+    const subcategoriesGrid = document.getElementById('subcategoriesGrid');
+    if (!subcategoriesGrid) return;
+    
+    const category = templatesData[categoryKey];
+    if (!category) return;
+    
     const cardClasses = "group nav-card bg-[#111111] p-4 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-[#262626] hover:bg-[#1a1a1a] transition-all duration-200 cursor-pointer text-right flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0";
 
     let cardsHtml = '';
     
-    Object.keys(category.subcategories).forEach(subKey => {
-        const subcategory = category.subcategories[subKey];
-        const totalTemplates = subcategory.groups.reduce((sum, group) => sum + group.templates.length, 0);
-        
-        cardsHtml += `
-            <div class="${cardClasses}" onclick="navigateToTemplateEditor('${categoryKey}', '${subKey}')">
-                <div class="flex-1 min-w-0">
-                    <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#e5e5e5]">${escapeHtml(subcategory.name)}</h3>
+    const subcategories = Object.keys(category.subcategories);
+    if (subcategories.length === 0) {
+        cardsHtml = '<div class="col-span-full text-center py-10"><p class="text-[#737373] text-base">אין תת-קטגוריות. לחץ על "הוסף תת-קטגוריה חדשה" כדי להתחיל.</p></div>';
+    } else {
+        subcategories.forEach(subKey => {
+            const subcategory = category.subcategories[subKey];
+            
+            cardsHtml += `
+                <div class="${cardClasses}" onclick="navigateToTemplateEditor('${categoryKey}', '${subKey}')">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#e5e5e5]">${escapeHtml(subcategory.name)}</h3>
+                    </div>
+                    <div class="flex items-center space-x-2 space-x-reverse z-10 flex-shrink-0">
+                        <button class="crud-btn crud-btn-edit" 
+                                onclick="event.stopPropagation(); handleSubcategoryEdit('${categoryKey}', '${subKey}')" 
+                                title="עריכת שם תת-קטגוריה">
+                            ${getIcon('edit', 'w-5 h-5')}
+                        </button>
+                        <button class="crud-btn crud-btn-delete" 
+                                onclick="event.stopPropagation(); handleSubcategoryDelete('${categoryKey}', '${subKey}')" 
+                                title="מחיקת תת-קטגוריה">
+                            ${getIcon('trash', 'w-5 h-5')}
+                        </button>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-2 space-x-reverse z-10 flex-shrink-0">
-                    <button class="crud-btn crud-btn-edit" 
-                            onclick="event.stopPropagation(); handleSubcategoryEdit('${categoryKey}', '${subKey}')" 
-                            title="עריכת שם תת-קטגוריה">
-                        ${getIcon('edit', 'w-5 h-5')}
-                    </button>
-                    <button class="crud-btn crud-btn-delete" 
-                            onclick="event.stopPropagation(); handleSubcategoryDelete('${categoryKey}', '${subKey}')" 
-                            title="מחיקת תת-קטגוריה">
-                        ${getIcon('trash', 'w-5 h-5')}
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-
-    appContainer.innerHTML = `
-            <div class="text-right mb-8 sm:mb-10 lg:mb-12 p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
-                <div class="flex-1">
-                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#e5e5e5] pb-1 text-right">
-                        בחירת תת-קטגוריה
-                    </h2>
-                    <p class="text-sm sm:text-base text-[#a3a3a3] mt-2">
-                        לחץ על תת-קטגוריה כדי להתחיל לערוך תבניות או נהל את התת-קטגוריות הקיימות.
-                    </p>
-                </div>
-                <button class="w-full sm:w-auto py-2.5 px-5 sm:py-2.5 sm:px-6 bg-[#0084a6] text-white font-semibold rounded-lg shadow-sm hover:bg-[#006b85] transition-all duration-150 flex items-center justify-center space-x-2 space-x-reverse"
-                        onclick="handleSubcategoryAdd('${categoryKey}')">
-                    ${getIcon('plus', 'w-5 h-5')}
-                    <span>הוסף תת-קטגוריה חדשה</span>
-                </button>
-            </div>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-10 p-4 sm:p-6">
-            ${cardsHtml}
-        </div>
-    `;
+            `;
+        });
+    }
+    
+    subcategoriesGrid.innerHTML = cardsHtml;
 }
 
 // --- פונקציית דף הבית (Homepage) ---
@@ -2093,7 +2208,7 @@ async function loadSupabaseDataIfNeeded() {
     }
 }
 
-// Initialize application: Render homepage immediately, load Supabase data only when needed
+// Initialize application: Render static content immediately, load Supabase data only when needed
 function initializeApp() {
     // Check if we're on the homepage (no hash or hash is empty/home)
     const hash = window.location.hash.replace('#', '');
@@ -2105,14 +2220,8 @@ function initializeApp() {
         // Load Supabase data in background (for future navigation)
         loadSupabaseDataIfNeeded();
     } else {
-        // Non-homepage - need Supabase data, show loading state
-        if (appContainer) {
-            appContainer.innerHTML = '<div class="text-center py-20"><p class="text-[#737373] text-lg">טוען...</p></div>';
-        }
-        // Load data then render
-        loadSupabaseDataIfNeeded().then(() => {
-            router();
-        });
+        // Non-homepage - render static structure immediately, then load data
+        router(); // router() will handle static rendering and async data loading
     }
 }
 
