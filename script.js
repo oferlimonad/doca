@@ -583,7 +583,7 @@ function renderTemplateEditorPage(categoryKey, subKey) {
                         <p class="text-sm sm:text-base text-[#a3a3a3] text-right">
                             סמן את המשפטים, מלא את השדות הדינמיים, והצפייה המקדימה תתעדכן מיידית.
                         </p>
-                    </div>
+    </div>
 
                     <!-- רשימת התבניות - גלילה (flex-grow) - Dynamic content -->
                     <div id="templateList" class="space-y-[2px] sm:space-y-[6px] lg:space-y-[14px] overflow-y-auto pr-2 sm:pr-4 flex-grow scrollable-content">
@@ -622,6 +622,32 @@ function renderTemplateEditorPage(categoryKey, subKey) {
     
     // Render dynamic content (template groups) after structure is rendered
     renderTemplateGroups(categoryKey, subKey);
+}
+
+function renderTemplateGroups(categoryKey, subKey) {
+    const templateList = document.getElementById('templateList');
+    if (!templateList) return;
+    
+    const category = templatesData[categoryKey];
+    const subcategory = category?.subcategories[subKey];
+    if (!category || !subcategory || !subcategory.groups) {
+        templateList.innerHTML = '<p class="text-center text-[#737373] mt-10">אין קבוצות תבניות. לחץ על "הוסף קבוצת תבניות" כדי להתחיל.</p>';
+        return;
+    }
+    
+    // Clear cache when page is rendered (in case data changed)
+    templateStructureCache.clear();
+    
+    // יצירת HTML עבור כל קבוצות התבניות
+    const allGroupsHtml = subcategory.groups.map((group, index) => 
+        generateTemplateGroupHtml(group, categoryKey, subKey, index)
+    ).join('<div class="h-[6px] sm:h-[14px] lg:h-[22px]"></div>');
+    
+    templateList.innerHTML = allGroupsHtml.length > 0 ? allGroupsHtml : '<p class="text-center text-[#737373] mt-10">אין קבוצות תבניות. לחץ על "הוסף קבוצת תבניות" כדי להתחיל.</p>';
+    
+    // Initialize events and preview after dynamic content is rendered
+    initTemplateEditorEvents();
+    updatePreview();
 }
 
 
