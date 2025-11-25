@@ -350,28 +350,32 @@ function createElementHtml(element, tempId, elementIndex) {
     switch (element.type) {
         case 'text':
             // טקסט קבוע - מוצג כספאן רגיל
-            return `<span class="whitespace-pre-wrap">${escapeHtml(element.value)}</span>`;
+            // הסר רווחים מיותרים מהתחלה וסוף כדי למנוע רווחים כפולים (הרווחים יתווספו ב-join)
+            const trimmedText = (element.value || '').trim();
+            return `<span class="whitespace-pre-wrap">${escapeHtml(trimmedText)}</span>`;
         case 'input':
             // שדה קלט - מוצג כ-input עם רוחב מותאם
             // הרוחב מחושב כדי להיות יחסי למספר התווים + מרווח
+            // הסר mx-1 כי הרווחים יתווספו ב-join
             const widthChars = element.width || 8;
             const safePlaceholder = escapeAttr(element.placeholder || '');
             const safeValue = escapeAttr(element.value || '');
             return `<input type="text" id="${uniqueElementId}" 
                         data-temp-id="${tempId}" data-index="${elementIndex}" data-type="input"
-                        class="dynamic-element text-center mx-1" 
+                        class="dynamic-element text-center" 
                         style="width: ${widthChars * 0.75 + 1.5}rem; min-width: 50px;" 
                         placeholder="${safePlaceholder}" 
                         value="${safeValue}"
                         oninput="updatePreview(true)" />`;
         case 'select':
             // רשימה נפתחת - מוצגת כ-select
+            // הסר mx-1 כי הרווחים יתווספו ב-join
             const optionsHtml = (element.options || []).map(opt => 
                 `<option value="${escapeAttr(opt)}" ${element.value === opt ? 'selected' : ''}>${escapeHtml(opt)}</option>`
             ).join('');
             return `<select id="${uniqueElementId}" 
                         data-temp-id="${tempId}" data-index="${elementIndex}" data-type="select"
-                        class="dynamic-element mx-1"
+                        class="dynamic-element"
                         onchange="updatePreview(true)">
                         ${optionsHtml}
                     </select>`;
@@ -386,10 +390,10 @@ function createElementHtml(element, tempId, elementIndex) {
 function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
     const safeGroupTitle = escapeAttr(group.title);
     const templatesHtml = group.templates.map((temp, tempIndex) => {
-        // רנדור המשפט הדינמי: מחבר את כל האלמנטים לשורה אחת
+        // רנדור המשפט הדינמי: מחבר את כל האלמנטים לשורה אחת עם רווח יחיד בין כל אלמנט
         const sentenceHtml = temp.elements.map((el, elIdx) => 
             createElementHtml(el, temp.id, elIdx)
-        ).join('');
+        ).join(' '); // רווח יחיד בין כל אלמנט
 
         return `
             <div class="template-item flex items-start p-3 sm:p-4 lg:p-5 rounded-xl hover:bg-[#111111] transition-all duration-150 group justify-between gap-2 border border-transparent hover:border-[#262626] hover:bg-[#1a1a1a]" 
@@ -923,14 +927,21 @@ function getTemplateDataFromDom(templateId) {
     
     // עובר על האלמנטים המקוריים בסדר הנכון (0, 1, 2, ...) ובונה את המשפט
     // זה מבטיח שסדר הערכים (מספריים וטקסט) תואם בדיוק לסדר המקורי
+    // מוסיף רווח יחיד בין כל אלמנט
     for (let elementIndex = 0; elementIndex < originalTemplate.elements.length; elementIndex++) {
         const element = originalTemplate.elements[elementIndex];
+        
+        // הוסף רווח לפני כל אלמנט (חוץ מהראשון)
+        if (elementIndex > 0) {
+            fullSentence += ' ';
+        }
         
         if (element.type === 'text') {
             // טקסט סטטי - קרא מה-SPANs לפי המיקום המקורי
             const textSpan = textSpanMap.get(elementIndex);
             if (textSpan) {
-                fullSentence += textSpan.textContent;
+                // הסר רווחים מיותרים מהתחלה וסוף הטקסט כדי למנוע רווחים כפולים
+                fullSentence += textSpan.textContent.trim();
             }
         } else if (element.type === 'input' || element.type === 'select') {
             // אלמנט דינמי - קרא מה-DOM לפי data-index המדויק
@@ -941,8 +952,8 @@ function getTemplateDataFromDom(templateId) {
                 if (element.type === 'input' && !value) {
                     value = `(${domElement.placeholder || 'ריק'})`;
                 }
-                // הוסף את הערך ישירות - ללא שינוי כיוון או סדר
-                fullSentence += value;
+                // הסר רווחים מיותרים מהתחלה וסוף כדי למנוע רווחים כפולים
+                fullSentence += value.trim();
             }
         }
     }
