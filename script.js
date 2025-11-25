@@ -2020,6 +2020,11 @@ Object.keys(templatesData).forEach(catKey => {
 // Initialize application: Load data from Supabase, then start router
 async function initializeApp() {
     try {
+        // Show loading state
+        if (appContainer) {
+            appContainer.innerHTML = '<div class="text-center py-20"><p class="text-[#737373] text-lg">טוען...</p></div>';
+        }
+        
         // Wait for Supabase client to be ready
         let retries = 0;
         while (!window.supabaseClient && retries < 50) {
@@ -2028,26 +2033,36 @@ async function initializeApp() {
         }
         
         if (!window.supabaseClient) {
-            console.error('Supabase client not available. Using fallback data.');
-            // Keep the default empty structure
+            console.warn('Supabase client not available. Check your environment variables.');
+            // Initialize with empty structure - user can still use the app
+            templatesData = {};
             router();
             return;
         }
         
         // Load data from Supabase
         if (window.supabaseData && window.supabaseData.loadAllDataFromSupabase) {
-            templatesData = await window.supabaseData.loadAllDataFromSupabase();
-            if (Object.keys(templatesData).length === 0) {
-                console.log('No data in database. Starting with empty structure.');
-            } else {
-                console.log('Data loaded successfully from Supabase.');
+            try {
+                templatesData = await window.supabaseData.loadAllDataFromSupabase();
+                if (Object.keys(templatesData).length === 0) {
+                    console.log('No data in database. Starting with empty structure.');
+                } else {
+                    console.log('✅ Data loaded successfully from Supabase.');
+                }
+            } catch (loadError) {
+                console.error('Error loading data from Supabase:', loadError);
+                // Initialize with empty structure on error
+                templatesData = {};
             }
         } else {
-            console.error('Supabase data functions not loaded');
+            console.error('Supabase data functions not loaded. Check if supabase-data.js is included.');
+            templatesData = {};
         }
     } catch (error) {
         console.error('Error initializing app:', error);
+        templatesData = {}; // Fallback to empty structure
     } finally {
+        // Always call router to render the page
         router();
     }
 }

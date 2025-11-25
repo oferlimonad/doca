@@ -1,11 +1,9 @@
 // Supabase Data Layer
 // This file contains all functions for reading and writing data to Supabase
 
-// Initialize Supabase client
-const supabase = window.supabaseClient;
-
-if (!supabase) {
-    console.error('Supabase client not initialized. Check your environment variables.');
+// Get Supabase client (will be set when client initializes)
+function getSupabase() {
+    return window.supabaseClient;
 }
 
 // ============================================
@@ -18,6 +16,12 @@ if (!supabase) {
  */
 async function loadAllDataFromSupabase() {
     try {
+        const supabase = getSupabase();
+        if (!supabase) {
+            console.warn('Supabase client not available. Returning empty data structure.');
+            return {};
+        }
+        
         // Load categories
         const { data: categories, error: categoriesError } = await supabase
             .from('categories')
@@ -136,6 +140,8 @@ async function loadAllDataFromSupabase() {
 
 async function createCategory(key, name) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { data, error } = await supabase
             .from('categories')
             .insert([{ key, name }])
@@ -152,6 +158,8 @@ async function createCategory(key, name) {
 
 async function updateCategory(categoryId, name) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { data, error } = await supabase
             .from('categories')
             .update({ name })
@@ -169,6 +177,8 @@ async function updateCategory(categoryId, name) {
 
 async function deleteCategory(categoryId) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { error } = await supabase
             .from('categories')
             .delete()
@@ -187,6 +197,8 @@ async function deleteCategory(categoryId) {
 
 async function createSubcategory(categoryId, key, name) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { data, error } = await supabase
             .from('subcategories')
             .insert([{ category_id: categoryId, key, name }])
@@ -203,6 +215,8 @@ async function createSubcategory(categoryId, key, name) {
 
 async function updateSubcategory(subcategoryId, name) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { data, error } = await supabase
             .from('subcategories')
             .update({ name })
@@ -220,6 +234,8 @@ async function updateSubcategory(subcategoryId, name) {
 
 async function deleteSubcategory(subcategoryId) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { error } = await supabase
             .from('subcategories')
             .delete()
@@ -238,6 +254,8 @@ async function deleteSubcategory(subcategoryId) {
 
 async function createTemplateGroup(subcategoryId, title, displayOrder = 0) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { data, error } = await supabase
             .from('template_groups')
             .insert([{ subcategory_id: subcategoryId, title, display_order: displayOrder }])
@@ -254,6 +272,8 @@ async function createTemplateGroup(subcategoryId, title, displayOrder = 0) {
 
 async function updateTemplateGroup(groupId, title) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { data, error } = await supabase
             .from('template_groups')
             .update({ title })
@@ -271,6 +291,8 @@ async function updateTemplateGroup(groupId, title) {
 
 async function deleteTemplateGroup(groupId) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { error } = await supabase
             .from('template_groups')
             .delete()
@@ -289,6 +311,8 @@ async function deleteTemplateGroup(groupId) {
 
 async function createTemplate(groupId, templateKey, displayOrder = 0) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { data, error } = await supabase
             .from('templates')
             .insert([{ group_id: groupId, template_key: templateKey, display_order: displayOrder }])
@@ -305,6 +329,8 @@ async function createTemplate(groupId, templateKey, displayOrder = 0) {
 
 async function deleteTemplate(templateId) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
         const { error } = await supabase
             .from('templates')
             .delete()
@@ -323,6 +349,9 @@ async function deleteTemplate(templateId) {
 
 async function saveTemplateElements(templateId, elements) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
+        
         // First, delete all existing elements for this template
         const { error: deleteError } = await supabase
             .from('template_elements')
@@ -377,6 +406,8 @@ async function saveTemplateElements(templateId, elements) {
  */
 async function getCategoryIdByKey(key) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) return null;
         const { data, error } = await supabase
             .from('categories')
             .select('id')
@@ -396,6 +427,8 @@ async function getCategoryIdByKey(key) {
  */
 async function getSubcategoryIdByKey(categoryId, key) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) return null;
         const { data, error } = await supabase
             .from('subcategories')
             .select('id')
@@ -416,6 +449,8 @@ async function getSubcategoryIdByKey(categoryId, key) {
  */
 async function getTemplateGroupId(subcategoryId, groupIndex) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) return null;
         const { data, error } = await supabase
             .from('template_groups')
             .select('id')
@@ -435,6 +470,8 @@ async function getTemplateGroupId(subcategoryId, groupIndex) {
  */
 async function getTemplateIdByKey(groupId, templateKey) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) return null;
         const { data, error } = await supabase
             .from('templates')
             .select('id')

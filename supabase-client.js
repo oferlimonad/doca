@@ -1,43 +1,40 @@
 // Supabase Client Configuration
-// This file initializes the Supabase client using environment variables
+// This file initializes the Supabase client using window.SUPABASE_URL and window.SUPABASE_ANON_KEY
 
 // Wait for Supabase library to load, then initialize client
 (function() {
     let retryCount = 0;
-    const maxRetries = 100; // Maximum 10 seconds (100 * 100ms)
+    const maxRetries = 50; // Maximum 5 seconds (50 * 100ms)
     
     function initSupabase() {
         // Check if Supabase library is loaded
         if (typeof supabase === 'undefined') {
             retryCount++;
             if (retryCount < maxRetries) {
-                // Only log every 10 retries to reduce console spam
-                if (retryCount % 10 === 0) {
-                    console.log(`Waiting for Supabase library to load... (attempt ${retryCount}/${maxRetries})`);
-                }
                 setTimeout(initSupabase, 100);
                 return;
             } else {
-                console.error('Supabase library failed to load after maximum retries. Check if the CDN script is included in index.html.');
+                console.error('Supabase library failed to load. Check if the CDN script is included in index.html.');
                 window.supabaseClient = null;
                 return;
             }
         }
 
-        // Get credentials from environment variables
-        const supabaseUrl = window.SUPABASE_URL || '';
-        const supabaseAnonKey = window.SUPABASE_ANON_KEY || '';
+        // Get credentials from window object (set in index.html)
+        const supabaseUrl = window.SUPABASE_URL;
+        const supabaseAnonKey = window.SUPABASE_ANON_KEY;
 
-        if (!supabaseUrl || !supabaseAnonKey) {
-            console.warn('Supabase credentials not found. Please set SUPABASE_URL and SUPABASE_ANON_KEY in your .env file or environment variables.');
-            // For development, you can set these here temporarily:
-            // window.SUPABASE_URL = 'your-supabase-url';
-            // window.SUPABASE_ANON_KEY = 'your-anon-key';
+        // Validate that both values exist and are not placeholders
+        if (!supabaseUrl || !supabaseAnonKey || 
+            supabaseUrl === 'REPLACE_URL' || supabaseAnonKey === 'REPLACE_KEY' ||
+            supabaseUrl === '' || supabaseAnonKey === '') {
+            console.error('Supabase client not initialized. Check environment variables.');
+            console.error('Please set window.SUPABASE_URL and window.SUPABASE_ANON_KEY in index.html');
             window.supabaseClient = null;
             return;
         }
 
-        // Create and store Supabase client
+        // Initialize the client only if both values exist
         try {
             window.supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
             console.log('✅ Supabase client initialized successfully');
@@ -47,8 +44,7 @@
         }
     }
 
-    // Start initialization after a short delay to ensure scripts are loaded
-    // Use window.onload to ensure all scripts including Supabase CDN are loaded
+    // Start initialization when window loads
     if (window.addEventListener) {
         window.addEventListener('load', function() {
             // Small delay to ensure Supabase CDN script has executed

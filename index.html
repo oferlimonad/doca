@@ -24,22 +24,18 @@
     </script>
     <!-- קישור לקובץ CSS חיצוני -->
     <link rel="stylesheet" href="styles.css">
-    <!-- Environment Variables Injection (for Vercel) - Load first -->
+    <!-- Supabase Environment Variables - MUST BE FIRST SCRIPT -->
+    <!-- Replace REPLACE_URL and REPLACE_KEY with your actual Supabase credentials -->
     <script>
-        // These will be replaced by Vercel at build time via environment variables
-        // For local development, create a .env file or set these directly
-        window.SUPABASE_URL = '{{SUPABASE_URL}}' || '';
-        window.SUPABASE_ANON_KEY = '{{SUPABASE_ANON_KEY}}' || '';
-        
-        // For local development, you can set these here temporarily:
-        // window.SUPABASE_URL = 'your-supabase-url';
-        // window.SUPABASE_ANON_KEY = 'your-anon-key';
+        // Supabase Configuration
+        // For Vercel: Manually replace REPLACE_URL and REPLACE_KEY with your actual values
+        // For local development: Replace these values directly
+        window.SUPABASE_URL = 'https://pxkptvearszpvdahoxbq.supabase.co';
+        window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4a3B0dmVhcnN6cHZkYWhveGJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwNjgwNjksImV4cCI6MjA3OTY0NDA2OX0.a5P7yGglY-hiPKmGIugsobABM05fl7oTMsuxEsPJLMI';
     </script>
-    <!-- Supabase JS Library - Must load before supabase-client.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" 
-            onload="console.log('Supabase library loaded')"
-            onerror="console.error('Failed to load Supabase library')"></script>
-    <!-- Supabase Client Configuration - Waits for library to load -->
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- Supabase Client Configuration -->
     <script src="supabase-client.js"></script>
     <!-- Supabase Data Layer -->
     <script src="supabase-data.js"></script>
