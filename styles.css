@@ -217,17 +217,17 @@ body {
 }
 
 .crud-btn-delete {
-    color: var(--error);
+    color: var(--accent-primary);
 }
 
 .crud-btn-delete:hover {
-    background-color: var(--error-bg);
-    color: var(--error);
+    background-color: var(--bg-tertiary);
+    color: var(--accent-primary-hover);
 }
 
 .crud-btn-delete:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 0 2px rgba(0, 132, 166, 0.3);
 }
 
 .crud-btn-edit {
@@ -235,13 +235,13 @@ body {
 }
 
 .crud-btn-edit:hover {
-    background-color: var(--info-bg);
-    color: var(--accent-primary);
+    background-color: var(--bg-tertiary);
+    color: var(--accent-primary-hover);
 }
 
 .crud-btn-edit:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 217, 255, 0.2);
+    box-shadow: 0 0 0 2px rgba(0, 132, 166, 0.3);
 }
 
 /* --- Scrollbar - Minimalist Dark --- */
