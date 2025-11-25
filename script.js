@@ -823,6 +823,24 @@ function router() {
     const category = params.get('category');
     const sub = params.get('sub');
     
+    // Check if we need Supabase data for this page
+    const needsSupabaseData = category || hash === 'categories';
+    
+    if (needsSupabaseData && !supabaseDataLoaded) {
+        // Show loading state and wait for data
+        if (appContainer) {
+            appContainer.innerHTML = '<div class="text-center py-20"><p class="text-[#737373] text-lg">טוען...</p></div>';
+        }
+        loadSupabaseDataIfNeeded().then(() => {
+            renderPage(category, sub, hash);
+        });
+        return;
+    }
+    
+    renderPage(category, sub, hash);
+}
+
+function renderPage(category, sub, hash) {
     // הסתרת הכותרת והניווט עבור דף הבית
     headerContainer.classList.add('hidden');
 
@@ -1947,14 +1965,20 @@ Object.keys(templatesData).forEach(catKey => {
     });
 });
 
-// Initialize application: Load data from Supabase, then start router
-async function initializeApp() {
+// Flag to track if Supabase data has been loaded
+let supabaseDataLoaded = false;
+let supabaseDataLoading = false;
+
+// Load Supabase data lazily (only when needed for non-homepage pages)
+async function loadSupabaseDataIfNeeded() {
+    // If already loaded or currently loading, return
+    if (supabaseDataLoaded || supabaseDataLoading) {
+        return;
+    }
+    
+    supabaseDataLoading = true;
+    
     try {
-        // Show loading state
-        if (appContainer) {
-            appContainer.innerHTML = '<div class="text-center py-20"><p class="text-[#737373] text-lg">טוען...</p></div>';
-        }
-        
         // Wait for Supabase client to be ready
         let retries = 0;
         while (!window.supabaseClient && retries < 50) {
@@ -1964,9 +1988,9 @@ async function initializeApp() {
         
         if (!window.supabaseClient) {
             console.warn('Supabase client not available. Check your environment variables.');
-            // Initialize with empty structure - user can still use the app
             templatesData = {};
-            router();
+            supabaseDataLoaded = true;
+            supabaseDataLoading = false;
             return;
         }
         
@@ -1981,7 +2005,6 @@ async function initializeApp() {
                 }
             } catch (loadError) {
                 console.error('Error loading data from Supabase:', loadError);
-                // Initialize with empty structure on error
                 templatesData = {};
             }
         } else {
@@ -1989,11 +2012,34 @@ async function initializeApp() {
             templatesData = {};
         }
     } catch (error) {
-        console.error('Error initializing app:', error);
-        templatesData = {}; // Fallback to empty structure
+        console.error('Error loading Supabase data:', error);
+        templatesData = {};
     } finally {
-        // Always call router to render the page
+        supabaseDataLoaded = true;
+        supabaseDataLoading = false;
+    }
+}
+
+// Initialize application: Render homepage immediately, load Supabase data only when needed
+function initializeApp() {
+    // Check if we're on the homepage (no hash or hash is empty/home)
+    const hash = window.location.hash.replace('#', '');
+    const isHomepage = !hash || hash === '' || hash === 'home';
+    
+    if (isHomepage) {
+        // Homepage is static - render immediately without waiting for Supabase
         router();
+        // Load Supabase data in background (for future navigation)
+        loadSupabaseDataIfNeeded();
+    } else {
+        // Non-homepage - need Supabase data, show loading state
+        if (appContainer) {
+            appContainer.innerHTML = '<div class="text-center py-20"><p class="text-[#737373] text-lg">טוען...</p></div>';
+        }
+        // Load data then render
+        loadSupabaseDataIfNeeded().then(() => {
+            router();
+        });
     }
 }
 
