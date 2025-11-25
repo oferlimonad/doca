@@ -1646,11 +1646,11 @@ function renderCategoriesPage() {
         const category = templatesData[key];
         cardsHtml += `
             <div class="${cardClasses}" onclick="navigateToSubcategories('${key}')">
-                <div class="flex-1">
+                <div class="flex-1 min-w-0">
                     <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#e5e5e5] mb-1">${escapeHtml(category.name)}</h3>
                     <p class="text-sm sm:text-base text-[#737373]">מעבר לתת-קטגוריות</p>
                 </div>
-                <div class="flex space-x-2 space-x-reverse z-10">
+                <div class="flex items-center space-x-2 space-x-reverse z-10 flex-shrink-0">
                     <button class="crud-btn crud-btn-edit" 
                             onclick="event.stopPropagation(); handleCategoryEdit('${key}')" 
                             title="עריכת שם קטגוריה">
@@ -1710,11 +1710,11 @@ function renderSubcategoriesPage(categoryKey) {
         
         cardsHtml += `
             <div class="${cardClasses}" onclick="navigateToTemplateEditor('${categoryKey}', '${subKey}')">
-                <div class="flex-1">
+                <div class="flex-1 min-w-0">
                     <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#e5e5e5] mb-1">${escapeHtml(subcategory.name)}</h3>
                     <p class="text-sm sm:text-base text-[#737373]">${totalTemplates} תבניות זמינות</p>
                 </div>
-                <div class="flex space-x-2 space-x-reverse z-10">
+                <div class="flex items-center space-x-2 space-x-reverse z-10 flex-shrink-0">
                     <button class="crud-btn crud-btn-edit" 
                             onclick="event.stopPropagation(); handleSubcategoryEdit('${categoryKey}', '${subKey}')" 
                             title="עריכת שם תת-קטגוריה">
