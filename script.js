@@ -550,7 +550,7 @@ function renderTemplateEditorPage(categoryKey, subKey) {
     updateNavigationState('categories');
 
     // Render static content immediately (layout structure, headers, preview panel)
-    const staticStructureHtml = `
+    appContainer.innerHTML = `
         <div class="flex flex-col lg:grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 xl:gap-12 p-4 sm:p-6 lg:p-6">
             
             <!-- 2/3 שמאלי: מנהל התבניות (החלק הגדול) -->
@@ -558,11 +558,11 @@ function renderTemplateEditorPage(categoryKey, subKey) {
                 <div class="p-4 sm:p-6 lg:p-8 bg-[#111111] rounded-2xl shadow-sm border border-[#262626] lg:h-[90vh] flex flex-col">
                     
                     <!-- כותרת, תיאור וכפתור הוספת קבוצה - סטטיים (flex-shrink-0) -->
-                        <div class="flex-shrink-0 mb-4 border-b border-[#262626] pb-3">
-                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-2">
-                                <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#0084a6] text-right">
-                                    בחירת משפטים דינמיים (תחת "${safeSubName}")
-                                </h2>
+                    <div class="flex-shrink-0 mb-4 border-b border-[#262626] pb-3">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-2">
+                            <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#0084a6] text-right">
+                                בחירת משפטים דינמיים (תחת "${safeSubName}")
+                            </h2>
                             <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                                 <!-- כפתור הוספת תבנית מוגדרת מראש -->
                                 <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150"
@@ -578,25 +578,27 @@ function renderTemplateEditorPage(categoryKey, subKey) {
                                         aria-label="הוסף קבוצת תבניות">
                                     ${getIcon('plus', 'w-4 h-4 sm:w-5 sm:h-5')}
                                 </button>
-            </div>
-            </div>
+                            </div>
+                        </div>
                         <p class="text-sm sm:text-base text-[#a3a3a3] text-right">
                             סמן את המשפטים, מלא את השדות הדינמיים, והצפייה המקדימה תתעדכן מיידית.
                         </p>
-    </div>
+                    </div>
 
-                    <!-- רשימת התבניות - גלילה (flex-grow) -->
+                    <!-- רשימת התבניות - גלילה (flex-grow) - Dynamic content -->
                     <div id="templateList" class="space-y-[2px] sm:space-y-[6px] lg:space-y-[14px] overflow-y-auto pr-2 sm:pr-4 flex-grow scrollable-content">
-                        ${allGroupsHtml.length > 0 ? allGroupsHtml : '<p class="text-center text-[#737373] mt-10">אין קבוצות תבניות. לחץ על "הוסף קבוצת תבניות" כדי להתחיל.</p>'}
-    </div>
+                        <div class="text-center py-10">
+                            <p class="text-[#737373] text-lg">טוען תבניות...</p>
+                        </div>
+                    </div>
 
                     <!-- הודעת סטטוס - מוצגת במרכז המסך -->
                     <div id="message" class="copy-message text-center p-3 rounded-lg font-medium" role="alert"></div>
                     
-        </div>
-    </div>
+                </div>
+            </div>
 
-            <!-- 1/3 ימני: תצוגה מקדימה -->
+            <!-- 1/3 ימני: תצוגה מקדימה - Static -->
             <div id="previewPanel" class="lg:col-span-1 w-full mb-6 sm:mb-8 lg:mb-0 order-2 lg:sticky lg:top-8">
                 <div class="bg-[#111111] rounded-2xl shadow-sm border border-[#262626] p-4 sm:p-6 lg:p-8 flex flex-col lg:h-[90vh]">
                     <!-- Preview Title with Copy Icon -->
@@ -616,6 +618,10 @@ function renderTemplateEditorPage(categoryKey, subKey) {
                 </div>
             </div>
         </div>
+    `;
+    
+    // Render dynamic content (template groups) after structure is rendered
+    renderTemplateGroups(categoryKey, subKey);
 }
 
 
@@ -636,55 +642,62 @@ function renderElementManagerHtml(elements) {
                     color = 'bg-[#1a1a1a]';
                     title = 'טקסט סטטי';
                     // משתמשים ב-el.value לצורך הצגת התוכן הנוכחי
-                    detailsHtml = `
-                        <textarea id="edit-val-${index}" rows="1" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg resize-none text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150" placeholder="הכנס טקסט קבוע">${escapeHtml(el.value)}</textarea>
-                    `;
+                    const textareaId = 'edit-val-' + index;
+                    const textareaValue = escapeHtml(el.value || '');
+                    detailsHtml = '<textarea id="' + textareaId + '" rows="1" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg resize-none text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150" placeholder="הכנס טקסט קבוע">' + textareaValue + '</textarea>';
                     break;
                 case 'input':
                     color = 'bg-[#1a1a1a]';
                     title = 'שדה קלט (חופשי)';
-                    detailsHtml = `
-                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 space-x-reverse">
-                            <label class="block flex-1 text-sm sm:text-base">Placeholder: <input type="text" id="edit-ph-${index}" value="${escapeAttr(el.placeholder || '')}" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150" /></label>
-                            <label class="block sm:w-1/4 text-sm sm:text-base">רוחב (תווים): <input type="number" id="edit-w-${index}" value="${el.width || 10}" min="1" max="50" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150" /></label>
-                        </div>
-                    `;
+                    const inputPhId = 'edit-ph-' + index;
+                    const inputWId = 'edit-w-' + index;
+                    const placeholderValue = escapeAttr(el.placeholder || '');
+                    const widthValue = el.width || 10;
+                    detailsHtml = '<div class="flex flex-col sm:flex-row gap-2 sm:gap-4 space-x-reverse">' +
+                        '<label class="block flex-1 text-sm sm:text-base">Placeholder: <input type="text" id="' + inputPhId + '" value="' + placeholderValue + '" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150" /></label>' +
+                        '<label class="block sm:w-1/4 text-sm sm:text-base">רוחב (תווים): <input type="number" id="' + inputWId + '" value="' + widthValue + '" min="1" max="50" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150" /></label>' +
+                        '</div>';
                     break;
                 case 'select':
                     color = 'bg-[#1a1a1a]';
                     title = 'רשימה נפתחת (Dropdown)';
-                    detailsHtml = `
-                        <label class="block text-sm sm:text-base">אפשרויות (כל אחת בשורה חדשה):</label>
-                        <textarea id="edit-opt-${index}" rows="3" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg resize-none text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150">${escapeHtml((el.options || []).join('\n'))}</textarea>
-                    `;
+                    const textareaOptId = 'edit-opt-' + index;
+                    const optionsValue = escapeHtml((el.options || []).join('\n'));
+                    detailsHtml = '<label class="block text-sm sm:text-base">אפשרויות (כל אחת בשורה חדשה):</label>' +
+                        '<textarea id="' + textareaOptId + '" rows="3" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg resize-none text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150">' + optionsValue + '</textarea>';
                     break;
             }
 
-        return `
-            <li id="el-${index}" class="element-item p-3 sm:p-4 ${color} rounded-xl border border-[#262626] shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0 mb-3">
-                <div class="flex-grow space-y-2 w-full sm:w-auto">
-                    <strong class="text-sm sm:text-base font-semibold block border-b border-[#262626] pb-1.5 text-[#a3a3a3]">${title} (אלמנט #${index + 1})</strong>
-                    ${detailsHtml}
-                </div>
-                <div class="flex flex-row sm:flex-col space-x-1 sm:space-x-0 space-y-0 sm:space-y-1 mr-0 sm:mr-4 self-end sm:self-auto">
-                    <button onclick="moveElement(${index}, 'up')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="הזז למעלה">${getIcon('arrow-up', 'w-4 h-4')}</button>
-                    <button onclick="moveElement(${index}, 'down')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="הזז למטה">${getIcon('arrow-down', 'w-4 h-4')}</button>
-                    <button onclick="deleteElement(${index})" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="מחק אלמנט">${getIcon('error', 'w-4 h-4')}</button>
-                </div>
-            </li>
-        `;
+        const liId = 'el-' + index;
+        const elementNum = index + 1;
+        const arrowUpIcon = getIcon('arrow-up', 'w-4 h-4');
+        const arrowDownIcon = getIcon('arrow-down', 'w-4 h-4');
+        const errorIcon = getIcon('error', 'w-4 h-4');
+        return '<li id="' + liId + '" class="element-item p-3 sm:p-4 ' + color + ' rounded-xl border border-[#262626] shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0 mb-3">' +
+            '<div class="flex-grow space-y-2 w-full sm:w-auto">' +
+            '<strong class="text-sm sm:text-base font-semibold block border-b border-[#262626] pb-1.5 text-[#a3a3a3]">' + title + ' (אלמנט #' + elementNum + ')</strong>' +
+            detailsHtml +
+            '</div>' +
+            '<div class="flex flex-row sm:flex-col space-x-1 sm:space-x-0 space-y-0 sm:space-y-1 mr-0 sm:mr-4 self-end sm:self-auto">' +
+            '<button onclick="moveElement(' + index + ', \'up\')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="הזז למעלה">' + arrowUpIcon + '</button>' +
+            '<button onclick="moveElement(' + index + ', \'down\')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="הזז למטה">' + arrowDownIcon + '</button>' +
+            '<button onclick="deleteElement(' + index + ')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#737373] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="מחק אלמנט">' + errorIcon + '</button>' +
+            '</div>' +
+            '</li>';
     }).join('');
 
-    return `
-        <div id="element-manager-ui" class="space-y-4">
-            ${elementsHtml.length === 0 ? '<p class="text-center text-[#737373] italic p-3 sm:p-4 border border-dashed border-[#262626] rounded-xl text-sm sm:text-base">המשפט ריק. הוסף רכיב כדי להתחיל.</p>' : `<ul id="element-list" class="divide-y divide-[#262626]">${elementsHtml}</ul>`}
-            <div class="flex flex-col sm:flex-row justify-start gap-2 sm:gap-3 space-x-reverse border-t border-[#262626] pt-3 sm:pt-4">
-                <button onclick="addElement('text')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-[#0084a6] text-white rounded-lg hover:bg-[#006b85] transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2">${getIcon('plus', 'w-4 h-4')} טקסט קבוע</button>
-                <button onclick="addElement('input')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-[#0084a6] text-white rounded-lg hover:bg-[#006b85] transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2">${getIcon('plus', 'w-4 h-4')} שדה קלט</button>
-                <button onclick="addElement('select')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-[#0084a6] text-white rounded-lg hover:bg-[#006b85] transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2">${getIcon('plus', 'w-4 h-4')} רשימה נפתחת</button>
-            </div>
-        </div>
-    `;
+    const emptyMessage = '<p class="text-center text-[#737373] italic p-3 sm:p-4 border border-dashed border-[#262626] rounded-xl text-sm sm:text-base">המשפט ריק. הוסף רכיב כדי להתחיל.</p>';
+    const elementsList = '<ul id="element-list" class="divide-y divide-[#262626]">' + elementsHtml + '</ul>';
+    const plusIcon = getIcon('plus', 'w-4 h-4');
+    const contentHtml = elementsHtml.length === 0 ? emptyMessage : elementsList;
+    return '<div id="element-manager-ui" class="space-y-4">' +
+        contentHtml +
+        '<div class="flex flex-col sm:flex-row justify-start gap-2 sm:gap-3 space-x-reverse border-t border-[#262626] pt-3 sm:pt-4">' +
+        '<button onclick="addElement(\'text\')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-[#0084a6] text-white rounded-lg hover:bg-[#006b85] transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2">' + plusIcon + ' טקסט קבוע</button>' +
+        '<button onclick="addElement(\'input\')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-[#0084a6] text-white rounded-lg hover:bg-[#006b85] transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2">' + plusIcon + ' שדה קלט</button>' +
+        '<button onclick="addElement(\'select\')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-[#0084a6] text-white rounded-lg hover:bg-[#006b85] transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2">' + plusIcon + ' רשימה נפתחת</button>' +
+        '</div>' +
+        '</div>';
 }
 
 // פונקציות ניהול האלמנטים המופעלות בתוך המודל
@@ -697,15 +710,15 @@ window.updateElementsJson = function() {
         
         switch (type) {
             case 'text':
-                el.value = document.getElementById(`edit-val-${index}`).value;
+                el.value = document.getElementById('edit-val-' + index).value;
                 break;
             case 'input':
-                el.placeholder = document.getElementById(`edit-ph-${index}`).value;
-                el.width = parseInt(document.getElementById(`edit-w-${index}`).value) || 10;
+                el.placeholder = document.getElementById('edit-ph-' + index).value;
+                el.width = parseInt(document.getElementById('edit-w-' + index).value) || 10;
                 el.value = el.value || ''; 
                 break;
             case 'select':
-                const optionsText = document.getElementById(`edit-opt-${index}`).value;
+                const optionsText = document.getElementById('edit-opt-' + index).value;
                 el.options = optionsText.split('\n').map(o => o.trim()).filter(o => o.length > 0);
                 el.value = el.value || el.options[0] || '';
                 break;
