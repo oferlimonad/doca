@@ -466,6 +466,23 @@ a, button, input, select, textarea {
     background-color: var(--bg-tertiary);
 }
 
+/* Mobile menu RTL support - ensure proper slide direction */
+@media (max-width: 640px) {
+    #mobileMenu {
+        right: 0;
+        left: auto;
+    }
+    
+    /* Ensure menu slides from right to left (RTL) */
+    #mobileMenu.translate-x-full {
+        transform: translateX(100%);
+    }
+    
+    #mobileMenu.translate-x-0 {
+        transform: translateX(0);
+    }
+}
+
 /* Touch targets - minimum 44x44px for mobile */
 @media (max-width: 640px) {
     button, a, .crud-btn, .template-input, .template-select {
@@ -543,33 +560,49 @@ a, button, input, select, textarea {
         padding: 1rem !important;
     }
     
-    /* Footer mobile centering */
+    /* Footer mobile centering - remove unnecessary spacing */
     #globalFooter {
         text-align: center !important;
-        padding: 2rem 1rem !important;
-        margin-top: 2rem !important;
+        padding: 1.5rem 0.75rem !important;
+        margin-top: 1.5rem !important;
     }
     
     #globalFooter > div {
         padding: 0 !important;
+        margin: 0 !important;
     }
     
     #globalFooter .grid {
-        gap: 2rem !important;
+        gap: 1.5rem !important;
+        margin-bottom: 1rem !important;
     }
     
     #globalFooter h3 {
         text-align: center !important;
+        margin-bottom: 0.75rem !important;
+        font-size: 0.9375rem !important;
     }
     
     #globalFooter ul {
         text-align: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    #globalFooter ul li {
+        margin: 0.5rem 0 !important;
     }
     
     #globalFooter .flex {
         flex-direction: column !important;
         align-items: center !important;
         text-align: center !important;
+        gap: 0.75rem !important;
+    }
+    
+    #globalFooter .border-t {
+        margin-top: 1rem !important;
+        padding-top: 1rem !important;
     }
     
     /* Prevent horizontal scrolling */
@@ -578,18 +611,53 @@ a, button, input, select, textarea {
         max-width: 100vw !important;
     }
     
-    /* Main content wrapper mobile padding */
+    /* Main content wrapper mobile padding - reduced */
     .flex-1 {
-        padding: 1rem !important;
+        padding: 0.75rem !important;
+        padding-top: 0.75rem !important;
     }
     
-    /* Container max-width on mobile */
+    /* Remove excessive margins on mobile */
+    .mb-6.sm\:mb-8,
+    .mb-8.sm\:mb-10,
+    .mb-12 {
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Clean vertical flow - reduce gaps */
+    .gap-4,
+    .gap-6,
+    .gap-8 {
+        gap: 0.75rem !important;
+    }
+    
+    /* Section spacing on mobile */
+    .my-8,
+    .my-12,
+    .my-16 {
+        margin-top: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    /* Container max-width on mobile - increased width */
     .max-w-7xl,
     .max-w-\[90rem\],
     .max-w-\[100rem\] {
         max-width: 100% !important;
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    
+    /* Main content wrapper - wider on mobile */
+    #appContainer {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    
+    /* Header container - wider on mobile */
+    #headerContainer {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
     }
     
     /* Template editor mobile adjustments */
@@ -600,6 +668,41 @@ a, button, input, select, textarea {
     .lg\:col-span-2,
     .lg\:col-span-1 {
         grid-column: span 1 !important;
+    }
+    
+    /* Template editor sentences - optimize for single line on mobile */
+    .template-item {
+        padding: 0.75rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .template-item label {
+        font-size: 0.875rem !important;
+        line-height: 1.4 !important;
+    }
+    
+    .template-item .block {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 0.25rem !important;
+    }
+    
+    .template-item .dynamic-element {
+        font-size: 0.875rem !important;
+        padding: 0.25rem 0.5rem !important;
+        min-width: auto !important;
+        flex-shrink: 0 !important;
+    }
+    
+    .template-item .whitespace-pre-wrap {
+        white-space: normal !important;
+        display: inline !important;
+    }
+    
+    /* Reduce spacing in template groups */
+    .space-y-\[2px\] > * + * {
+        margin-top: 0.25rem !important;
     }
     
     /* Button groups mobile stacking */
