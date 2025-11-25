@@ -448,6 +448,172 @@ a, button, input, select, textarea {
     }
 }
 
+/* Mobile Menu Styles */
+#mobileMenu {
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.5);
+}
+
+#mobileMenu.translate-x-0 {
+    transform: translateX(0);
+}
+
+#mobileMenu.translate-x-full {
+    transform: translateX(100%);
+}
+
+.mobile-nav-link.active {
+    color: var(--text-primary);
+    background-color: var(--bg-tertiary);
+}
+
+/* Touch targets - minimum 44x44px for mobile */
+@media (max-width: 640px) {
+    button, a, .crud-btn, .template-input, .template-select {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .crud-btn {
+        padding: 0.75rem;
+        width: 44px;
+        height: 44px;
+    }
+    
+    /* Ensure icons are tappable */
+    svg {
+        min-width: 24px;
+        min-height: 24px;
+    }
+    
+    /* Homepage mobile optimizations */
+    .hero-medical-static {
+        padding: 2rem 0 !important;
+    }
+    
+    .hero-medical-static h1 {
+        font-size: 1.875rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 1rem !important;
+        text-align: center !important;
+    }
+    
+    .hero-medical-static p {
+        font-size: 1rem !important;
+        text-align: center !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .hero-medical-static .flex {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 1rem !important;
+    }
+    
+    .hero-medical-static button,
+    .hero-medical-static a {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    
+    /* Section mobile optimizations */
+    section {
+        padding: 2rem 0 !important;
+    }
+    
+    section h2 {
+        font-size: 1.5rem !important;
+        text-align: center !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    section p {
+        font-size: 0.9375rem !important;
+        text-align: center !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    /* Grid adjustments for mobile */
+    .grid {
+        gap: 1rem !important;
+    }
+    
+    /* Card spacing on mobile */
+    .nav-card,
+    .bg-\[#111111\] {
+        padding: 1rem !important;
+    }
+    
+    /* Footer mobile centering */
+    #globalFooter {
+        text-align: center !important;
+        padding: 2rem 1rem !important;
+        margin-top: 2rem !important;
+    }
+    
+    #globalFooter > div {
+        padding: 0 !important;
+    }
+    
+    #globalFooter .grid {
+        gap: 2rem !important;
+    }
+    
+    #globalFooter h3 {
+        text-align: center !important;
+    }
+    
+    #globalFooter ul {
+        text-align: center !important;
+    }
+    
+    #globalFooter .flex {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+    }
+    
+    /* Prevent horizontal scrolling */
+    body, html {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
+    
+    /* Main content wrapper mobile padding */
+    .flex-1 {
+        padding: 1rem !important;
+    }
+    
+    /* Container max-width on mobile */
+    .max-w-7xl,
+    .max-w-\[90rem\],
+    .max-w-\[100rem\] {
+        max-width: 100% !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* Template editor mobile adjustments */
+    .lg\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .lg\:col-span-2,
+    .lg\:col-span-1 {
+        grid-column: span 1 !important;
+    }
+    
+    /* Button groups mobile stacking */
+    .flex.flex-row {
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+    
+    .flex.flex-row > * {
+        width: 100% !important;
+        margin: 0.25rem 0 !important;
+    }
+}
+
 /* --- Global Footer --- */
 #globalFooter {
     margin-top: auto;
@@ -484,6 +650,60 @@ a, button, input, select, textarea {
 #globalFooter a:hover {
     text-decoration: none;
     color: var(--accent-primary); /* #0084a6 - darker cyan accent */
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 640px) {
+    /* Reduce excessive padding in main content */
+    .p-4.sm\:p-6.md\:p-8.lg\:p-12.xl\:p-16 {
+        padding: 1rem !important;
+    }
+    
+    /* Center all text on mobile */
+    .text-right {
+        text-align: center !important;
+    }
+    
+    /* Stack elements vertically on mobile */
+    .flex.flex-row {
+        flex-direction: column !important;
+    }
+    
+    /* Full width buttons on mobile */
+    button:not(.crud-btn) {
+        width: 100% !important;
+    }
+    
+    /* Template editor mobile layout */
+    .lg\:grid {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    
+    /* Cards mobile spacing */
+    .space-y-\[2px\] {
+        gap: 0.5rem !important;
+    }
+    
+    /* Modal mobile adjustments */
+    #crudModal > div {
+        margin: 1rem !important;
+        max-width: calc(100% - 2rem) !important;
+    }
+    
+    /* Icon sizes on mobile */
+    .w-5.h-5,
+    .w-6.h-6 {
+        width: 1.5rem !important;
+        height: 1.5rem !important;
+    }
+    
+    /* Input fields mobile */
+    input[type="text"],
+    select,
+    textarea {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+    }
 }
 
 /* Consistent spacing between items for calm, precision, trust */

@@ -171,6 +171,9 @@ function updateNavigationState(activePage) {
     if (activeLink) {
         activeLink.classList.add('active');
     }
+    
+    // Also update mobile navigation
+    updateMobileNavigationState(activePage);
 }
 
 /**
@@ -275,6 +278,53 @@ function confirmAction(message, onConfirm) {
         'מחק',
         'bg-[#0084a6] hover:bg-[#006b85]'
     );
+}
+
+// --- Mobile Menu Functions ---
+window.toggleMobileMenu = function() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+    const hamburgerIcon = document.getElementById('hamburgerIcon');
+    const closeIcon = document.getElementById('closeIcon');
+    
+    if (!mobileMenu || !mobileMenuOverlay) return;
+    
+    const isOpen = mobileMenu.classList.contains('translate-x-0');
+    
+    if (isOpen) {
+        // Close menu
+        mobileMenu.classList.remove('translate-x-0');
+        mobileMenu.classList.add('translate-x-full');
+        mobileMenuOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+        mobileMenuOverlay.classList.add('opacity-0', 'pointer-events-none');
+        hamburgerIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        document.body.style.overflow = '';
+    } else {
+        // Open menu
+        mobileMenu.classList.remove('translate-x-full');
+        mobileMenu.classList.add('translate-x-0');
+        mobileMenuOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        mobileMenuOverlay.classList.add('opacity-100', 'pointer-events-auto');
+        hamburgerIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+// Update mobile navigation state
+function updateMobileNavigationState(activePage) {
+    const mobileNavHome = document.getElementById('mobile-nav-home');
+    const mobileNavCategories = document.getElementById('mobile-nav-categories');
+    
+    if (mobileNavHome) mobileNavHome.classList.remove('active');
+    if (mobileNavCategories) mobileNavCategories.classList.remove('active');
+    
+    if (activePage === 'home' && mobileNavHome) {
+        mobileNavHome.classList.add('active');
+    } else if (activePage === 'categories' && mobileNavCategories) {
+        mobileNavCategories.classList.add('active');
+    }
 }
 
 // --- פונקציות ניווט כלליות ---
