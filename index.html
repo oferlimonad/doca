@@ -24,6 +24,23 @@
     </script>
     <!-- קישור לקובץ CSS חיצוני -->
     <link rel="stylesheet" href="styles.css">
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- Environment Variables Injection (for Vercel) -->
+    <script>
+        // These will be replaced by Vercel at build time via environment variables
+        // For local development, create a .env file or set these directly
+        window.SUPABASE_URL = '{{SUPABASE_URL}}' || '';
+        window.SUPABASE_ANON_KEY = '{{SUPABASE_ANON_KEY}}' || '';
+        
+        // For local development, you can set these here temporarily:
+        // window.SUPABASE_URL = 'your-supabase-url';
+        // window.SUPABASE_ANON_KEY = 'your-anon-key';
+    </script>
+    <!-- Supabase Client Configuration -->
+    <script src="supabase-client.js"></script>
+    <!-- Supabase Data Layer -->
+    <script src="supabase-data.js"></script>
 </head>
 <body class="bg-[#0a0a0a]">
 

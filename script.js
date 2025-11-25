@@ -128,7 +128,8 @@ const predefinedTemplates = [
 ];
 
 // --- מבנה נתונים חדש עם Dynamic Elements ---
-let templatesData = {
+// Data will be loaded from Supabase on initialization
+let templatesData = {};
     'obstetrics': {
         name: 'מיילדות',
         subcategories: {
@@ -621,17 +622,17 @@ function renderTemplateEditorPage(categoryKey, subKey) {
                                         aria-label="הוסף קבוצת תבניות">
                                     ${getIcon('plus', 'w-4 h-4 sm:w-5 sm:h-5')}
                                 </button>
-                            </div>
+            </div>
             </div>
                         <p class="text-sm sm:text-base text-[#a3a3a3] text-right">
                             סמן את המשפטים, מלא את השדות הדינמיים, והצפייה המקדימה תתעדכן מיידית.
                         </p>
-            </div>
+        </div>
                     
                     <!-- רשימת התבניות - גלילה (flex-grow) -->
                     <div id="templateList" class="space-y-[2px] sm:space-y-[6px] lg:space-y-[14px] overflow-y-auto pr-2 sm:pr-4 flex-grow scrollable-content">
                         ${allGroupsHtml.length > 0 ? allGroupsHtml : '<p class="text-center text-[#737373] mt-10">אין קבוצות תבניות. לחץ על "הוסף קבוצת תבניות" כדי להתחיל.</p>'}
-                    </div> 
+    </div>
 
                     <!-- הודעת סטטוס - מוצגת במרכז המסך -->
                     <div id="message" class="copy-message text-center p-3 rounded-lg font-medium" role="alert"></div>
@@ -823,52 +824,100 @@ function setupElementBuilderModal(title, initialElements, saveCallback) {
 // --- לוגיקת CRUD: תבניות (בעורך) ---
 
 // הוספת משפט (Template) - משתמש כעת בממשק הבנייה המלא
-function handleAddTemplate(categoryKey, subKey, groupIndex) {
+async function handleAddTemplate(categoryKey, subKey, groupIndex) {
     const subcategory = templatesData[categoryKey].subcategories[subKey];
     const group = subcategory.groups[groupIndex];
 
     // פתיחת בונה האלמנטים עם מערך אלמנטים ריק
-    setupElementBuilderModal(`הוספת משפט חדש לקבוצה "${group.title}"`, [], (finalElements) => {
+    setupElementBuilderModal(`הוספת משפט חדש לקבוצה "${group.title}"`, [], async (finalElements) => {
         if (finalElements.length === 0) {
-             // זה אמור להימנע על ידי הבדיקה ב-setupElementBuilderModal, אבל ליתר ביטחון
              showMessage('שמירה בוטלה: המשפט לא נוצר ללא רכיבים.', 'warning');
              return;
         }
         
-        const newTemplate = { 
-            id: generateUniqueKey('temp'), 
-            elements: finalElements
-        };
-        group.templates.push(newTemplate);
-        showMessage(`משפט חדש נוסף לקבוצה "${group.title}".`, 'success');
-        renderTemplateEditorPage(categoryKey, subKey);
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+            const groupId = await window.supabaseData.getTemplateGroupId(subcategoryId, groupIndex);
+            
+            if (!groupId) {
+                showMessage('קבוצה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            const templateKey = generateUniqueKey('temp');
+            const templateData = await window.supabaseData.createTemplate(groupId, templateKey, group.templates.length);
+            
+            // Save elements preserving order
+            await window.supabaseData.saveTemplateElements(templateData.id, finalElements);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`משפט חדש נוסף לקבוצה "${group.title}".`, 'success');
+            renderTemplateEditorPage(categoryKey, subKey);
+        } catch (error) {
+            console.error('Error creating template:', error);
+            showMessage('שגיאה בהוספת המשפט. נסה שוב.', 'error');
+        }
     });
 }
 
 // מחיקת משפט (Template)
-function handleDeleteTemplate(categoryKey, subKey, groupIndex, tempIndex) {
+async function handleDeleteTemplate(categoryKey, subKey, groupIndex, tempIndex) {
     const subcategory = templatesData[categoryKey].subcategories[subKey];
     const template = subcategory.groups[groupIndex].templates[tempIndex];
     const sampleText = template.elements.map(e => e.type === 'text' ? e.value : `[${e.type}]`).join(' ').substring(0, 50);
 
-    confirmAction(`האם אתה בטוח שברצונך למחוק לצמיתות את המשפט: "${sampleText}..."?`, () => {
-        subcategory.groups[groupIndex].templates.splice(tempIndex, 1);
-        showMessage('המשפט נמחק בהצלחה.', 'success');
-        renderTemplateEditorPage(categoryKey, subKey);
+    confirmAction(`האם אתה בטוח שברצונך למחוק לצמיתות את המשפט: "${sampleText}..."?`, async () => {
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+            const groupId = await window.supabaseData.getTemplateGroupId(subcategoryId, groupIndex);
+            const templateId = await window.supabaseData.getTemplateIdByKey(groupId, template.id);
+            
+            if (!templateId) {
+                showMessage('תבנית לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            await window.supabaseData.deleteTemplate(templateId);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage('המשפט נמחק בהצלחה.', 'success');
+            renderTemplateEditorPage(categoryKey, subKey);
+        } catch (error) {
+            console.error('Error deleting template:', error);
+            showMessage('שגיאה במחיקת המשפט. נסה שוב.', 'error');
+        }
     });
 }
 
 // עריכת משפט (Template) - משתמש כעת בממשק הבנייה המלא
-function handleEditTemplate(categoryKey, subKey, groupIndex, tempIndex) {
+async function handleEditTemplate(categoryKey, subKey, groupIndex, tempIndex) {
     const template = templatesData[categoryKey].subcategories[subKey].groups[groupIndex].templates[tempIndex];
     
     // פתיחת בונה האלמנטים עם האלמנטים הקיימים של התבנית
-    setupElementBuilderModal(`עריכת מבנה המשפט`, template.elements, (finalElements) => {
-        // עדכון מבנה הנתונים הראשי
-        templatesData[categoryKey].subcategories[subKey].groups[groupIndex].templates[tempIndex].elements = finalElements;
-        
-        showMessage('מבנה המשפט עודכן בהצלחה.', 'success');
-        renderTemplateEditorPage(categoryKey, subKey);
+    setupElementBuilderModal(`עריכת מבנה המשפט`, template.elements, async (finalElements) => {
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+            const groupId = await window.supabaseData.getTemplateGroupId(subcategoryId, groupIndex);
+            const templateId = await window.supabaseData.getTemplateIdByKey(groupId, template.id);
+            
+            if (!templateId) {
+                showMessage('תבנית לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            // Save elements preserving RTL order
+            await window.supabaseData.saveTemplateElements(templateId, finalElements);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage('מבנה המשפט עודכן בהצלחה.', 'success');
+            renderTemplateEditorPage(categoryKey, subKey);
+        } catch (error) {
+            console.error('Error updating template:', error);
+            showMessage('שגיאה בעדכון המשפט. נסה שוב.', 'error');
+        }
     });
 }
 
@@ -1202,113 +1251,232 @@ async function handleCopy(event) {
 
 // --- פונקציות CRUD עבור קטגוריות ותתי-קטגוריות (נותרו ללא שינוי, נוספו לתחתית הקובץ לנוחות) ---
 
-function handleCategoryAdd() {
+async function handleCategoryAdd() {
     const contentHtml = `
         <label for="categoryName" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">שם הקטגוריה החדשה:</label>
         <input type="text" id="categoryName" placeholder="הכנס שם קטגוריה (כגון 'הפלות')" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
     `;
-    openModal('הוספת קטגוריה ראשית', contentHtml, () => {
+    openModal('הוספת קטגוריה ראשית', contentHtml, async () => {
         const name = document.getElementById('categoryName').value.trim();
         if (!name) return showMessage('שם קטגוריה לא יכול להיות ריק.', 'error');
         
-        const newKey = generateUniqueKey('cat');
-        templatesData[newKey] = { name: name, subcategories: {} };
-        showMessage(`קטגוריה "${name}" נוספה בהצלחה.`, 'success');
-        router(); 
+        try {
+            const newKey = generateUniqueKey('cat');
+            await window.supabaseData.createCategory(newKey, name);
+            
+            // Reload data from Supabase
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`קטגוריה "${name}" נוספה בהצלחה.`, 'success');
+            router();
+        } catch (error) {
+            console.error('Error creating category:', error);
+            showMessage('שגיאה בהוספת הקטגוריה. נסה שוב.', 'error');
+        }
     }, 'הוסף');
 }
 
-function handleCategoryEdit(key) {
+async function handleCategoryEdit(key) {
     const currentName = templatesData[key].name;
     const contentHtml = `
         <label for="categoryNameEdit" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">שם חדש לקטגוריה:</label>
         <input type="text" id="categoryNameEdit" value="${escapeAttr(currentName)}" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
     `;
-    openModal(`עריכת קטגוריה: ${currentName}`, contentHtml, () => {
+    openModal(`עריכת קטגוריה: ${currentName}`, contentHtml, async () => {
         const newName = document.getElementById('categoryNameEdit').value.trim();
         if (!newName) return showMessage('שם קטגוריה לא יכול להיות ריק.', 'error');
 
-        templatesData[key].name = newName;
-        showMessage(`שם הקטגוריה שונה ל- "${newName}".`, 'success');
-        router();
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(key);
+            if (!categoryId) {
+                showMessage('קטגוריה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            await window.supabaseData.updateCategory(categoryId, newName);
+            
+            // Reload data from Supabase
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`שם הקטגוריה שונה ל- "${newName}".`, 'success');
+            router();
+        } catch (error) {
+            console.error('Error updating category:', error);
+            showMessage('שגיאה בעדכון הקטגוריה. נסה שוב.', 'error');
+        }
     });
 }
 
-function handleCategoryDelete(key) {
+async function handleCategoryDelete(key) {
     const name = templatesData[key].name;
-    confirmAction(`האם אתה בטוח שברצונך למחוק לצמיתות את הקטגוריה "${name}" וכל תתי-הקטגוריות והתבניות הכלולות בה?`, () => {
-        delete templatesData[key];
-        showMessage(`קטגוריה "${name}" נמחקה בהצלחה.`, 'success');
-        router();
+    confirmAction(`האם אתה בטוח שברצונך למחוק לצמיתות את הקטגוריה "${name}" וכל תתי-הקטגוריות והתבניות הכלולות בה?`, async () => {
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(key);
+            if (!categoryId) {
+                showMessage('קטגוריה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            await window.supabaseData.deleteCategory(categoryId);
+            
+            // Reload data from Supabase
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`קטגוריה "${name}" נמחקה בהצלחה.`, 'success');
+            router();
+        } catch (error) {
+            console.error('Error deleting category:', error);
+            showMessage('שגיאה במחיקת הקטגוריה. נסה שוב.', 'error');
+        }
     });
 }
 
-function handleSubcategoryAdd(categoryKey) {
+async function handleSubcategoryAdd(categoryKey) {
     const categoryName = templatesData[categoryKey].name;
     const contentHtml = `
         <label for="subName" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">שם תת-הקטגוריה החדשה:</label>
         <input type="text" id="subName" placeholder="הכנס שם תת-קטגוריה (כגון 'סקר טרימסטר שני')" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
     `;
-    openModal(`הוספת תת-קטגוריה ל- ${categoryName}`, contentHtml, () => {
+    openModal(`הוספת תת-קטגוריה ל- ${categoryName}`, contentHtml, async () => {
         const name = document.getElementById('subName').value.trim();
         if (!name) return showMessage('שם תת-קטגוריה לא יכול להיות ריק.', 'error');
         
-        const newKey = generateUniqueKey('sub');
-        templatesData[categoryKey].subcategories[newKey] = { name: name, groups: [] };
-        showMessage(`תת-קטגוריה "${name}" נוספה בהצלחה.`, 'success');
-        renderSubcategoriesPage(categoryKey); 
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            if (!categoryId) {
+                showMessage('קטגוריה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            const newKey = generateUniqueKey('sub');
+            await window.supabaseData.createSubcategory(categoryId, newKey, name);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`תת-קטגוריה "${name}" נוספה בהצלחה.`, 'success');
+            renderSubcategoriesPage(categoryKey);
+        } catch (error) {
+            console.error('Error creating subcategory:', error);
+            showMessage('שגיאה בהוספת תת-הקטגוריה. נסה שוב.', 'error');
+        }
     }, 'הוסף');
 }
 
-function handleSubcategoryEdit(categoryKey, subKey) {
+async function handleSubcategoryEdit(categoryKey, subKey) {
     const currentName = templatesData[categoryKey].subcategories[subKey].name;
     const contentHtml = `
         <label for="subNameEdit" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">שם חדש לתת-קטגוריה:</label>
         <input type="text" id="subNameEdit" value="${escapeAttr(currentName)}" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
     `;
-    openModal(`עריכת תת-קטגוריה: ${currentName}`, contentHtml, () => {
+    openModal(`עריכת תת-קטגוריה: ${currentName}`, contentHtml, async () => {
         const newName = document.getElementById('subNameEdit').value.trim();
         if (!newName) return showMessage('שם תת-קטגוריה לא יכול להיות ריק.', 'error');
 
-        templatesData[categoryKey].subcategories[subKey].name = newName;
-        showMessage(`שם תת-הקטגוריה שונה ל- "${newName}".`, 'success');
-        renderSubcategoriesPage(categoryKey);
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            if (!categoryId) {
+                showMessage('קטגוריה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+            if (!subcategoryId) {
+                showMessage('תת-קטגוריה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            await window.supabaseData.updateSubcategory(subcategoryId, newName);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`שם תת-הקטגוריה שונה ל- "${newName}".`, 'success');
+            renderSubcategoriesPage(categoryKey);
+        } catch (error) {
+            console.error('Error updating subcategory:', error);
+            showMessage('שגיאה בעדכון תת-הקטגוריה. נסה שוב.', 'error');
+        }
     });
 }
 
-function handleSubcategoryDelete(categoryKey, subKey) {
+async function handleSubcategoryDelete(categoryKey, subKey) {
     const name = templatesData[categoryKey].subcategories[subKey].name;
-    confirmAction(`האם אתה בטוח שברצונך למחוק לצמיתות את תת-הקטגוריה "${name}" וכל קבוצות התבניות והתבניות הכלולות בה?`, () => {
-        delete templatesData[categoryKey].subcategories[subKey];
-        showMessage(`תת-קטגוריה "${name}" נמחקה בהצלחה.`, 'success');
-        renderSubcategoriesPage(categoryKey);
+    confirmAction(`האם אתה בטוח שברצונך למחוק לצמיתות את תת-הקטגוריה "${name}" וכל קבוצות התבניות והתבניות הכלולות בה?`, async () => {
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            if (!categoryId) {
+                showMessage('קטגוריה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+            if (!subcategoryId) {
+                showMessage('תת-קטגוריה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            await window.supabaseData.deleteSubcategory(subcategoryId);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`תת-קטגוריה "${name}" נמחקה בהצלחה.`, 'success');
+            renderSubcategoriesPage(categoryKey);
+        } catch (error) {
+            console.error('Error deleting subcategory:', error);
+            showMessage('שגיאה במחיקת תת-הקטגוריה. נסה שוב.', 'error');
+        }
     });
 }
 
-function handleGroupEdit(categoryKey, subKey, groupIndex) {
+async function handleGroupEdit(categoryKey, subKey, groupIndex) {
     const subcategory = templatesData[categoryKey].subcategories[subKey];
     const currentTitle = subcategory.groups[groupIndex].title;
     const contentHtml = `
         <label for="groupTitleEdit" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">שם חדש לקבוצה:</label>
         <input type="text" id="groupTitleEdit" value="${escapeAttr(currentTitle)}" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
     `;
-    openModal(`עריכת קבוצה: ${currentTitle}`, contentHtml, () => {
+    openModal(`עריכת קבוצה: ${currentTitle}`, contentHtml, async () => {
         const newTitle = document.getElementById('groupTitleEdit').value.trim();
         if (!newTitle) return showMessage('שם קבוצה לא יכול להיות ריק.', 'error');
 
-        subcategory.groups[groupIndex].title = newTitle;
-        showMessage(`שם הקבוצה שונה ל- "${newTitle}".`, 'success');
-        renderTemplateEditorPage(categoryKey, subKey);
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+            const groupId = await window.supabaseData.getTemplateGroupId(subcategoryId, groupIndex);
+            
+            if (!groupId) {
+                showMessage('קבוצה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            await window.supabaseData.updateTemplateGroup(groupId, newTitle);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`שם הקבוצה שונה ל- "${newTitle}".`, 'success');
+            renderTemplateEditorPage(categoryKey, subKey);
+        } catch (error) {
+            console.error('Error updating group:', error);
+            showMessage('שגיאה בעדכון הקבוצה. נסה שוב.', 'error');
+        }
     });
 }
 
-function handleGroupDelete(categoryKey, subKey, groupIndex) {
+async function handleGroupDelete(categoryKey, subKey, groupIndex) {
     const subcategory = templatesData[categoryKey].subcategories[subKey];
     const title = subcategory.groups[groupIndex].title;
-    confirmAction(`האם אתה בטוח שברצונך למחוק לצמיתות את הקבוצה "${title}" וכל המשפטים הכלולים בה?`, () => {
-        subcategory.groups.splice(groupIndex, 1);
-        showMessage(`קבוצה "${title}" נמחקה בהצלחה.`, 'success');
-        renderTemplateEditorPage(categoryKey, subKey);
+    confirmAction(`האם אתה בטוח שברצונך למחוק לצמיתות את הקבוצה "${title}" וכל המשפטים הכלולים בה?`, async () => {
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+            const groupId = await window.supabaseData.getTemplateGroupId(subcategoryId, groupIndex);
+            
+            if (!groupId) {
+                showMessage('קבוצה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            await window.supabaseData.deleteTemplateGroup(groupId);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`קבוצה "${title}" נמחקה בהצלחה.`, 'success');
+            renderTemplateEditorPage(categoryKey, subKey);
+        } catch (error) {
+            console.error('Error deleting group:', error);
+            showMessage('שגיאה במחיקת הקבוצה. נסה שוב.', 'error');
+        }
     });
 }
 
@@ -1373,25 +1541,40 @@ function handlePredefinedTemplateSelect(categoryKey, subKey) {
     // שמירת הקשר למודל
     window.currentPredefinedTemplateIndex = null;
     
-    openModal('הוספת תבנית מוגדרת מראש', contentHtml, () => {
+    openModal('הוספת תבנית מוגדרת מראש', contentHtml, async () => {
         const selectedGroupIndex = parseInt(document.getElementById('predefinedGroupSelect').value);
         if (window.currentPredefinedTemplateIndex === null) {
             showMessage('יש לבחור תבנית מהרשימה.', 'warning');
             return;
         }
         
-        const selectedTemplate = predefinedTemplates[window.currentPredefinedTemplateIndex];
-        const group = subcategory.groups[selectedGroupIndex];
-        
-        // יצירת עותק עמוק של האלמנטים
-        const templateCopy = {
-            id: generateUniqueKey('temp'),
-            elements: JSON.parse(JSON.stringify(selectedTemplate.elements))
-        };
-        
-        group.templates.push(templateCopy);
-        showMessage(`תבנית "${selectedTemplate.name}" נוספה בהצלחה לקבוצה "${group.title}".`, 'success');
-        renderTemplateEditorPage(categoryKey, subKey);
+        try {
+            const selectedTemplate = predefinedTemplates[window.currentPredefinedTemplateIndex];
+            const group = subcategory.groups[selectedGroupIndex];
+            
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+            const groupId = await window.supabaseData.getTemplateGroupId(subcategoryId, selectedGroupIndex);
+            
+            if (!groupId) {
+                showMessage('קבוצה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            const templateKey = generateUniqueKey('temp');
+            const templateData = await window.supabaseData.createTemplate(groupId, templateKey, group.templates.length);
+            
+            // יצירת עותק עמוק של האלמנטים ושמירה בסדר RTL
+            const elementsCopy = JSON.parse(JSON.stringify(selectedTemplate.elements));
+            await window.supabaseData.saveTemplateElements(templateData.id, elementsCopy);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`תבנית "${selectedTemplate.name}" נוספה בהצלחה לקבוצה "${group.title}".`, 'success');
+            renderTemplateEditorPage(categoryKey, subKey);
+        } catch (error) {
+            console.error('Error adding predefined template:', error);
+            showMessage('שגיאה בהוספת התבנית. נסה שוב.', 'error');
+        }
     }, 'הוסף תבנית');
 }
 
@@ -1415,19 +1598,35 @@ function selectPredefinedTemplate(categoryKey, subKey, templateIndex, event) {
     }
 }
 
-function handleGroupAdd(categoryKey, subKey) {
+async function handleGroupAdd(categoryKey, subKey) {
     const subcategory = templatesData[categoryKey].subcategories[subKey];
     const contentHtml = `
         <label for="groupTitleAdd" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">שם קבוצת התבניות החדשה:</label>
         <input type="text" id="groupTitleAdd" placeholder="הכנס שם קבוצה (כגון 'בדיקות דם לאחר לידה')" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
     `;
-    openModal('הוספת קבוצת תבניות חדשה', contentHtml, () => {
+    openModal('הוספת קבוצת תבניות חדשה', contentHtml, async () => {
         const title = document.getElementById('groupTitleAdd').value.trim();
         if (!title) return showMessage('שם קבוצה לא יכול להיות ריק.', 'error');
 
-        subcategory.groups.push({ title: title, templates: [] });
-        showMessage(`קבוצת תבניות "${title}" נוספה בהצלחה.`, 'success');
-        renderTemplateEditorPage(categoryKey, subKey);
+        try {
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+            
+            if (!subcategoryId) {
+                showMessage('תת-קטגוריה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            const displayOrder = subcategory.groups.length;
+            await window.supabaseData.createTemplateGroup(subcategoryId, title, displayOrder);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`קבוצת תבניות "${title}" נוספה בהצלחה.`, 'success');
+            renderTemplateEditorPage(categoryKey, subKey);
+        } catch (error) {
+            console.error('Error creating group:', error);
+            showMessage('שגיאה בהוספת הקבוצה. נסה שוב.', 'error');
+        }
     }, 'הוסף');
 }
 
@@ -1818,5 +2017,40 @@ Object.keys(templatesData).forEach(catKey => {
     });
 });
 
-router();
-router();
+// Initialize application: Load data from Supabase, then start router
+async function initializeApp() {
+    try {
+        // Wait for Supabase client to be ready
+        let retries = 0;
+        while (!window.supabaseClient && retries < 50) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            retries++;
+        }
+        
+        if (!window.supabaseClient) {
+            console.error('Supabase client not available. Using fallback data.');
+            // Keep the default empty structure
+            router();
+            return;
+        }
+        
+        // Load data from Supabase
+        if (window.supabaseData && window.supabaseData.loadAllDataFromSupabase) {
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            if (Object.keys(templatesData).length === 0) {
+                console.log('No data in database. Starting with empty structure.');
+            } else {
+                console.log('Data loaded successfully from Supabase.');
+            }
+        } else {
+            console.error('Supabase data functions not loaded');
+        }
+    } catch (error) {
+        console.error('Error initializing app:', error);
+    } finally {
+        router();
+    }
+}
+
+// Start the application
+initializeApp();

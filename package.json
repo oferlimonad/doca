@@ -1,0 +1,13 @@
+{
+  "name": "medical-template-editor",
+  "version": "1.0.0",
+  "description": "Medical template editor with Supabase backend",
+  "scripts": {
+    "dev": "echo 'No build step needed for static site'",
+    "build": "echo 'No build step needed for static site'"
+  },
+  "keywords": ["medical", "templates", "supabase", "vercel"],
+  "author": "",
+  "license": "MIT"
+}
+
