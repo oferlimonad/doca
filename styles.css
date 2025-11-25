@@ -150,7 +150,7 @@ body {
     font-family: inherit;
 }
 
-/* Dropdown (select) specific styling - Modern, clean design */
+/* Dropdown (select) specific styling - Modern, clean design with perfect vertical centering */
 select.dynamic-element,
 .template-select {
     appearance: none;
@@ -159,12 +159,17 @@ select.dynamic-element,
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%230084a6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: left 0.625rem center;
+    padding: 0;
     padding-left: 2rem;
     padding-right: 0.625rem;
     cursor: pointer;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     display: inline-block;
     vertical-align: middle;
+    /* Perfect vertical centering - line-height equals height */
+    line-height: 32px;
+    height: 32px;
+    box-sizing: border-box;
 }
 
 /* Ensure dropdown options are vertically centered */
@@ -192,7 +197,7 @@ select.dynamic-element:hover:not(:disabled),
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-/* RTL support for dropdown arrow */
+/* RTL support for dropdown arrow - perfect vertical centering maintained */
 [dir="rtl"] select.dynamic-element,
 [dir="rtl"] .template-select {
     background-position: right 0.625rem center;
@@ -231,12 +236,26 @@ select.dynamic-element:hover:not(:disabled),
         padding: 0.4375rem 0.75rem;
         height: 34px;
     }
+    
+    /* Perfect vertical centering for dropdowns at sm breakpoint */
+    select.dynamic-element,
+    .template-select {
+        line-height: 34px;
+        height: 34px;
+    }
 }
 
 @media (min-width: 1024px) {
     .dynamic-element {
         font-size: 1rem;
         padding: 0.5rem 0.875rem;
+        height: 36px;
+    }
+    
+    /* Perfect vertical centering for dropdowns at lg breakpoint */
+    select.dynamic-element,
+    .template-select {
+        line-height: 36px;
         height: 36px;
     }
 }
