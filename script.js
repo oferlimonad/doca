@@ -1252,11 +1252,14 @@ async function handleCopy(event) {
 async function handleCategoryAdd() {
     const contentHtml = `
         <label for="categoryName" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">שם הקטגוריה החדשה:</label>
-        <input type="text" id="categoryName" placeholder="הכנס שם קטגוריה (כגון 'הפלות')" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
+        <input type="text" id="categoryName" placeholder="הכנס שם קטגוריה (כגון 'הפלות')" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150 mb-4" />
+        <label for="categorySubtitle" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">כותרת משנה (אופציונלי):</label>
+        <input type="text" id="categorySubtitle" placeholder="הכנס כותרת משנה או השאר ריק" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
     `;
     openModal('הוספת קטגוריה ראשית', contentHtml, async () => {
         const name = document.getElementById('categoryName').value.trim();
         if (!name) return showMessage('שם קטגוריה לא יכול להיות ריק.', 'error');
+        const subtitle = document.getElementById('categorySubtitle').value.trim();
         
         try {
             const newKey = generateUniqueKey('cat');
@@ -1264,6 +1267,11 @@ async function handleCategoryAdd() {
             
             // Reload data from Supabase
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            // Store subtitle in memory (for now, until database schema is updated)
+            if (subtitle && templatesData[newKey]) {
+                templatesData[newKey].subtitle = subtitle;
+            }
+            
             showMessage(`קטגוריה "${name}" נוספה בהצלחה.`, 'success');
             router();
         } catch (error) {
@@ -1275,13 +1283,17 @@ async function handleCategoryAdd() {
 
 async function handleCategoryEdit(key) {
     const currentName = templatesData[key].name;
+    const currentSubtitle = templatesData[key].subtitle || '';
     const contentHtml = `
         <label for="categoryNameEdit" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">שם חדש לקטגוריה:</label>
-        <input type="text" id="categoryNameEdit" value="${escapeAttr(currentName)}" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
+        <input type="text" id="categoryNameEdit" value="${escapeAttr(currentName)}" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150 mb-4" />
+        <label for="categorySubtitleEdit" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">כותרת משנה (אופציונלי):</label>
+        <input type="text" id="categorySubtitleEdit" value="${escapeAttr(currentSubtitle)}" placeholder="הכנס כותרת משנה או השאר ריק" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
     `;
     openModal(`עריכת קטגוריה: ${currentName}`, contentHtml, async () => {
         const newName = document.getElementById('categoryNameEdit').value.trim();
         if (!newName) return showMessage('שם קטגוריה לא יכול להיות ריק.', 'error');
+        const newSubtitle = document.getElementById('categorySubtitleEdit').value.trim();
 
         try {
             const categoryId = await window.supabaseData.getCategoryIdByKey(key);
@@ -1292,8 +1304,19 @@ async function handleCategoryEdit(key) {
             
             await window.supabaseData.updateCategory(categoryId, newName);
             
+            // Store subtitle in memory (for now, until database schema is updated)
+            if (!templatesData[key].subtitle) {
+                templatesData[key].subtitle = '';
+            }
+            templatesData[key].subtitle = newSubtitle;
+            
             // Reload data from Supabase
             templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            // Restore subtitle after reload
+            if (newSubtitle) {
+                templatesData[key].subtitle = newSubtitle;
+            }
+            
             showMessage(`שם הקטגוריה שונה ל- "${newName}".`, 'success');
             router();
         } catch (error) {
@@ -1528,7 +1551,7 @@ function handlePredefinedTemplateSelect(categoryKey, subKey) {
         </div>
         <div class="mt-4">
             <label for="predefinedGroupSelect" class="block text-sm sm:text-base font-medium text-[#a3a3a3] mb-2">בחר קבוצה להוספת התבנית:</label>
-            <select id="predefinedGroupSelect" class="w-full p-2.5 sm:p-3 border border-[#262626] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150 bg-[#0a0a0a] text-[#e5e5e5]">
+            <select id="predefinedGroupSelect" class="dynamic-element template-select w-full">
                 ${subcategory.groups.map((group, idx) => 
                     `<option value="${idx}">${escapeHtml(group.title)}</option>`
                 ).join('')}
@@ -1644,11 +1667,12 @@ function renderCategoriesPage() {
     
     Object.keys(templatesData).forEach(key => {
         const category = templatesData[key];
+        const subtitle = category.subtitle || '';
         cardsHtml += `
             <div class="${cardClasses}" onclick="navigateToSubcategories('${key}')">
                 <div class="flex-1 min-w-0">
                     <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#e5e5e5] mb-1">${escapeHtml(category.name)}</h3>
-                    <p class="text-sm sm:text-base text-[#737373]">מעבר לתת-קטגוריות</p>
+                    ${subtitle ? `<p class="text-sm sm:text-base text-[#737373]">${escapeHtml(subtitle)}</p>` : ''}
                 </div>
                 <div class="flex items-center space-x-2 space-x-reverse z-10 flex-shrink-0">
                     <button class="crud-btn crud-btn-edit" 
