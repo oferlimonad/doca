@@ -95,6 +95,7 @@
 body {
     font-family: 'Inter', 'IBM Plex Sans Hebrew', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-weight: 400;
+    font-size: 0.9rem; /* Reduced from 1rem for more mature, professional appearance */
     color: var(--text-primary);
     background-color: var(--bg-primary);
     line-height: 1.55;
@@ -122,6 +123,19 @@ h2 {
 
 h3 {
     letter-spacing: -0.015em;
+}
+
+/* Hero section subtitle alignment - matches title width */
+.hero-medical-static h1 + p {
+    display: inline-block;
+    width: 100%;
+    text-align: right;
+}
+
+@media (min-width: 1024px) {
+    .hero-medical-static h1 + p {
+        max-width: none;
+    }
 }
 
 /* --- Message Notifications --- */
@@ -458,11 +472,17 @@ select.dynamic-element:hover:not(:disabled),
 /* --- Template Items - Minimal Transitions --- */
 .template-item {
     transition: background-color var(--transition-fast);
-    margin-bottom: 0.3rem; /* Reduced vertical spacing by ~25% for tighter, cleaner layout */
+    margin-bottom: 0.2rem; /* Further reduced for compact, efficient layout */
+    padding: 0.5rem 0.75rem; /* Reduced padding: top/bottom 0.5rem, left/right 0.75rem */
 }
 
 .template-item:last-child {
     margin-bottom: 0; /* Remove margin from last item */
+}
+
+/* Hover background adjusted for slimmer rows */
+.template-item:hover {
+    background-color: var(--bg-hover);
 }
 
 /* --- Input Focus States - Dark Mode --- */
@@ -489,7 +509,7 @@ select:focus {
 /* --- Responsive Adjustments --- */
 @media (max-width: 640px) {
     .template-item {
-        padding: 0.75rem !important;
+        padding: 0.5rem 0.625rem !important; /* Reduced padding for mobile: more compact */
     }
     
     .crud-btn {
@@ -638,6 +658,7 @@ a, button, input, select, textarea {
         font-size: 1rem !important;
         text-align: center !important;
         margin-bottom: 1.5rem !important;
+        max-width: 100% !important;
     }
     
     .hero-medical-static .flex {
@@ -792,8 +813,8 @@ a, button, input, select, textarea {
     
     /* Template editor sentences - optimize for single line on mobile */
     .template-item {
-        padding: 0.75rem !important;
-        margin-bottom: 0.3rem !important; /* Reduced by ~25% for tighter, cleaner mobile layout */
+        padding: 0.5rem 0.625rem !important; /* Reduced padding for mobile: more compact */
+        margin-bottom: 0.2rem !important; /* Further reduced for compact mobile layout */
     }
     
     .template-item label {

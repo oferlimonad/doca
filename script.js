@@ -453,7 +453,7 @@ function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
         ).join(' '); // רווח יחיד בין כל אלמנט
 
         return `
-            <div class="template-item flex items-start p-3 sm:p-4 lg:p-5 rounded-xl hover:bg-[#111111] transition-all duration-150 group justify-between gap-2 border border-transparent hover:border-[#262626] hover:bg-[#1a1a1a]" 
+            <div class="template-item flex items-start rounded-xl transition-all duration-150 group justify-between gap-2 border border-transparent hover:border-[#262626]" 
                  data-template-id="${temp.id}">
                 <div class="flex items-center flex-grow min-w-0">
                     <!-- תיבת הסימון -->
@@ -555,7 +555,7 @@ function renderTemplateEditorPage(categoryKey, subKey) {
             
             <!-- 2/3 שמאלי: מנהל התבניות (החלק הגדול) -->
             <div class="lg:col-span-2 w-full order-1">
-                <div class="p-4 sm:p-6 lg:p-8 bg-[#111111] rounded-2xl shadow-sm border border-[#262626] lg:h-[90vh] flex flex-col">
+                <div class="p-4 sm:p-6 lg:p-8 bg-[#111111] rounded-2xl shadow-sm border border-[#262626] lg:h-[95vh] flex flex-col">
                     
                     <!-- כותרת, תיאור וכפתור הוספת קבוצה - סטטיים (flex-shrink-0) -->
                     <div class="flex-shrink-0 mb-4 border-b border-[#262626] pb-3">
@@ -600,7 +600,7 @@ function renderTemplateEditorPage(categoryKey, subKey) {
 
             <!-- 1/3 ימני: תצוגה מקדימה - Static -->
             <div id="previewPanel" class="lg:col-span-1 w-full mb-6 sm:mb-8 lg:mb-0 order-2 lg:sticky lg:top-8">
-                <div class="bg-[#111111] rounded-2xl shadow-sm border border-[#262626] p-4 sm:p-6 lg:p-8 flex flex-col lg:h-[90vh]">
+                <div class="bg-[#111111] rounded-2xl shadow-sm border border-[#262626] p-4 sm:p-6 lg:p-8 flex flex-col lg:h-[95vh]">
                     <!-- Preview Title with Copy Icon -->
                     <div class="flex items-center justify-between border-b border-[#262626] pb-3 mb-4 sm:mb-6 flex-shrink-0">
                         <h2 class="text-xl sm:text-2xl font-semibold text-[#0084a6] text-right flex-1">
@@ -1972,10 +1972,10 @@ function renderHomePage() {
                     
                     <!-- Hero Content -->
                     <div class="lg:col-span-7 xl:col-span-8">
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold text-[#e5e5e5] mb-4 sm:mb-6 leading-tight">
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold text-[#e5e5e5] mb-4 sm:mb-6 leading-tight text-right">
                             בנייה, ניהול והעתקה מיידית של תבניות רפואיות
                         </h1>
-                        <p class="text-lg sm:text-xl text-[#a3a3a3] mb-6 sm:mb-8 max-w-xl">
+                        <p class="text-lg sm:text-xl text-[#a3a3a3] mb-6 sm:mb-8 text-right" style="white-space: normal; word-wrap: break-word;">
                             מערכת מתקדמת ליצירת משפטים דינמיים לשימוש יומיומי (מיילים, SMS, סיכום ביקור). חסוך שעות עבודה על ידי אוטומציה של תוכן משתנה.
                         </p>
                         <div class="flex flex-col sm:flex-row justify-start sm:space-x-4 sm:space-x-reverse space-y-3 sm:space-y-0">
