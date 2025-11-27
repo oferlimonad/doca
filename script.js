@@ -92,6 +92,12 @@ const getIcon = (iconName, className = 'w-6 h-6') => {
             <circle cx="15" cy="12" r="1.5" fill="currentColor"/>
             <circle cx="15" cy="19" r="1.5" fill="currentColor"/>
         </svg>`,
+        'chevron-down': `<svg class="${className}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
+        'chevron-up': `<svg class="${className}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 15L12 9L6 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
         'template': `<svg class="${className}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14 2H6C5.44772 2 5 2.44772 5 3V21C5 21.5523 5.44772 22 6 22H18C18.5523 22 19 21.5523 19 21V8L14 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M14 2V8H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -219,11 +225,11 @@ function showMessage(msg, type) {
 
     let baseClasses = 'copy-message text-center p-3.5 rounded-xl font-medium shadow-sm';
     if (type === 'success') {
-        baseClasses += ' bg-[#1a1a1a] text-[#0084a6] border border-[#0084a6]';
+        baseClasses += ' bg-white text-sky-500 border border-sky-500';
     } else if (type === 'warning') {
-        baseClasses += ' bg-[#1a1a1a] text-[#0084a6] border border-[#0084a6]';
+        baseClasses += ' bg-white text-amber-500 border border-amber-500';
     } else if (type === 'error') {
-        baseClasses += ' bg-[#1a1a1a] text-[#0084a6] border border-[#0084a6]';
+        baseClasses += ' bg-white text-red-500 border border-red-500';
     }
 
     messageDisplay.className = baseClasses + ' show';
@@ -237,7 +243,7 @@ function showMessage(msg, type) {
 /**
  * פתיחת קופץ (Modal) גנרי.
  */
-function openModal(title, contentHtml, onAction, actionText = 'שמור', actionClass = 'bg-[#0084a6] hover:bg-[#006b85]') {
+function openModal(title, contentHtml, onAction, actionText = 'שמור', actionClass = 'bg-sky-500 hover:bg-sky-600') {
     modalTitle.textContent = title;
     modalContent.innerHTML = contentHtml;
     crudModal.classList.remove('hidden');
@@ -246,7 +252,7 @@ function openModal(title, contentHtml, onAction, actionText = 'שמור', action
     // יצירת כפתור הפעולה (שמירה או אישור)
     const actionButton = document.createElement('button');
     actionButton.textContent = actionText;
-    actionButton.className = `py-2.5 px-5 sm:py-2.5 sm:px-6 rounded-lg text-white font-semibold transition-all duration-150 text-sm sm:text-base shadow-sm ${actionClass}`;
+    actionButton.className = `py-2.5 px-5 sm:py-2.5 sm:px-6 rounded-lg text-white font-semibold transition-all duration-150 text-sm sm:text-base shadow-sm active:scale-95 ${actionClass}`;
     actionButton.onclick = () => {
         onAction();
         closeModal();
@@ -259,7 +265,7 @@ function openModal(title, contentHtml, onAction, actionText = 'שמור', action
     const cancelButton = document.createElement('button');
     cancelButton.textContent = 'ביטול';
     cancelButton.onclick = closeModal;
-    cancelButton.className = 'py-2.5 px-5 sm:py-2.5 sm:px-6 border border-[#2e2e2e] rounded-lg text-[#b3b3b3] hover:bg-[#1a1a1a] hover:border-[#404040] transition-all duration-150 text-sm sm:text-base font-medium';
+    cancelButton.className = 'py-2.5 px-5 sm:py-2.5 sm:px-6 border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-150 text-sm sm:text-base font-medium active:scale-95';
 
     // הוספת כפתורים בסדר הנכון (ביטול מימין, פעולה משמאל)
     modalFooter.appendChild(cancelButton);
@@ -281,10 +287,10 @@ function confirmAction(message, onConfirm) {
     const safeMessage = escapeHtml(message);
     openModal(
         'אישור מחיקה',
-        `<p class="text-sm sm:text-base lg:text-lg text-[#b3b3b3]">${safeMessage}</p>`,
+        `<p class="text-sm sm:text-base lg:text-lg text-slate-700">${safeMessage}</p>`,
         onConfirm,
         'מחק',
-        'bg-[#0084a6] hover:bg-[#006b85]'
+        'bg-red-500 hover:bg-red-600'
     );
 }
 
@@ -378,28 +384,28 @@ function renderBreadcrumb(currentCategory = null, currentSubcategory = null) {
     }
 
     let html = `
-        <a href="#" onclick="navigateToHome(); return false;" class="hover:text-[#0084a6] transition-colors duration-150 text-[#b3b3b3]">בית</a>
-                        <span class="mx-2 text-[#4a4a4a]">/</span>
-        <a href="#" onclick="navigateToCategories(); return false;" class="hover:text-[#0084a6] transition-colors duration-150 text-[#b3b3b3]">קטגוריות</a>
+        <a href="#" onclick="navigateToHome(); return false;" class="hover:text-sky-500 transition-colors duration-150 text-slate-500">בית</a>
+                        <span class="mx-2 text-slate-400">/</span>
+        <a href="#" onclick="navigateToCategories(); return false;" class="hover:text-sky-500 transition-colors duration-150 text-slate-500">קטגוריות</a>
     `;
 
     // אם יש קטגוריה, מוסיפים אותה
     html += `
-                        <span class="mx-2 text-[#4a4a4a]">/</span>
-        <a href="#" onclick="navigateToSubcategories('${categoryKey}'); return false;" class="hover:text-[#0084a6] transition-colors duration-150 text-[#b3b3b3]">${safeCategory}</a>
+                        <span class="mx-2 text-slate-400">/</span>
+        <a href="#" onclick="navigateToSubcategories('${categoryKey}'); return false;" class="hover:text-sky-500 transition-colors duration-150 text-slate-500">${safeCategory}</a>
     `;
 
     // אם יש תת-קטגוריה, מוסיפים אותה (הדף הנוכחי - לא קישור)
     if (currentSubcategory) {
         html += `
-                        <span class="mx-2 text-[#4a4a4a]">/</span>
-            <span class="text-[#0084a6] font-semibold">${safeSubcategory}</span>
+                        <span class="mx-2 text-slate-400">/</span>
+            <span class="text-sky-500 font-semibold">${safeSubcategory}</span>
         `;
     } else {
         // אם אין תת-קטגוריה, הקטגוריה היא הדף הנוכחי
         html = html.replace(
-            `<a href="#" onclick="navigateToSubcategories('${categoryKey}'); return false;" class="hover:text-[#0084a6] transition-colors duration-150 text-[#b3b3b3]">${safeCategory}</a>`,
-            `<span class="text-[#0084a6] font-semibold">${safeCategory}</span>`
+            `<a href="#" onclick="navigateToSubcategories('${categoryKey}'); return false;" class="hover:text-sky-500 transition-colors duration-150 text-slate-500">${safeCategory}</a>`,
+            `<span class="text-sky-500 font-semibold">${safeCategory}</span>`
         );
     }
     
@@ -461,47 +467,49 @@ function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
         ).join(' '); // רווח יחיד בין כל אלמנט
 
         return `
-            <div class="template-item flex items-start rounded-xl transition-all duration-150 group justify-between gap-2 border border-transparent hover:border-[#2e2e2e]" 
+            <div class="template-item flex items-center rounded-xl transition-all duration-150 group border border-slate-200 hover:border-slate-300" 
                  data-template-id="${temp.id}"
                  data-template-index="${tempIndex}">
-                <!-- Drag Handle (left side in RTL) -->
-                <div class="drag-handle-container flex-shrink-0 mr-1 sm:mr-2 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                    <div class="drag-handle p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150" 
+                <!-- Drag Handle (right edge in RTL) - flush against edge -->
+                <div class="drag-handle-container flex-shrink-0 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                    <div class="drag-handle p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-80 hover:opacity-100 transition-all duration-150" 
                          title="גרור לסידור מחדש">
                         ${getIcon('drag-handle', 'w-4 h-4 sm:w-5 sm:h-5')}
                     </div>
                 </div>
                 <!-- Fallback Move Buttons (hidden by default, shown if drag fails) -->
-                <div class="fallback-move-buttons flex flex-col gap-0.5 flex-shrink-0 mr-1 sm:mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 hidden">
-                    <button class="move-up-btn p-1 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150" 
+                <div class="fallback-move-buttons flex flex-col gap-0.5 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150 hidden">
+                    <button class="move-up-btn p-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-80 hover:opacity-100 transition-all duration-150" 
                             onclick="event.stopPropagation(); moveTemplateUp('${categoryKey}', '${subKey}', ${groupIndex}, ${tempIndex})" 
                             title="הזז למעלה">
                         ${getIcon('arrow-up', 'w-3 h-3')}
                     </button>
-                    <button class="move-down-btn p-1 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150" 
+                    <button class="move-down-btn p-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-80 hover:opacity-100 transition-all duration-150" 
                             onclick="event.stopPropagation(); moveTemplateDown('${categoryKey}', '${subKey}', ${groupIndex}, ${tempIndex})" 
                             title="הזז למטה">
                         ${getIcon('arrow-down', 'w-3 h-3')}
                     </button>
                 </div>
-                <div class="flex items-center flex-grow min-w-0">
+                <!-- Checkbox and Sentence Content - aligned with group title -->
+                <div class="flex items-center flex-grow template-item-content">
                     <!-- תיבת הסימון -->
                     <input type="checkbox" id="temp-${temp.id}" 
                         data-subheader="${safeGroupTitle}" 
-                        class="form-checkbox h-5 w-5 text-[#0084a6] rounded border-[#2e2e2e] focus:ring-[#0084a6] ml-2 sm:ml-3 flex-shrink-0 self-center">
+                        class="form-checkbox h-5 w-5 text-sky-500 rounded border-slate-200 focus:ring-sky-500 flex-shrink-0">
                     
                     <!-- התווית מכילה את המשפט הדינמי -->
-                    <label for="temp-${temp.id}" class="text-[#f5f5f5] text-sm sm:text-base md:text-lg lg:text-xl flex-1 cursor-pointer break-words self-center" style="font-size: 0.9375rem;">
+                    <label for="temp-${temp.id}" class="text-slate-900 text-sm sm:text-base md:text-lg lg:text-xl flex-1 cursor-pointer" style="font-size: 0.9375rem;">
                         <span class="block">${sentenceHtml}</span>
                     </label>
-    </div>
+                </div>
+                <!-- CRUD Buttons (left side in RTL) -->
                 <div class="flex space-x-1 space-x-reverse text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0">
-                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150" 
+                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-80 hover:opacity-100 transition-all duration-150" 
                             onclick="event.stopPropagation(); handleEditTemplate('${categoryKey}', '${subKey}', ${groupIndex}, ${tempIndex})" 
                             title="עריכת מבנה המשפט">
                         ${getIcon('edit', 'w-4 h-4 sm:w-5 sm:h-5')}
                     </button>
-                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150" 
+                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-80 hover:opacity-100 transition-all duration-150" 
                             onclick="event.stopPropagation(); handleDeleteTemplate('${categoryKey}', '${subKey}', ${groupIndex}, ${tempIndex})" 
                             title="מחיקת משפט">
                         ${getIcon('trash', 'w-4 h-4 sm:w-5 sm:h-5')}
@@ -511,34 +519,49 @@ function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
         `;
     }).join('');
 
+    const groupContainerId = `template-group-${categoryKey}-${subKey}-${groupIndex}`;
+    const groupHeaderId = `template-group-header-${categoryKey}-${subKey}-${groupIndex}`;
+    const groupContentId = `template-group-content-${categoryKey}-${subKey}-${groupIndex}`;
+    
     return `
-        <div class="bg-[#1a1a1a] p-4 sm:p-5 lg:p-6 rounded-2xl border border-[#2e2e2e] shadow-sm">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 border-b border-[#2e2e2e] pb-3 mb-4">
-                <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#b3b3b3]" style="font-size: 1.125rem;">
-                ${escapeHtml(group.title)}
-                </h3>
-                <div class="flex space-x-2 space-x-reverse text-sm">
-                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#262626] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150 cursor-pointer" 
+        <div class="bg-white p-4 sm:p-5 lg:p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div id="${groupHeaderId}" class="template-group-header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 border-b border-slate-200 pb-3 mb-4 cursor-pointer group-header-clickable" 
+                 onclick="toggleTemplateGroup('${categoryKey}', '${subKey}', ${groupIndex})"
+                 data-category-key="${categoryKey}" 
+                 data-sub-key="${subKey}" 
+                 data-group-index="${groupIndex}">
+                <div class="flex items-center gap-2 sm:gap-3 flex-grow">
+                    <div class="chevron-icon text-slate-500 transition-transform duration-200 flex-shrink-0" style="transform: rotate(-90deg);">
+                        ${getIcon('chevron-down', 'w-5 h-5')}
+            </div>
+                    <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-700" style="font-size: 1.125rem;">
+                        ${escapeHtml(group.title)}
+                    </h3>
+            </div>
+                <div class="flex space-x-2 space-x-reverse text-sm" onclick="event.stopPropagation();">
+                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-80 hover:opacity-100 transition-all duration-150 cursor-pointer" 
                             onclick="handleGroupEdit('${categoryKey}', '${subKey}', ${groupIndex})" 
                             title="עריכת שם קבוצה">
                         ${getIcon('edit', 'w-4 h-4 sm:w-5 sm:h-5')}
                     </button>
-                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#262626] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150 cursor-pointer" 
+                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-80 hover:opacity-100 transition-all duration-150 cursor-pointer" 
                             onclick="handleGroupDelete('${categoryKey}', '${subKey}', ${groupIndex})" 
                             title="מחיקת קבוצה">
                         ${getIcon('trash', 'w-4 h-4 sm:w-5 sm:h-5')}
                     </button>
-                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#262626] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150 cursor-pointer" 
+                    <button class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-80 hover:opacity-100 transition-all duration-150 cursor-pointer" 
                             onclick="handleAddTemplate('${categoryKey}', '${subKey}', ${groupIndex})" 
-                        title="הוספת משפט חדש">
-                    ${getIcon('plus', 'w-4 h-4 sm:w-5 sm:h-5')}
-                </button>
-    </div>
-        </div>
-        <div id="template-group-${categoryKey}-${subKey}-${groupIndex}" class="space-y-0 sm:space-y-0 mt-2" data-category-key="${categoryKey}" data-sub-key="${subKey}" data-group-index="${groupIndex}">
-            ${templatesHtml.length > 0 ? templatesHtml : `<p class="text-[#4a4a4a] text-sm p-3 flex items-center gap-2">אין משפטים בקבוצה זו. לחץ ${getIcon('plus', 'w-4 h-4 inline')} להוספה.</p>`}
+                            title="הוספת משפט חדש">
+                        ${getIcon('plus', 'w-4 h-4 sm:w-5 sm:h-5')}
+                    </button>
         </div>
     </div>
+            <div id="${groupContentId}" class="template-group-content overflow-hidden transition-all duration-300 ease-in-out collapsed" style="max-height: 0px;">
+                <div id="${groupContainerId}" class="space-y-1 mt-2" data-category-key="${categoryKey}" data-sub-key="${subKey}" data-group-index="${groupIndex}">
+                    ${templatesHtml.length > 0 ? templatesHtml : `<p class="text-slate-500 text-sm p-3 flex items-center gap-2">אין משפטים בקבוצה זו. לחץ ${getIcon('plus', 'w-4 h-4 inline')} להוספה.</p>`}
+                </div>
+            </div>
+        </div>
     `;
 }
 
@@ -559,8 +582,8 @@ function renderTemplateEditorPage(categoryKey, subKey) {
         appContainer.innerHTML = `
             <div class="flex flex-col lg:grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 xl:gap-12 p-4 sm:p-6 lg:p-6">
                 <div class="lg:col-span-2 w-full">
-                    <div class="p-4 sm:p-6 lg:p-8 bg-[#1f1f1f] rounded-2xl shadow-sm border border-[#2e2e2e]">
-                        <p class="text-[#4a4a4a] text-center py-10">קטגוריה או תת-קטגוריה לא נמצאה. מעבר לדף הבית...</p>
+                    <div class="p-4 sm:p-6 lg:p-8 bg-white rounded-2xl shadow-sm border border-slate-200">
+                        <p class="text-slate-500 text-center py-10">קטגוריה או תת-קטגוריה לא נמצאה. מעבר לדף הבית...</p>
             </div>
             </div>
         </div>
@@ -580,28 +603,28 @@ function renderTemplateEditorPage(categoryKey, subKey) {
 
     // Render static content immediately (layout structure, headers, preview panel)
     appContainer.innerHTML = `
-        <div class="flex flex-col lg:grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 xl:gap-12 p-4 sm:p-6 lg:p-6">
+        <div class="flex flex-col lg:grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 xl:gap-12 w-full max-w-full">
             
             <!-- 2/3 שמאלי: מנהל התבניות (החלק הגדול) -->
             <div class="lg:col-span-2 w-full order-1">
-                <div class="p-4 sm:p-6 lg:p-8 bg-[#1f1f1f] rounded-2xl shadow-sm border border-[#2e2e2e] lg:h-[95vh] flex flex-col">
+                <div class="p-4 sm:p-6 lg:p-8 bg-white rounded-2xl shadow-sm border border-slate-200 lg:h-[95vh] flex flex-col">
                     
                     <!-- כותרת, תיאור וכפתור הוספת קבוצה - סטטיים (flex-shrink-0) -->
-                    <div class="flex-shrink-0 mb-4 border-b border-[#2e2e2e] pb-3">
+                    <div class="flex-shrink-0 mb-4 border-b border-slate-200 pb-3">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-2">
-                                <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#0084a6] text-right" style="font-size: 1.375rem;">
+                                <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-sky-500 text-right" style="font-size: 1.375rem;">
                                 בחירת משפטים דינמיים (תחת "${safeSubName}")
                             </h2>
                             <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                                 <!-- כפתור הוספת תבנית מוגדרת מראש -->
-                                <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150"
+                                <button class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-80 hover:opacity-100 transition-all duration-150"
                                         onclick="handlePredefinedTemplateSelect('${categoryKey}', '${subKey}')"
                                         title="הוסף תבנית מוגדרת מראש"
                                         aria-label="הוסף תבנית מוגדרת מראש">
                                     ${getIcon('file-text', 'w-4 h-4 sm:w-5 sm:h-5')}
                                 </button>
                                 <!-- כפתור הוספת קבוצה חדשה -->
-                                <button class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150"
+                                <button class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-80 hover:opacity-100 transition-all duration-150"
                                         onclick="handleGroupAdd('${categoryKey}', '${subKey}')"
                                         title="הוסף קבוצת תבניות"
                                         aria-label="הוסף קבוצת תבניות">
@@ -609,15 +632,15 @@ function renderTemplateEditorPage(categoryKey, subKey) {
                                 </button>
                             </div>
                         </div>
-                        <p class="text-sm sm:text-base text-[#b3b3b3] text-right">
+                        <p class="text-sm sm:text-base text-slate-600 text-right">
                             סמן את המשפטים, מלא את השדות הדינמיים, והצפייה המקדימה תתעדכן מיידית.
                         </p>
     </div>
 
                     <!-- רשימת התבניות - גלילה (flex-grow) - Dynamic content -->
-                    <div id="templateList" class="space-y-[2px] sm:space-y-[6px] lg:space-y-[14px] overflow-y-auto pr-2 sm:pr-4 flex-grow scrollable-content">
+                    <div id="templateList" class="space-y-1 overflow-y-auto pr-2 sm:pr-4 flex-grow scrollable-content">
                         <div class="text-center py-10">
-                            <p class="text-[#4a4a4a] text-lg">טוען תבניות...</p>
+                            <p class="text-slate-500 text-lg">טוען תבניות...</p>
                         </div>
                     </div>
 
@@ -629,19 +652,19 @@ function renderTemplateEditorPage(categoryKey, subKey) {
 
             <!-- 1/3 ימני: תצוגה מקדימה - Static -->
             <div id="previewPanel" class="lg:col-span-1 w-full mb-6 sm:mb-8 lg:mb-0 order-2 lg:sticky lg:top-8">
-                <div class="bg-[#1f1f1f] rounded-2xl shadow-sm border border-[#2e2e2e] p-4 sm:p-6 lg:p-8 flex flex-col lg:h-[95vh]">
+                <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6 lg:p-8 flex flex-col lg:h-[95vh]">
                     <!-- Preview Title with Copy Icon -->
-                    <div class="flex items-center justify-between border-b border-[#2e2e2e] pb-3 mb-4 sm:mb-6 flex-shrink-0">
-                        <h2 class="text-xl sm:text-2xl font-semibold text-[#0084a6] text-right flex-1" style="font-size: 1.375rem;">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4 sm:mb-6 flex-shrink-0">
+                        <h2 class="text-xl sm:text-2xl font-semibold text-sky-500 text-right flex-1" style="font-size: 1.375rem;">
                             תצוגה מקדימה ואיסוף
                         </h2>
-                        <div id="previewCopyIcon" class="p-1.5 sm:p-2 rounded-full text-[#4a4a4a] hover:text-[#0084a6] hover:bg-[#1a1a1a] transition-all duration-150 cursor-pointer opacity-30" onclick="handleCopy()" role="button" tabindex="0" title="העתק ללוח הגזירים" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); handleCopy(); }">
+                        <div id="previewCopyIcon" class="p-1.5 sm:p-2 rounded-full text-slate-500 hover:text-sky-500 hover:bg-slate-100 transition-all duration-150 cursor-pointer opacity-70 hover:opacity-100" onclick="handleCopy()" role="button" tabindex="0" title="העתק ללוח הגזירים" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); handleCopy(); }">
                             ${getIcon('clipboard', 'w-5 h-5 sm:w-6 sm:h-6')}
                         </div>
                     </div>
                     
                     <!-- תצוגת התוכן המורכב -->
-                    <div id="previewContent" class="text-sm sm:text-base whitespace-pre-wrap text-[#b3b3b3] min-h-64 mb-4 sm:mb-6 p-3 sm:p-4 bg-[#1a1a1a] rounded-xl border border-[#2e2e2e] overflow-auto flex-grow text-right scrollable-content">
+                    <div id="previewContent" class="text-sm sm:text-base whitespace-pre-wrap text-slate-700 min-h-64 mb-4 sm:mb-6 p-3 sm:p-4 bg-slate-50 rounded-xl border border-slate-200 overflow-auto flex-grow text-right scrollable-content">
                         לא נבחר טקסט לתצוגה מקדימה...
                     </div>
                 </div>
@@ -660,7 +683,7 @@ function renderTemplateGroups(categoryKey, subKey) {
     const category = templatesData[categoryKey];
     const subcategory = category?.subcategories[subKey];
     if (!category || !subcategory || !subcategory.groups) {
-        templateList.innerHTML = '<p class="text-center text-[#4a4a4a] mt-10">אין קבוצות תבניות. לחץ על "הוסף קבוצת תבניות" כדי להתחיל.</p>';
+        templateList.innerHTML = '<p class="text-center text-slate-500 mt-10">אין קבוצות תבניות. לחץ על "הוסף קבוצת תבניות" כדי להתחיל.</p>';
         return;
     }
     
@@ -672,7 +695,7 @@ function renderTemplateGroups(categoryKey, subKey) {
         generateTemplateGroupHtml(group, categoryKey, subKey, index)
     ).join('<div class="h-[6px] sm:h-[14px] lg:h-[22px]"></div>');
     
-    templateList.innerHTML = allGroupsHtml.length > 0 ? allGroupsHtml : '<p class="text-center text-[#4a4a4a] mt-10">אין קבוצות תבניות. לחץ על "הוסף קבוצת תבניות" כדי להתחיל.</p>';
+    templateList.innerHTML = allGroupsHtml.length > 0 ? allGroupsHtml : '<p class="text-center text-slate-500 mt-10">אין קבוצות תבניות. לחץ על "הוסף קבוצת תבניות" כדי להתחיל.</p>';
     
     // Initialize events and preview after dynamic content is rendered
     initTemplateEditorEvents();
@@ -680,6 +703,9 @@ function renderTemplateGroups(categoryKey, subKey) {
     
     // Initialize drag-and-drop for all template groups
     initializeDragAndDrop(categoryKey, subKey);
+    
+    // Initialize collapsible groups (all expanded by default)
+    initializeCollapsibleGroups(categoryKey, subKey);
 }
 
 // ============================================
@@ -910,37 +936,37 @@ async function saveTemplateOrderAfterMove(categoryKey, subKey, groupIndex) {
 function renderElementManagerHtml(elements) {
     const elementsHtml = elements.map((el, index) => {
         let detailsHtml = '';
-        let color = 'bg-[#1a1a1a]';
+        let color = 'bg-white';
         let title = '';
 
             switch (el.type) {
                 case 'text':
-                    color = 'bg-[#1a1a1a]';
+                    color = 'bg-[#FAFAFA]';
                     title = 'טקסט סטטי';
                     // משתמשים ב-el.value לצורך הצגת התוכן הנוכחי
                     const textareaId = 'edit-val-' + index;
                     const textareaValue = escapeHtml(el.value || '');
-                    detailsHtml = '<textarea id="' + textareaId + '" rows="1" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg resize-none text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150" placeholder="הכנס טקסט קבוע">' + textareaValue + '</textarea>';
+                    detailsHtml = '<textarea id="' + textareaId + '" rows="1" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg resize-none text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-150 bg-white" placeholder="הכנס טקסט קבוע">' + textareaValue + '</textarea>';
                     break;
                 case 'input':
-                    color = 'bg-[#1a1a1a]';
+                    color = 'bg-[#FAFAFA]';
                     title = 'שדה קלט (חופשי)';
                     const inputPhId = 'edit-ph-' + index;
                     const inputWId = 'edit-w-' + index;
                     const placeholderValue = escapeAttr(el.placeholder || '');
                     const widthValue = el.width || 10;
                     detailsHtml = '<div class="flex flex-col sm:flex-row gap-2 sm:gap-4 space-x-reverse">' +
-                        '<label class="block flex-1 text-sm sm:text-base">Placeholder: <input type="text" id="' + inputPhId + '" value="' + placeholderValue + '" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150" /></label>' +
-                        '<label class="block sm:w-1/4 text-sm sm:text-base">רוחב (תווים): <input type="number" id="' + inputWId + '" value="' + widthValue + '" min="1" max="50" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150" /></label>' +
+                        '<label class="block flex-1 text-sm sm:text-base">Placeholder: <input type="text" id="' + inputPhId + '" value="' + placeholderValue + '" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-150 bg-white" /></label>' +
+                        '<label class="block sm:w-1/4 text-sm sm:text-base">רוחב (תווים): <input type="number" id="' + inputWId + '" value="' + widthValue + '" min="1" max="50" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-150 bg-white" /></label>' +
                         '</div>';
                     break;
                 case 'select':
-                    color = 'bg-[#1a1a1a]';
+                    color = 'bg-[#FAFAFA]';
                     title = 'רשימה נפתחת (Dropdown)';
                     const textareaOptId = 'edit-opt-' + index;
                     const optionsValue = escapeHtml((el.options || []).join('\n'));
                     detailsHtml = '<label class="block text-sm sm:text-base">אפשרויות (כל אחת בשורה חדשה):</label>' +
-                        '<textarea id="' + textareaOptId + '" rows="3" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg resize-none text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] transition-all duration-150">' + optionsValue + '</textarea>';
+                        '<textarea id="' + textareaOptId + '" rows="3" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg resize-none text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-150 bg-white">' + optionsValue + '</textarea>';
                     break;
             }
 
@@ -949,29 +975,29 @@ function renderElementManagerHtml(elements) {
         const arrowUpIcon = getIcon('arrow-up', 'w-4 h-4');
         const arrowDownIcon = getIcon('arrow-down', 'w-4 h-4');
         const errorIcon = getIcon('error', 'w-4 h-4');
-        return '<li id="' + liId + '" class="element-item p-3 sm:p-4 ' + color + ' rounded-xl border border-[#2e2e2e] shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0 mb-3">' +
+        return '<li id="' + liId + '" class="element-item p-3 sm:p-4 ' + color + ' rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0 mb-3">' +
             '<div class="flex-grow space-y-2 w-full sm:w-auto">' +
-            '<strong class="text-sm sm:text-base font-semibold block border-b border-[#2e2e2e] pb-1.5 text-[#b3b3b3]">' + title + ' (אלמנט #' + elementNum + ')</strong>' +
+            '<strong class="text-sm sm:text-base font-semibold block border-b border-slate-200 pb-1.5 text-slate-700">' + title + ' (אלמנט #' + elementNum + ')</strong>' +
             detailsHtml +
             '</div>' +
             '<div class="flex flex-row sm:flex-col space-x-1 sm:space-x-0 space-y-0 sm:space-y-1 mr-0 sm:mr-4 self-end sm:self-auto">' +
-            '<button onclick="moveElement(' + index + ', \'up\')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="הזז למעלה">' + arrowUpIcon + '</button>' +
-            '<button onclick="moveElement(' + index + ', \'down\')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="הזז למטה">' + arrowDownIcon + '</button>' +
-            '<button onclick="deleteElement(' + index + ')" class="p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-70 hover:opacity-100 transition-all duration-150" title="מחק אלמנט">' + errorIcon + '</button>' +
+            '<button onclick="moveElement(' + index + ', \'up\')" class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-70 hover:opacity-100 transition-all duration-150" title="הזז למעלה">' + arrowUpIcon + '</button>' +
+            '<button onclick="moveElement(' + index + ', \'down\')" class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-70 hover:opacity-100 transition-all duration-150" title="הזז למטה">' + arrowDownIcon + '</button>' +
+            '<button onclick="deleteElement(' + index + ')" class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-sky-500 opacity-70 hover:opacity-100 transition-all duration-150" title="מחק אלמנט">' + errorIcon + '</button>' +
             '</div>' +
             '</li>';
     }).join('');
 
-    const emptyMessage = '<p class="text-center text-[#4a4a4a] italic p-3 sm:p-4 border border-dashed border-[#2e2e2e] rounded-xl text-sm sm:text-base">המשפט ריק. הוסף רכיב כדי להתחיל.</p>';
-    const elementsList = '<ul id="element-list" class="divide-y divide-[#262626]">' + elementsHtml + '</ul>';
+    const emptyMessage = '<p class="text-center text-slate-500 italic p-3 sm:p-4 border border-dashed border-slate-300 rounded-xl text-sm sm:text-base">המשפט ריק. הוסף רכיב כדי להתחיל.</p>';
+    const elementsList = '<ul id="element-list" class="divide-y divide-slate-200">' + elementsHtml + '</ul>';
     const plusIcon = getIcon('plus', 'w-4 h-4');
     const contentHtml = elementsHtml.length === 0 ? emptyMessage : elementsList;
     return '<div id="element-manager-ui" class="space-y-4">' +
         contentHtml +
-        '<div class="flex flex-col sm:flex-row justify-start gap-2 sm:gap-3 space-x-reverse border-t border-[#2e2e2e] pt-3 sm:pt-4">' +
-        '<button onclick="addElement(\'text\')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-[#0084a6] text-white rounded-lg hover:bg-[#006b85] transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2">' + plusIcon + ' טקסט קבוע</button>' +
-        '<button onclick="addElement(\'input\')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-[#0084a6] text-white rounded-lg hover:bg-[#006b85] transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2">' + plusIcon + ' שדה קלט</button>' +
-        '<button onclick="addElement(\'select\')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-[#0084a6] text-white rounded-lg hover:bg-[#006b85] transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2">' + plusIcon + ' רשימה נפתחת</button>' +
+        '<div class="flex flex-col sm:flex-row justify-start gap-2 sm:gap-3 space-x-reverse border-t border-slate-200 pt-3 sm:pt-4">' +
+        '<button onclick="addElement(\'text\')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2 active:scale-95">' + plusIcon + ' טקסט קבוע</button>' +
+        '<button onclick="addElement(\'input\')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2 active:scale-95">' + plusIcon + ' שדה קלט</button>' +
+        '<button onclick="addElement(\'select\')" class="py-2.5 px-4 sm:py-2.5 sm:px-5 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-all duration-150 text-sm sm:text-base font-semibold shadow-sm flex items-center justify-center gap-2 active:scale-95">' + plusIcon + ' רשימה נפתחת</button>' +
         '</div>' +
         '</div>';
 }
@@ -1059,7 +1085,7 @@ function setupElementBuilderModal(title, initialElements, saveCallback) {
         // קריאה לפונקציה השומרת עם המבנה הסופי
         saveCallback(currentSessionElements);
         
-    }, 'שמור ועדכן מבנה', 'bg-[#0084a6] hover:bg-[#006b85]');
+    }, 'שמור ועדכן מבנה', 'bg-sky-500 hover:bg-sky-600');
 }
 
 // --- לוגיקת CRUD: תבניות (בעורך) ---
@@ -1458,7 +1484,7 @@ function updatePreview(isFromDynamicElement = false, immediate = false) {
     if (text) {
         previewContent.textContent = text;
         previewContent.classList.remove('text-[#4a4a4a]');
-        previewContent.classList.add('text-[#b3b3b3]');
+        previewContent.classList.add('text-slate-500');
         // Enable icon - remove opacity, change color
         previewCopyIcon.classList.remove('text-[#4a4a4a]', 'opacity-30');
         previewCopyIcon.classList.add('text-[#0084a6]', 'opacity-100');
@@ -1472,7 +1498,7 @@ function updatePreview(isFromDynamicElement = false, immediate = false) {
         }
     } else {
         previewContent.textContent = 'לא נבחר טקסט לתצוגה מקדימה...';
-        previewContent.classList.remove('text-[#b3b3b3]');
+        previewContent.classList.remove('text-slate-500');
         previewContent.classList.add('text-[#4a4a4a]');
         // Disable icon visually - add opacity, change color
         previewCopyIcon.classList.remove('text-[#0084a6]', 'opacity-100');
@@ -1596,10 +1622,10 @@ async function handleCopy(event) {
 
 async function handleCategoryAdd() {
     const contentHtml = `
-        <label for="categoryName" class="block text-sm sm:text-base font-medium text-[#b3b3b3] mb-2">שם הקטגוריה החדשה:</label>
-        <input type="text" id="categoryName" placeholder="הכנס שם קטגוריה (כגון 'הפלות')" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150 mb-4" />
-        <label for="categorySubtitle" class="block text-sm sm:text-base font-medium text-[#b3b3b3] mb-2" style="font-size: 0.875rem;">כותרת משנה (אופציונלי):</label>
-        <input type="text" id="categorySubtitle" placeholder="הכנס כותרת משנה או השאר ריק" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
+        <label for="categoryName" class="block text-sm sm:text-base font-medium text-slate-700 mb-2">שם הקטגוריה החדשה:</label>
+        <input type="text" id="categoryName" placeholder="הכנס שם קטגוריה (כגון 'הפלות')" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:text-base transition-all duration-150 mb-4 bg-white" />
+        <label for="categorySubtitle" class="block text-sm sm:text-base font-medium text-slate-700 mb-2" style="font-size: 0.875rem;">כותרת משנה (אופציונלי):</label>
+        <input type="text" id="categorySubtitle" placeholder="הכנס כותרת משנה או השאר ריק" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:text-base transition-all duration-150 bg-white" />
     `;
     openModal('הוספת קטגוריה ראשית', contentHtml, async () => {
         const name = document.getElementById('categoryName').value.trim();
@@ -1630,10 +1656,10 @@ async function handleCategoryEdit(key) {
     const currentName = templatesData[key].name;
     const currentSubtitle = templatesData[key].subtitle || '';
     const contentHtml = `
-        <label for="categoryNameEdit" class="block text-sm sm:text-base font-medium text-[#b3b3b3] mb-2">שם חדש לקטגוריה:</label>
-        <input type="text" id="categoryNameEdit" value="${escapeAttr(currentName)}" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150 mb-4" />
-        <label for="categorySubtitleEdit" class="block text-sm sm:text-base font-medium text-[#b3b3b3] mb-2" style="font-size: 0.875rem;">כותרת משנה (אופציונלי):</label>
-        <input type="text" id="categorySubtitleEdit" value="${escapeAttr(currentSubtitle)}" placeholder="הכנס כותרת משנה או השאר ריק" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
+        <label for="categoryNameEdit" class="block text-sm sm:text-base font-medium text-slate-700 mb-2">שם חדש לקטגוריה:</label>
+        <input type="text" id="categoryNameEdit" value="${escapeAttr(currentName)}" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:text-base transition-all duration-150 mb-4 bg-white" />
+        <label for="categorySubtitleEdit" class="block text-sm sm:text-base font-medium text-slate-700 mb-2" style="font-size: 0.875rem;">כותרת משנה (אופציונלי):</label>
+        <input type="text" id="categorySubtitleEdit" value="${escapeAttr(currentSubtitle)}" placeholder="הכנס כותרת משנה או השאר ריק" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:text-base transition-all duration-150 bg-white" />
     `;
     openModal(`עריכת קטגוריה: ${currentName}`, contentHtml, async () => {
         const newName = document.getElementById('categoryNameEdit').value.trim();
@@ -1697,8 +1723,8 @@ async function handleCategoryDelete(key) {
 async function handleSubcategoryAdd(categoryKey) {
     const categoryName = templatesData[categoryKey].name;
     const contentHtml = `
-        <label for="subName" class="block text-sm sm:text-base font-medium text-[#b3b3b3] mb-2">שם תת-הקטגוריה החדשה:</label>
-        <input type="text" id="subName" placeholder="הכנס שם תת-קטגוריה (כגון 'סקר טרימסטר שני')" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
+        <label for="subName" class="block text-sm sm:text-base font-medium text-slate-700 mb-2">שם תת-הקטגוריה החדשה:</label>
+        <input type="text" id="subName" placeholder="הכנס שם תת-קטגוריה (כגון 'סקר טרימסטר שני')" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:text-base transition-all duration-150 bg-white" />
     `;
     openModal(`הוספת תת-קטגוריה ל- ${categoryName}`, contentHtml, async () => {
         const name = document.getElementById('subName').value.trim();
@@ -1727,8 +1753,8 @@ async function handleSubcategoryAdd(categoryKey) {
 async function handleSubcategoryEdit(categoryKey, subKey) {
     const currentName = templatesData[categoryKey].subcategories[subKey].name;
     const contentHtml = `
-        <label for="subNameEdit" class="block text-sm sm:text-base font-medium text-[#b3b3b3] mb-2">שם חדש לתת-קטגוריה:</label>
-        <input type="text" id="subNameEdit" value="${escapeAttr(currentName)}" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
+        <label for="subNameEdit" class="block text-sm sm:text-base font-medium text-slate-700 mb-2">שם חדש לתת-קטגוריה:</label>
+        <input type="text" id="subNameEdit" value="${escapeAttr(currentName)}" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:text-base transition-all duration-150 bg-white" />
     `;
     openModal(`עריכת תת-קטגוריה: ${currentName}`, contentHtml, async () => {
         const newName = document.getElementById('subNameEdit').value.trim();
@@ -1792,7 +1818,7 @@ async function handleGroupEdit(categoryKey, subKey, groupIndex) {
     const currentTitle = subcategory.groups[groupIndex].title;
     const contentHtml = `
         <label for="groupTitleEdit" class="block text-sm sm:text-base font-medium text-[#b3b3b3] mb-2">שם חדש לקבוצה:</label>
-        <input type="text" id="groupTitleEdit" value="${escapeAttr(currentTitle)}" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
+        <input type="text" id="groupTitleEdit" value="${escapeAttr(currentTitle)}" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:text-base transition-all duration-150 bg-white" />
     `;
     openModal(`עריכת קבוצה: ${currentTitle}`, contentHtml, async () => {
         const newTitle = document.getElementById('groupTitleEdit').value.trim();
@@ -1868,18 +1894,18 @@ function handlePredefinedTemplateSelect(categoryKey, subKey) {
         }).join('');
         
         return `
-            <div class="border border-[#2e2e2e] rounded-lg p-4 hover:border-[#0084a6] hover:bg-[#1a1a1a] transition-all duration-150 cursor-pointer mb-3 predefined-template-card" 
+            <div class="border border-slate-200 rounded-lg p-4 hover:border-sky-500 hover:bg-slate-50 transition-all duration-150 cursor-pointer mb-3 predefined-template-card" 
                  onclick="selectPredefinedTemplate('${categoryKey}', '${subKey}', ${index}, event)"
                  data-template-index="${index}">
                 <div class="flex items-start justify-between gap-3">
                     <div class="flex-1">
-                        <h4 class="text-base font-semibold text-[#b3b3b3] mb-1">${escapeHtml(template.name)}</h4>
-                        <p class="text-sm text-[#4a4a4a] mb-2">${escapeHtml(template.description)}</p>
-                        <div class="text-xs text-[#4a4a4a] bg-[#0a0a0a] p-2 rounded border border-[#2e2e2e] font-mono">
+                        <h4 class="text-base font-semibold text-slate-900 mb-1">${escapeHtml(template.name)}</h4>
+                        <p class="text-sm text-slate-600 mb-2">${escapeHtml(template.description)}</p>
+                        <div class="text-xs text-slate-600 bg-slate-50 p-2 rounded border border-slate-200 font-mono">
                             ${escapeHtml(previewText)}
                         </div>
                     </div>
-                    <div class="text-[#0084a6] flex-shrink-0">
+                    <div class="text-sky-500 flex-shrink-0">
                         ${getIcon('arrow-left', 'w-5 h-5')}
                     </div>
                 </div>
@@ -1889,13 +1915,13 @@ function handlePredefinedTemplateSelect(categoryKey, subKey) {
     
     const contentHtml = `
         <div class="mb-4">
-            <p class="text-sm text-[#b3b3b3] mb-4">בחר תבנית מוגדרת מראש להוספה לקבוצה:</p>
+            <p class="text-sm text-slate-600 mb-4">בחר תבנית מוגדרת מראש להוספה לקבוצה:</p>
             <div class="max-h-96 overflow-y-auto scrollable-content">
                 ${templatesListHtml}
             </div>
         </div>
         <div class="mt-4">
-            <label for="predefinedGroupSelect" class="block text-sm sm:text-base font-medium text-[#b3b3b3] mb-2">בחר קבוצה להוספת התבנית:</label>
+            <label for="predefinedGroupSelect" class="block text-sm sm:text-base font-medium text-slate-700 mb-2">בחר קבוצה להוספת התבנית:</label>
             <select id="predefinedGroupSelect" class="dynamic-element template-select w-full">
                 ${subcategory.groups.map((group, idx) => 
                     `<option value="${idx}">${escapeHtml(group.title)}</option>`
@@ -1952,23 +1978,23 @@ function selectPredefinedTemplate(categoryKey, subKey, templateIndex, event) {
     
     // עדכון ויזואלי - הסרת בחירה קודמת והוספת בחירה חדשה
     document.querySelectorAll('.predefined-template-card').forEach(el => {
-        el.classList.remove('border-[#0084a6]', 'bg-[#1a1a1a]');
-        el.classList.add('border-[#2e2e2e]');
+        el.classList.remove('border-sky-500', 'bg-sky-50');
+        el.classList.add('border-slate-200');
     });
     
     // מציאת האלמנט הנבחר לפי data-template-index
     const selectedCard = document.querySelector(`[data-template-index="${templateIndex}"]`);
     if (selectedCard) {
-        selectedCard.classList.add('border-[#0084a6]', 'bg-[#1a1a1a]');
-        selectedCard.classList.remove('border-[#2e2e2e]');
+        selectedCard.classList.add('border-sky-500', 'bg-sky-50');
+        selectedCard.classList.remove('border-slate-200');
     }
 }
 
 async function handleGroupAdd(categoryKey, subKey) {
     const subcategory = templatesData[categoryKey].subcategories[subKey];
     const contentHtml = `
-        <label for="groupTitleAdd" class="block text-sm sm:text-base font-medium text-[#b3b3b3] mb-2">שם קבוצת התבניות החדשה:</label>
-        <input type="text" id="groupTitleAdd" placeholder="הכנס שם קבוצה (כגון 'בדיקות דם לאחר לידה')" class="w-full p-2.5 sm:p-3 border border-[#2e2e2e] rounded-lg focus:ring-2 focus:ring-[#0084a6] focus:border-[#0084a6] text-sm sm:text-base transition-all duration-150" />
+        <label for="groupTitleAdd" class="block text-sm sm:text-base font-medium text-slate-700 mb-2">שם קבוצת התבניות החדשה:</label>
+        <input type="text" id="groupTitleAdd" placeholder="הכנס שם קבוצה (כגון 'בדיקות דם לאחר לידה')" class="w-full p-2.5 sm:p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm sm:text-base transition-all duration-150 bg-white" />
     `;
     openModal('הוספת קבוצת תבניות חדשה', contentHtml, async () => {
         const title = document.getElementById('groupTitleAdd').value.trim();
@@ -2010,14 +2036,14 @@ function renderCategoriesPage() {
     const staticHeaderHtml = `
         <div class="text-right mb-8 sm:mb-10 lg:mb-12 p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
             <div class="flex-1">
-                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#f5f5f5] pb-1 text-right">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900 pb-1 text-right">
                     בחירת קטגוריה ראשית
                 </h2>
-                    <p class="text-sm sm:text-base text-[#b3b3b3] mt-2">
+                    <p class="text-sm sm:text-base text-slate-600 mt-2">
                     לחץ על קטגוריה כדי לעבור לבחירת תבניות או נהל את הקטגוריות הקיימות.
                 </p>
             </div>
-            <button class="w-full sm:w-auto py-2.5 px-5 sm:py-2.5 sm:px-6 bg-[#0084a6] text-white font-semibold rounded-lg shadow-sm hover:bg-[#006b85] transition-all duration-150 flex items-center justify-center space-x-2 space-x-reverse"
+            <button class="w-full sm:w-auto py-2.5 px-5 sm:py-2.5 sm:px-6 bg-sky-500 text-white font-semibold rounded-lg shadow-sm hover:bg-sky-600 transition-all duration-150 flex items-center justify-center space-x-2 space-x-reverse active:scale-95"
                     onclick="handleCategoryAdd()">
                 ${getIcon('plus', 'w-5 h-5')}
                 <span>הוסף קטגוריה חדשה</span>
@@ -2026,7 +2052,7 @@ function renderCategoriesPage() {
         
         <div id="categoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-10 p-4 sm:p-6">
             <div class="text-center py-10">
-                <p class="text-[#4a4a4a] text-lg">טוען קטגוריות...</p>
+                <p class="text-slate-500 text-lg">טוען קטגוריות...</p>
             </div>
         </div>
     `;
@@ -2041,12 +2067,12 @@ function renderCategoriesCards() {
     const categoriesGrid = document.getElementById('categoriesGrid');
     if (!categoriesGrid) return;
     
-    const cardClasses = "group nav-card bg-[#1f1f1f] p-4 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-[#2e2e2e] hover:bg-[#1a1a1a] transition-all duration-200 cursor-pointer text-right flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0";
+    const cardClasses = "group nav-card bg-white p-4 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-slate-200 hover:bg-slate-50 hover:shadow-md transition-all duration-200 cursor-pointer text-right flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0";
 
     let cardsHtml = '';
     
     if (Object.keys(templatesData).length === 0) {
-        cardsHtml = '<div class="col-span-full text-center py-10"><p class="text-[#4a4a4a] text-base">אין קטגוריות. לחץ על "הוסף קטגוריה חדשה" כדי להתחיל.</p></div>';
+        cardsHtml = '<div class="col-span-full text-center py-10"><p class="text-slate-500 text-base">אין קטגוריות. לחץ על "הוסף קטגוריה חדשה" כדי להתחיל.</p></div>';
     } else {
         Object.keys(templatesData).forEach(key => {
             const category = templatesData[key];
@@ -2054,8 +2080,8 @@ function renderCategoriesCards() {
             cardsHtml += `
                 <div class="${cardClasses}" onclick="navigateToSubcategories('${key}')">
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#f5f5f5] mb-1">${escapeHtml(category.name)}</h3>
-                        ${subtitle ? `<p class="text-sm sm:text-base text-[#4a4a4a]">${escapeHtml(subtitle)}</p>` : ''}
+                        <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-900 mb-1">${escapeHtml(category.name)}</h3>
+                        ${subtitle ? `<p class="text-sm sm:text-base text-slate-600">${escapeHtml(subtitle)}</p>` : ''}
                     </div>
                     <div class="flex items-center space-x-2 space-x-reverse z-10 flex-shrink-0">
                         <button class="crud-btn crud-btn-edit" 
@@ -2088,10 +2114,10 @@ function renderSubcategoriesPage(categoryKey) {
         updateNavigationState('categories');
         appContainer.innerHTML = `
             <div class="text-right mb-8 sm:mb-10 lg:mb-12 p-4 sm:p-6">
-                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#f5f5f5] pb-1 text-right">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900 pb-1 text-right">
                     בחירת תת-קטגוריה
                 </h2>
-                    <p class="text-sm sm:text-base text-[#b3b3b3] mt-2">
+                    <p class="text-sm sm:text-base text-slate-600 mt-2">
                     קטגוריה לא נמצאה. מעבר לדף הבית...
                 </p>
             </div>
@@ -2110,14 +2136,14 @@ function renderSubcategoriesPage(categoryKey) {
     const staticHeaderHtml = `
         <div class="text-right mb-8 sm:mb-10 lg:mb-12 p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
             <div class="flex-1">
-                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-[#f5f5f5] pb-1 text-right">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-900 pb-1 text-right">
                     בחירת תת-קטגוריה
                 </h2>
-                    <p class="text-sm sm:text-base text-[#b3b3b3] mt-2">
+                    <p class="text-sm sm:text-base text-slate-600 mt-2">
                     לחץ על תת-קטגוריה כדי להתחיל לערוך תבניות או נהל את התת-קטגוריות הקיימות.
                 </p>
             </div>
-            <button class="w-full sm:w-auto py-2.5 px-5 sm:py-2.5 sm:px-6 bg-[#0084a6] text-white font-semibold rounded-lg shadow-sm hover:bg-[#006b85] transition-all duration-150 flex items-center justify-center space-x-2 space-x-reverse"
+            <button class="w-full sm:w-auto py-2.5 px-5 sm:py-2.5 sm:px-6 bg-sky-500 text-white font-semibold rounded-lg shadow-sm hover:bg-sky-600 transition-all duration-150 flex items-center justify-center space-x-2 space-x-reverse active:scale-95"
                     onclick="handleSubcategoryAdd('${categoryKey}')">
                 ${getIcon('plus', 'w-5 h-5')}
                 <span>הוסף תת-קטגוריה חדשה</span>
@@ -2126,7 +2152,7 @@ function renderSubcategoriesPage(categoryKey) {
         
         <div id="subcategoriesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-10 p-4 sm:p-6">
             <div class="text-center py-10">
-                <p class="text-[#4a4a4a] text-lg">טוען תת-קטגוריות...</p>
+                <p class="text-slate-500 text-lg">טוען תת-קטגוריות...</p>
             </div>
         </div>
     `;
@@ -2144,13 +2170,13 @@ function renderSubcategoriesCards(categoryKey) {
     const category = templatesData[categoryKey];
     if (!category) return;
     
-    const cardClasses = "group nav-card bg-[#1f1f1f] p-4 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-[#2e2e2e] hover:bg-[#1a1a1a] transition-all duration-200 cursor-pointer text-right flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0";
+    const cardClasses = "group nav-card bg-white p-4 sm:p-6 lg:p-8 rounded-2xl shadow-sm border border-slate-200 hover:bg-slate-50 hover:shadow-md transition-all duration-200 cursor-pointer text-right flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0";
 
     let cardsHtml = '';
     
     const subcategories = Object.keys(category.subcategories);
     if (subcategories.length === 0) {
-        cardsHtml = '<div class="col-span-full text-center py-10"><p class="text-[#4a4a4a] text-base">אין תת-קטגוריות. לחץ על "הוסף תת-קטגוריה חדשה" כדי להתחיל.</p></div>';
+        cardsHtml = '<div class="col-span-full text-center py-10"><p class="text-slate-500 text-base">אין תת-קטגוריות. לחץ על "הוסף תת-קטגוריה חדשה" כדי להתחיל.</p></div>';
     } else {
         subcategories.forEach(subKey => {
             const subcategory = category.subcategories[subKey];
@@ -2158,7 +2184,7 @@ function renderSubcategoriesCards(categoryKey) {
             cardsHtml += `
                 <div class="${cardClasses}" onclick="navigateToTemplateEditor('${categoryKey}', '${subKey}')">
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#f5f5f5]">${escapeHtml(subcategory.name)}</h3>
+                        <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-900">${escapeHtml(subcategory.name)}</h3>
                     </div>
                     <div class="flex items-center space-x-2 space-x-reverse z-10 flex-shrink-0">
                         <button class="crud-btn crud-btn-edit" 
@@ -2196,8 +2222,8 @@ function renderHomePage() {
     ];
     
     const templateExample = `
-        <div class="bg-[#1f1f1f] p-3 sm:p-4 lg:p-6 rounded-2xl shadow-sm border border-[#2e2e2e] flex flex-col space-y-2 text-sm sm:text-base text-[#f5f5f5]">
-            <p class="font-semibold text-base sm:text-lg lg:text-xl text-[#0084a6] border-b border-[#2e2e2e] pb-2">דוגמה למשפט דינמי</p>
+        <div class="bg-white p-3 sm:p-4 lg:p-6 rounded-2xl shadow-md border border-slate-200 flex flex-col space-y-2 text-sm sm:text-base text-slate-900">
+            <p class="font-semibold text-base sm:text-lg lg:text-xl text-sky-500 border-b border-slate-200 pb-2">דוגמה למשפט דינמי</p>
             <div class="flex flex-wrap items-center gap-1">
                 <span class="whitespace-pre-wrap">הבדיקה הקרובה נקבעה לתאריך</span>
                 <input type="text" class="dynamic-element text-center mx-1" style="width: 8rem; min-width: 50px;" placeholder="DD/MM/YYYY" value="20/03/2026" disabled>
@@ -2216,25 +2242,25 @@ function renderHomePage() {
 
     appContainer.innerHTML = `
         <!-- 1. Hero Section - Full Width Background, Constrained Content -->
-        <section class="hero-medical-static w-full py-16 sm:py-24 md:py-32 lg:py-48 mb-8 sm:mb-12 lg:mb-16 rounded-2xl">
-            <div class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto px-10 sm:px-12 lg:px-16">
+        <section class="hero-medical-static w-full py-16 sm:py-24 md:py-32 lg:py-48">
+            <div class="max-w-[100rem] xl:max-w-[115rem] 2xl:max-w-[140rem] mx-auto px-10 sm:px-12 lg:px-16">
                 <div class="lg:grid lg:grid-cols-12 lg:gap-8 xl:gap-12 items-center text-right">
                     
                     <!-- Hero Content -->
                     <div class="lg:col-span-7 xl:col-span-8">
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold text-[#f5f5f5] mb-4 sm:mb-6 leading-tight text-right">
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-4 sm:mb-6 leading-tight text-right">
                             בנייה, ניהול והעתקה מיידית של תבניות רפואיות
                         </h1>
-                        <p class="text-lg sm:text-xl text-[#b3b3b3] mb-6 sm:mb-8 text-right" style="white-space: normal; word-wrap: break-word;">
+                        <p class="text-lg sm:text-xl text-slate-600 mb-6 sm:mb-8 text-right leading-relaxed" style="white-space: normal; word-wrap: break-word;">
                             מערכת מתקדמת ליצירת משפטים דינמיים לשימוש יומיומי (מיילים, SMS, סיכום ביקור). חסוך שעות עבודה על ידי אוטומציה של תוכן משתנה.
                         </p>
                         <div class="flex flex-col sm:flex-row justify-start sm:space-x-4 sm:space-x-reverse space-y-3 sm:space-y-0">
                             <button onclick="navigateToCategories()" 
-                                    class="w-full sm:w-auto py-3 px-6 sm:px-8 bg-[#0084a6] text-white text-base sm:text-lg font-semibold rounded-xl shadow-sm hover:bg-[#006b85] transition-all duration-200 flex items-center justify-center gap-2">
+                                    class="w-full sm:w-auto py-3 px-6 sm:px-8 bg-sky-500 text-white text-base sm:text-lg font-semibold rounded-xl shadow-md hover:bg-sky-600 transition-all duration-200 flex items-center justify-center gap-2 active:scale-95">
                                 ${getIcon('rocket', 'w-5 h-5')} התחל עריכת תבניות
                             </button>
                             <a href="#section-features" 
-                               class="w-full sm:w-auto py-3 px-6 sm:px-8 border border-[#2e2e2e] text-[#b3b3b3] text-base sm:text-lg font-semibold rounded-xl shadow-sm hover:bg-[#1a1a1a] hover:border-[#404040] transition-all duration-200 text-center flex items-center justify-center gap-2">
+                               class="w-full sm:w-auto py-3 px-6 sm:px-8 border border-slate-300 text-slate-700 text-base sm:text-lg font-semibold rounded-xl shadow-sm hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 text-center flex items-center justify-center gap-2 active:scale-95">
                                 ${getIcon('lightbulb', 'w-5 h-5')} למידע נוסף
                             </a>
                         </div>
@@ -2242,7 +2268,7 @@ function renderHomePage() {
                     
                     <!-- Hero Illustration/Icon -->
                     <div class="mt-12 lg:mt-0 lg:col-span-5 xl:col-span-4 flex justify-center lg:justify-center">
-                        <div class="text-[#4a4a4a] hover:text-[#0084a6] transition-colors duration-150 w-36 h-36 sm:w-44 sm:h-44 lg:w-52 lg:h-52 xl:w-64 xl:h-64">
+                        <div class="text-slate-400 hover:text-sky-500 transition-colors duration-150 w-36 h-36 sm:w-44 sm:h-44 lg:w-52 lg:h-52 xl:w-64 xl:h-64">
                             ${getIcon('document', 'w-full h-full')}
                         </div>
                     </div>
@@ -2251,20 +2277,20 @@ function renderHomePage() {
         </section>
 
         <!-- 2. Section 1 – What the system does -->
-        <section id="section-features" class="section-bg-1 w-full text-right rounded-2xl py-16 sm:py-20 lg:py-24 my-8 sm:my-12 lg:my-16">
-            <div class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto px-10 sm:px-12 lg:px-16">
-                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#f5f5f5] mb-3 sm:mb-4">
+        <section id="section-features" class="section-bg-1 w-full text-right py-16 sm:py-20 lg:py-24">
+            <div class="max-w-[100rem] xl:max-w-[115rem] 2xl:max-w-[140rem] mx-auto px-10 sm:px-12 lg:px-16">
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
                     הכוח של אוטומציית טקסט רפואי
                 </h2>
-                <p class="text-base sm:text-lg text-[#b3b3b3] mb-8 sm:mb-10 lg:mb-12 max-w-2xl">
+                <p class="text-base sm:text-lg text-slate-600 mb-8 sm:mb-10 lg:mb-12 max-w-2xl leading-relaxed">
                     המערכת נועדה לחסוך זמן קליני יקר על ידי הפיכת טקסט חוזרני לדינמי, מובנה ומוכן לשליחה מיידית.
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-10">
                     ${features.map(f => `
-                        <div class="p-4 sm:p-6 lg:p-8 bg-[#1f1f1f] rounded-2xl shadow-sm border border-[#2e2e2e] text-center  transition-all duration-200">
-                            <div class="flex justify-center mb-3 sm:mb-4 text-[#4a4a4a] hover:text-[#0084a6] transition-colors duration-150">${getIcon(f.icon, 'w-12 h-12 sm:w-16 sm:h-16')}</div>
-                            <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-[#f5f5f5] mb-2">${f.title}</h3>
-                            <p class="text-[#b3b3b3] text-sm sm:text-base">${f.desc}</p>
+                        <div class="p-4 sm:p-6 lg:p-8 bg-white rounded-2xl shadow-md border border-slate-200 text-center transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+                            <div class="flex justify-center mb-3 sm:mb-4 text-slate-400 hover:text-sky-500 transition-colors duration-150">${getIcon(f.icon, 'w-12 h-12 sm:w-16 sm:h-16')}</div>
+                            <h3 class="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-900 mb-2">${f.title}</h3>
+                            <p class="text-slate-600 text-sm sm:text-base leading-relaxed">${f.desc}</p>
                         </div>
                     `).join('')}
                 </div>
@@ -2272,33 +2298,33 @@ function renderHomePage() {
         </section>
             
         <!-- 3. Section 2 – Category Management -->
-        <section class="section-bg-2 w-full text-right rounded-2xl py-16 sm:py-20 lg:py-24 my-8 sm:my-12 lg:my-16">
-            <div class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto px-10 sm:px-12 lg:px-16">
+        <section class="section-bg-2 w-full text-right py-16 sm:py-20 lg:py-24">
+            <div class="max-w-[100rem] xl:max-w-[115rem] 2xl:max-w-[140rem] mx-auto px-10 sm:px-12 lg:px-16">
                 <div class="lg:grid lg:grid-cols-12 lg:gap-8 xl:gap-12 items-center">
                     <div class="lg:col-span-7">
-                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#f5f5f5] mb-3 sm:mb-4">
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
                             מבנה נתונים מסודר וקל לניהול
                         </h2>
-                        <p class="text-base sm:text-lg text-[#b3b3b3] mb-4 sm:mb-6">
+                        <p class="text-base sm:text-lg text-slate-600 mb-4 sm:mb-6 leading-relaxed">
                             אפשרות ליצור היררכיה ברורה של קטגוריות ראשיות (כגון 'מיילדות' או 'גינקולוגיה'), תתי-קטגוריות (כגון 'טרימסטר ראשון') וקבוצות תבניות, מה שמבטיח נגישות מהירה למידע הנכון. כל השמות והמיקומים ניתנים לעריכה ולמחיקה.
                         </p>
-                        <ul class="space-y-2 sm:space-y-3 text-sm sm:text-base text-[#b3b3b3]">
+                        <ul class="space-y-2 sm:space-y-3 text-sm sm:text-base text-slate-600">
                             <li class="flex items-start space-x-2 space-x-reverse">
-                                <span class="text-[#4a4a4a] hover:text-[#0084a6] transition-colors duration-150 mt-1 flex-shrink-0">${getIcon('check', 'w-5 h-5')}</span>
-                                <p class="text-[#b3b3b3]"><strong class="font-semibold text-[#f5f5f5]">קטגוריה ראשית:</strong> הרמה הגבוהה ביותר (למשל, "פריון").</p>
+                                <span class="text-slate-400 hover:text-sky-500 transition-colors duration-150 mt-1 flex-shrink-0">${getIcon('check', 'w-5 h-5')}</span>
+                                <p class="text-slate-600"><strong class="font-semibold text-slate-900">קטגוריה ראשית:</strong> הרמה הגבוהה ביותר (למשל, "פריון").</p>
                             </li>
                             <li class="flex items-start space-x-2 space-x-reverse">
-                                <span class="text-[#4a4a4a] hover:text-[#0084a6] transition-colors duration-150 mt-1 flex-shrink-0">${getIcon('check', 'w-5 h-5')}</span>
-                                <p class="text-[#b3b3b3]"><strong class="font-semibold text-[#f5f5f5]">תת-קטגוריה:</strong> פילוח נושאי (למשל, "פרוטוקול IVF").</p>
+                                <span class="text-slate-400 hover:text-sky-500 transition-colors duration-150 mt-1 flex-shrink-0">${getIcon('check', 'w-5 h-5')}</span>
+                                <p class="text-slate-600"><strong class="font-semibold text-slate-900">תת-קטגוריה:</strong> פילוח נושאי (למשל, "פרוטוקול IVF").</p>
                             </li>
                             <li class="flex items-start space-x-2 space-x-reverse">
-                                <span class="text-[#4a4a4a] hover:text-[#0084a6] transition-colors duration-150 mt-1 flex-shrink-0">${getIcon('check', 'w-5 h-5')}</span>
-                                <p class="text-[#b3b3b3]"><strong class="font-semibold text-[#f5f5f5]">קבוצות תבניות:</strong> קיבוץ משפטים בעלי קשר (למשל, "הנחיות לגירוי שחלתי").</p>
+                                <span class="text-slate-400 hover:text-sky-500 transition-colors duration-150 mt-1 flex-shrink-0">${getIcon('check', 'w-5 h-5')}</span>
+                                <p class="text-slate-600"><strong class="font-semibold text-slate-900">קבוצות תבניות:</strong> קיבוץ משפטים בעלי קשר (למשל, "הנחיות לגירוי שחלתי").</p>
                             </li>
                         </ul>
                     </div>
                     <div class="lg:col-span-5 mt-8 lg:mt-0 flex justify-center">
-                        <div class="text-[#0084a6] w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48">
+                        <div class="text-sky-500 w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48">
                             ${getIcon('folder', 'w-full h-full')}
                         </div>
                     </div>
@@ -2307,31 +2333,31 @@ function renderHomePage() {
         </section>
             
         <!-- 4. Section 3 – Dynamic Template Editor -->
-        <section class="section-bg-3 w-full text-right rounded-2xl py-16 sm:py-20 lg:py-24 my-8 sm:my-12 lg:my-16">
-            <div class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto px-10 sm:px-12 lg:px-16">
+        <section class="section-bg-3 w-full text-right py-16 sm:py-20 lg:py-24">
+            <div class="max-w-[100rem] xl:max-w-[115rem] 2xl:max-w-[140rem] mx-auto px-10 sm:px-12 lg:px-16">
                 <div class="lg:grid lg:grid-cols-12 lg:gap-8 xl:gap-12 items-center">
                     <div class="lg:col-span-5 order-2 lg:order-1 mt-8 lg:mt-0 flex justify-center">
                         ${templateExample}
                     </div>
                     <div class="lg:col-span-7 order-1 lg:order-2">
-                        <h2 class="text-3xl font-semibold text-[#f5f5f5] mb-4">
+                        <h2 class="text-3xl font-bold text-slate-900 mb-4">
                             עורך תבניות דינמי: הפסקת העתק-הדבק
                         </h2>
-                        <p class="text-lg text-[#b3b3b3] mb-6">
+                        <p class="text-lg text-slate-600 mb-6 leading-relaxed">
                             בניית משפטים אינה דורשת יותר קיצורי דרך או השלמות ידניות. המערכת מציעה שלושה רכיבי יסוד להרכבה גמישה של כל הודעה:
                         </p>
-                        <ul class="space-y-2 sm:space-y-3 text-sm sm:text-base text-[#b3b3b3]">
+                        <ul class="space-y-2 sm:space-y-3 text-sm sm:text-base text-slate-600">
                             <li class="flex items-start space-x-2 space-x-reverse">
-                                <span class="text-[#0084a6] mt-1 flex-shrink-0">${getIcon('circle-blue', 'w-5 h-5')}</span>
-                                <p><strong class="font-semibold">טקסט סטטי (FreeText):</strong> החלק הקבוע במשפט.</p>
+                                <span class="text-sky-500 mt-1 flex-shrink-0">${getIcon('circle-blue', 'w-5 h-5')}</span>
+                                <p><strong class="font-semibold text-slate-900">טקסט סטטי (FreeText):</strong> החלק הקבוע במשפט.</p>
                             </li>
                             <li class="flex items-start space-x-2 space-x-reverse">
-                                <span class="text-[#0084a6] mt-1 flex-shrink-0">${getIcon('circle-green', 'w-5 h-5')}</span>
-                                <p><strong class="font-semibold">שדה קלט (InputField):</strong> מילוי טקסט חופשי (תאריך, מינון, שם).</p>
+                                <span class="text-sky-500 mt-1 flex-shrink-0">${getIcon('circle-green', 'w-5 h-5')}</span>
+                                <p><strong class="font-semibold text-slate-900">שדה קלט (InputField):</strong> מילוי טקסט חופשי (תאריך, מינון, שם).</p>
                             </li>
                             <li class="flex items-start space-x-2 space-x-reverse">
-                                <span class="text-[#0084a6] mt-1 flex-shrink-0">${getIcon('circle-yellow', 'w-5 h-5')}</span>
-                                <p><strong class="font-semibold">רשימה נפתחת (Dropdown):</strong> בחירה מתוך אפשרויות קבועות מראש.</p>
+                                <span class="text-sky-500 mt-1 flex-shrink-0">${getIcon('circle-yellow', 'w-5 h-5')}</span>
+                                <p><strong class="font-semibold text-slate-900">רשימה נפתחת (Dropdown):</strong> בחירה מתוך אפשרויות קבועות מראש.</p>
                             </li>
                         </ul>
                     </div>
@@ -2340,22 +2366,22 @@ function renderHomePage() {
         </section>
             
         <!-- 5. Section 4 – Preview Panel -->
-        <section class="section-bg-4 w-full text-right rounded-2xl py-16 sm:py-20 lg:py-24 my-8 sm:my-12 lg:my-16">
-            <div class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto px-10 sm:px-12 lg:px-16">
+        <section class="section-bg-4 w-full text-right py-16 sm:py-20 lg:py-24">
+            <div class="max-w-[100rem] xl:max-w-[115rem] 2xl:max-w-[140rem] mx-auto px-10 sm:px-12 lg:px-16">
                 <div class="lg:grid lg:grid-cols-12 lg:gap-8 xl:gap-12 items-center">
                     <div class="lg:col-span-7">
-                        <h2 class="text-3xl font-semibold text-[#f5f5f5] mb-4">
+                        <h2 class="text-3xl font-bold text-slate-900 mb-4">
                             תצוגה מקדימה וסנכרון בזמן אמת
                         </h2>
-                        <p class="text-lg text-[#b3b3b3] mb-6">
+                        <p class="text-lg text-slate-600 mb-6 leading-relaxed">
                             אין צורך לעבור בין מסכים. בזמן שאתה בוחר משפטים וממלא שדות דינמיים, הטקסט המאוחד מוצג מיד בלוח הצדדי. זה מבטיח דיוק ומונע טעויות לפני שלב ההעתקה הסופי.
                         </p>
-                        <div class="bg-[#1a1a1a] p-3 sm:p-4 lg:p-6 rounded-xl border border-[#2e2e2e]">
-                            <strong class="text-sm sm:text-base text-[#0084a6]">כלל הזהב:</strong> <span class="text-sm sm:text-base text-[#b3b3b3]">כל קלט (טקסט, מספר, בחירה) משתקף מיידית בתוצר הסופי.</span>
+                        <div class="bg-sky-50 p-3 sm:p-4 lg:p-6 rounded-xl border border-sky-200">
+                            <strong class="text-sm sm:text-base text-sky-600">כלל הזהב:</strong> <span class="text-sm sm:text-base text-slate-700">כל קלט (טקסט, מספר, בחירה) משתקף מיידית בתוצר הסופי.</span>
                         </div>
                     </div>
                     <div class="lg:col-span-5 mt-8 lg:mt-0 flex justify-center">
-                        <div class="text-[#0084a6] w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48">
+                        <div class="text-sky-500 w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48">
                             ${getIcon('eyes', 'w-full h-full')}
                         </div>
                     </div>
@@ -2364,53 +2390,53 @@ function renderHomePage() {
         </section>
 
         <!-- 6. Section 5 – Copy-to-Clipboard Automation -->
-        <section class="section-bg-5 w-full text-right rounded-2xl py-16 sm:py-20 lg:py-24 my-8 sm:my-12 lg:my-16">
-            <div class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto px-10 sm:px-12 lg:px-16">
-                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#f5f5f5] mb-3 sm:mb-4">
+        <section class="section-bg-5 w-full text-right py-16 sm:py-20 lg:py-24">
+            <div class="max-w-[100rem] xl:max-w-[115rem] 2xl:max-w-[140rem] mx-auto px-10 sm:px-12 lg:px-16">
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
                     העתקה אוטומטית ומבנה פלט ברור
                 </h2>
-                <p class="text-base sm:text-lg text-[#b3b3b3] mb-4 sm:mb-6 max-w-2xl">
+                <p class="text-base sm:text-lg text-slate-600 mb-4 sm:mb-6 max-w-2xl leading-relaxed">
                     בלחיצת כפתור אחת, כל הטקסטים המאוחדים מועתקים ללוח הגזירים, תוך שמירה על מבנה קריא הכולל הפרדה על ידי כותרות קבוצה.
                 </p>
-                <ul class="space-y-3 sm:space-y-4 text-[#b3b3b3] grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-                    <li class="flex items-start space-x-3 space-x-reverse p-3 sm:p-4 lg:p-6 bg-[#1f1f1f] rounded-xl shadow-sm border border-[#2e2e2e]">
-                        <span class="text-lg sm:text-xl text-[#0084a6] mt-1 flex-shrink-0 font-semibold">1.</span>
-                        <p class="text-sm sm:text-base"><strong class="font-semibold">קיבוץ אוטומטי:</strong> המשפטים מסודרים אוטומטית תחת כותרות הקבוצה שלהם (למשל, "--- הנחיות פתיחה ---").</p>
+                <ul class="space-y-3 sm:space-y-4 text-slate-600 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+                    <li class="flex items-start space-x-3 space-x-reverse p-3 sm:p-4 lg:p-6 bg-white rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-all duration-200">
+                        <span class="text-lg sm:text-xl text-sky-500 mt-1 flex-shrink-0 font-semibold">1.</span>
+                        <p class="text-sm sm:text-base"><strong class="font-semibold text-slate-900">קיבוץ אוטומטי:</strong> המשפטים מסודרים אוטומטית תחת כותרות הקבוצה שלהם (למשל, "--- הנחיות פתיחה ---").</p>
                     </li>
-                    <li class="flex items-start space-x-3 space-x-reverse p-3 sm:p-4 lg:p-6 bg-[#1f1f1f] rounded-xl shadow-sm border border-[#2e2e2e]">
-                        <span class="text-lg sm:text-xl text-[#0084a6] mt-1 flex-shrink-0 font-semibold">2.</span>
-                        <p class="text-sm sm:text-base"><strong class="font-semibold">ניקוי הפלט:</strong> כל רכיב דינמי מוחלף בערך שמולא (או טקסט חלופי אם הושאר ריק), ללא קוד או סימנים מבלבלים.</p>
+                    <li class="flex items-start space-x-3 space-x-reverse p-3 sm:p-4 lg:p-6 bg-white rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-all duration-200">
+                        <span class="text-lg sm:text-xl text-sky-500 mt-1 flex-shrink-0 font-semibold">2.</span>
+                        <p class="text-sm sm:text-base"><strong class="font-semibold text-slate-900">ניקוי הפלט:</strong> כל רכיב דינמי מוחלף בערך שמולא (או טקסט חלופי אם הושאר ריק), ללא קוד או סימנים מבלבלים.</p>
                     </li>
-                    <li class="flex items-start space-x-3 space-x-reverse p-3 sm:p-4 lg:p-6 bg-[#1f1f1f] rounded-xl shadow-sm border border-[#2e2e2e]">
-                        <span class="text-lg sm:text-xl text-[#0084a6] mt-1 flex-shrink-0 font-semibold">3.</span>
-                        <p class="text-sm sm:text-base"><strong class="font-semibold">העתקה מהירה:</strong> שימוש ב-API מתקדם להעתקה מיידית ואיפוס הבחירות מיד לאחר מכן.</p>
+                    <li class="flex items-start space-x-3 space-x-reverse p-3 sm:p-4 lg:p-6 bg-white rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-all duration-200">
+                        <span class="text-lg sm:text-xl text-sky-500 mt-1 flex-shrink-0 font-semibold">3.</span>
+                        <p class="text-sm sm:text-base"><strong class="font-semibold text-slate-900">העתקה מהירה:</strong> שימוש ב-API מתקדם להעתקה מיידית ואיפוס הבחירות מיד לאחר מכן.</p>
                     </li>
-                    <li class="flex items-start space-x-3 space-x-reverse p-3 sm:p-4 lg:p-6 bg-[#1f1f1f] rounded-xl shadow-sm border border-[#2e2e2e]">
-                        <span class="text-lg sm:text-xl text-[#0084a6] mt-1 flex-shrink-0 font-semibold">4.</span>
-                        <p class="text-sm sm:text-base"><strong class="font-semibold">תמיכת מכשירים:</strong> מנגנון fallback מובנה להבטחת העתקה מוצלחת גם בדפדפנים ישנים יותר.</p>
+                    <li class="flex items-start space-x-3 space-x-reverse p-3 sm:p-4 lg:p-6 bg-white rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-all duration-200">
+                        <span class="text-lg sm:text-xl text-sky-500 mt-1 flex-shrink-0 font-semibold">4.</span>
+                        <p class="text-sm sm:text-base"><strong class="font-semibold text-slate-900">תמיכת מכשירים:</strong> מנגנון fallback מובנה להבטחת העתקה מוצלחת גם בדפדפנים ישנים יותר.</p>
                     </li>
                 </ul>
             </div>
         </section>
 
         <!-- 7. Section 6 – Coming Features -->
-        <section class="section-bg-6 w-full text-right rounded-2xl py-16 sm:py-20 lg:py-24 my-8 sm:my-12 lg:my-16 mb-8 sm:mb-12 lg:mb-16">
-            <div class="max-w-7xl xl:max-w-[90rem] 2xl:max-w-[100rem] mx-auto px-10 sm:px-12 lg:px-16">
-                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#f5f5f5] mb-3 sm:mb-4">
+        <section class="section-bg-6 w-full text-right py-16 sm:py-20 lg:py-24">
+            <div class="max-w-[100rem] xl:max-w-[115rem] 2xl:max-w-[140rem] mx-auto px-10 sm:px-12 lg:px-16">
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
                     תכונות עתידיות בתכנון
                 </h2>
-                <p class="text-base sm:text-lg text-[#b3b3b3] mb-8 sm:mb-10 lg:mb-12 max-w-2xl">
+                <p class="text-base sm:text-lg text-slate-600 mb-8 sm:mb-10 lg:mb-12 max-w-2xl leading-relaxed">
                     אנו עובדים על הרחבת היכולות של המערכת כדי להפוך אותה לכלי הניהול המקיף ביותר במרפאה.
                 </p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 xl:gap-10">
-                    <div class="p-3 sm:p-4 lg:p-6 bg-[#1a1a1a] rounded-xl border border-[#2e2e2e]">
-                        <strong class="font-semibold text-sm sm:text-base text-[#f5f5f5]">ייצוא/ייבוא JSON:</strong> <span class="text-sm sm:text-base text-[#b3b3b3]">גיבוי קל ושיתוף של כל מבנה התבניות באמצעות קובץ.</span>
+                    <div class="p-3 sm:p-4 lg:p-6 bg-white rounded-xl border border-slate-200 shadow-md hover:shadow-lg transition-all duration-200">
+                        <strong class="font-semibold text-sm sm:text-base text-slate-900">ייצוא/ייבוא JSON:</strong> <span class="text-sm sm:text-base text-slate-600">גיבוי קל ושיתוף של כל מבנה התבניות באמצעות קובץ.</span>
                     </div>
-                    <div class="p-3 sm:p-4 lg:p-6 bg-[#1a1a1a] rounded-xl border border-[#2e2e2e]">
-                        <strong class="font-semibold text-sm sm:text-base text-[#f5f5f5]">שמירת ענן:</strong> <span class="text-sm sm:text-base text-[#b3b3b3]">תמיכה בשמירה בענן או במסד נתונים (כגון Firebase) לשימוש בין משתמשים.</span>
+                    <div class="p-3 sm:p-4 lg:p-6 bg-white rounded-xl border border-slate-200 shadow-md hover:shadow-lg transition-all duration-200">
+                        <strong class="font-semibold text-sm sm:text-base text-slate-900">שמירת ענן:</strong> <span class="text-sm sm:text-base text-slate-600">תמיכה בשמירה בענן או במסד נתונים (כגון Firebase) לשימוש בין משתמשים.</span>
                     </div>
-                    <div class="p-3 sm:p-4 lg:p-6 bg-[#1a1a1a] rounded-xl border border-[#2e2e2e]">
-                        <strong class="font-semibold text-sm sm:text-base text-[#f5f5f5]">ניהול משתמשים:</strong> <span class="text-sm sm:text-base text-[#b3b3b3]">פונקציות לרישום והתחברות עבור מספר רופאים/מזכירות.</span>
+                    <div class="p-3 sm:p-4 lg:p-6 bg-white rounded-xl border border-slate-200 shadow-md hover:shadow-lg transition-all duration-200">
+                        <strong class="font-semibold text-sm sm:text-base text-slate-900">ניהול משתמשים:</strong> <span class="text-sm sm:text-base text-slate-600">פונקציות לרישום והתחברות עבור מספר רופאים/מזכירות.</span>
                     </div>
                 </div>
             </div>
@@ -2511,6 +2537,76 @@ function initializeApp() {
     } else {
         // Non-homepage - render static structure immediately, then load data
         router(); // router() will handle static rendering and async data loading
+    }
+}
+
+// ============================================
+// COLLAPSIBLE TEMPLATE GROUPS
+// ============================================
+
+/**
+ * Initialize collapsible groups (set initial state - all collapsed by default)
+ */
+function initializeCollapsibleGroups(categoryKey, subKey) {
+    const category = templatesData[categoryKey];
+    const subcategory = category?.subcategories[subKey];
+    if (!category || !subcategory || !subcategory.groups) return;
+    
+    subcategory.groups.forEach((group, groupIndex) => {
+        const groupContentId = `template-group-content-${categoryKey}-${subKey}-${groupIndex}`;
+        const groupHeaderId = `template-group-header-${categoryKey}-${subKey}-${groupIndex}`;
+        const content = document.getElementById(groupContentId);
+        const header = document.getElementById(groupHeaderId);
+        
+        if (!content || !header) return;
+        
+        // Set initial collapsed state (closed by default)
+        content.style.maxHeight = '0px';
+        content.classList.add('collapsed');
+        
+        // Set chevron to rotated (collapsed)
+        const chevron = header.querySelector('.chevron-icon');
+        if (chevron) {
+            chevron.style.transform = 'rotate(-90deg)';
+        }
+    });
+}
+
+/**
+ * Toggle template group collapse/expand
+ * Follows the example pattern: toggle max-height between 0 and scrollHeight
+ */
+window.toggleTemplateGroup = function(categoryKey, subKey, groupIndex) {
+    const groupContentId = `template-group-content-${categoryKey}-${subKey}-${groupIndex}`;
+    const groupHeaderId = `template-group-header-${categoryKey}-${subKey}-${groupIndex}`;
+    const content = document.getElementById(groupContentId);
+    const header = document.getElementById(groupHeaderId);
+    
+    if (!content || !header) return;
+    
+    const chevron = header.querySelector('.chevron-icon');
+    
+    // Check if currently expanded (has maxHeight set and not 0)
+    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+        // Collapse: set max-height to 0
+        content.style.maxHeight = '0px';
+        content.classList.add('collapsed');
+        if (chevron) {
+            chevron.style.transform = 'rotate(-90deg)';
+        }
+    } else {
+        // Expand: set max-height to scrollHeight
+        content.classList.remove('collapsed');
+        const scrollHeight = content.scrollHeight;
+        content.style.maxHeight = scrollHeight + 'px';
+        if (chevron) {
+            chevron.style.transform = 'rotate(0deg)';
+        }
+        
+        // Re-initialize drag-and-drop for this group after expansion
+        setTimeout(() => {
+            initializeDragAndDrop(categoryKey, subKey);
+        }, 300); // Wait for animation to complete
     }
 }
 
