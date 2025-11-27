@@ -84,6 +84,14 @@ const getIcon = (iconName, className = 'w-6 h-6') => {
         'arrow-down': `<svg class="${className}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 5V19M5 12L12 19L19 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>`,
+        'drag-handle': `<svg class="${className}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="9" cy="5" r="1.5" fill="currentColor"/>
+            <circle cx="9" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="9" cy="19" r="1.5" fill="currentColor"/>
+            <circle cx="15" cy="5" r="1.5" fill="currentColor"/>
+            <circle cx="15" cy="12" r="1.5" fill="currentColor"/>
+            <circle cx="15" cy="19" r="1.5" fill="currentColor"/>
+        </svg>`,
         'template': `<svg class="${className}" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14 2H6C5.44772 2 5 2.44772 5 3V21C5 21.5523 5.44772 22 6 22H18C18.5523 22 19 21.5523 19 21V8L14 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M14 2V8H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -454,7 +462,28 @@ function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
 
         return `
             <div class="template-item flex items-start rounded-xl transition-all duration-150 group justify-between gap-2 border border-transparent hover:border-[#2e2e2e]" 
-                 data-template-id="${temp.id}">
+                 data-template-id="${temp.id}"
+                 data-template-index="${tempIndex}">
+                <!-- Drag Handle (left side in RTL) -->
+                <div class="drag-handle-container flex-shrink-0 mr-1 sm:mr-2 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                    <div class="drag-handle p-1.5 sm:p-2 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150" 
+                         title="גרור לסידור מחדש">
+                        ${getIcon('drag-handle', 'w-4 h-4 sm:w-5 sm:h-5')}
+                    </div>
+                </div>
+                <!-- Fallback Move Buttons (hidden by default, shown if drag fails) -->
+                <div class="fallback-move-buttons flex flex-col gap-0.5 flex-shrink-0 mr-1 sm:mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 hidden">
+                    <button class="move-up-btn p-1 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150" 
+                            onclick="event.stopPropagation(); moveTemplateUp('${categoryKey}', '${subKey}', ${groupIndex}, ${tempIndex})" 
+                            title="הזז למעלה">
+                        ${getIcon('arrow-up', 'w-3 h-3')}
+                    </button>
+                    <button class="move-down-btn p-1 rounded-full hover:bg-[#1a1a1a] text-[#4a4a4a] hover:text-[#0084a6] opacity-80 hover:opacity-100 transition-all duration-150" 
+                            onclick="event.stopPropagation(); moveTemplateDown('${categoryKey}', '${subKey}', ${groupIndex}, ${tempIndex})" 
+                            title="הזז למטה">
+                        ${getIcon('arrow-down', 'w-3 h-3')}
+                    </button>
+                </div>
                 <div class="flex items-center flex-grow min-w-0">
                     <!-- תיבת הסימון -->
                     <input type="checkbox" id="temp-${temp.id}" 
@@ -506,7 +535,7 @@ function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
                 </button>
     </div>
         </div>
-        <div class="space-y-0 sm:space-y-0 mt-2">
+        <div id="template-group-${categoryKey}-${subKey}-${groupIndex}" class="space-y-0 sm:space-y-0 mt-2" data-category-key="${categoryKey}" data-sub-key="${subKey}" data-group-index="${groupIndex}">
             ${templatesHtml.length > 0 ? templatesHtml : `<p class="text-[#4a4a4a] text-sm p-3 flex items-center gap-2">אין משפטים בקבוצה זו. לחץ ${getIcon('plus', 'w-4 h-4 inline')} להוספה.</p>`}
         </div>
     </div>
@@ -648,6 +677,227 @@ function renderTemplateGroups(categoryKey, subKey) {
     // Initialize events and preview after dynamic content is rendered
     initTemplateEditorEvents();
     updatePreview();
+    
+    // Initialize drag-and-drop for all template groups
+    initializeDragAndDrop(categoryKey, subKey);
+}
+
+// ============================================
+// DRAG-AND-DROP FUNCTIONALITY
+// ============================================
+
+/**
+ * Initialize SortableJS for all template groups
+ */
+function initializeDragAndDrop(categoryKey, subKey) {
+    const category = templatesData[categoryKey];
+    const subcategory = category?.subcategories[subKey];
+    if (!category || !subcategory || !subcategory.groups) return;
+    
+    subcategory.groups.forEach((group, groupIndex) => {
+        const containerId = `template-group-${categoryKey}-${subKey}-${groupIndex}`;
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        // Check if SortableJS is available
+        if (typeof Sortable === 'undefined') {
+            // Fallback: show up/down buttons, hide drag handles
+            showFallbackButtons(container);
+            return;
+        }
+        
+        try {
+            const sortable = new Sortable(container, {
+                handle: '.drag-handle',
+                animation: 200,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                forceFallback: false,
+                fallbackOnBody: true,
+                swapThreshold: 0.65,
+                direction: 'vertical',
+                onEnd: async function(evt) {
+                    const oldIndex = evt.oldIndex;
+                    const newIndex = evt.newIndex;
+                    
+                    if (oldIndex === newIndex) return;
+                    
+                    // Save new order to Supabase
+                    await saveTemplateOrder(categoryKey, subKey, groupIndex, container);
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing SortableJS:', error);
+            // Fallback: show up/down buttons, hide drag handles
+            showFallbackButtons(container);
+        }
+    });
+}
+
+/**
+ * Show fallback buttons and hide drag handles
+ */
+function showFallbackButtons(container) {
+    const dragHandles = container.querySelectorAll('.drag-handle-container');
+    const fallbackButtons = container.querySelectorAll('.fallback-move-buttons');
+    
+    dragHandles.forEach(handle => {
+        handle.classList.add('hidden');
+    });
+    
+    fallbackButtons.forEach(buttons => {
+        buttons.classList.remove('hidden');
+    });
+}
+
+/**
+ * Save template order to Supabase
+ */
+async function saveTemplateOrder(categoryKey, subKey, groupIndex, container) {
+    try {
+        const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+        const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+        const groupId = await window.supabaseData.getTemplateGroupId(subcategoryId, groupIndex);
+        
+        const templateItems = container.querySelectorAll('.template-item[data-template-id]');
+        const updatePromises = [];
+        
+        for (let index = 0; index < templateItems.length; index++) {
+            const item = templateItems[index];
+            const templateId = item.getAttribute('data-template-id');
+            const template = templatesData[categoryKey].subcategories[subKey].groups[groupIndex].templates.find(t => t.id === templateId);
+            
+            if (template) {
+                const supabaseTemplateId = await window.supabaseData.getTemplateIdByKey(groupId, templateId);
+                if (supabaseTemplateId) {
+                    updatePromises.push(window.supabaseData.updateTemplate(supabaseTemplateId, index));
+                }
+            }
+        }
+        
+        await Promise.all(updatePromises);
+        
+        // Reload data to reflect new order
+        templatesData = await window.supabaseData.loadAllDataFromSupabase();
+        
+    } catch (error) {
+        console.error('Error saving template order:', error);
+        showMessage('שגיאה בשמירת סדר המשפטים. נסה שוב.', 'error');
+    }
+}
+
+/**
+ * Move template up (fallback)
+ */
+window.moveTemplateUp = async function(categoryKey, subKey, groupIndex, tempIndex) {
+    if (tempIndex === 0) return; // Already at top
+    
+    const group = templatesData[categoryKey].subcategories[subKey].groups[groupIndex];
+    const templates = group.templates;
+    
+    // Swap in array
+    [templates[tempIndex - 1], templates[tempIndex]] = [templates[tempIndex], templates[tempIndex - 1]];
+    
+    // Animate movement
+    const container = document.getElementById(`template-group-${categoryKey}-${subKey}-${groupIndex}`);
+    if (container) {
+        const items = container.querySelectorAll('.template-item');
+        const currentItem = items[tempIndex];
+        const prevItem = items[tempIndex - 1];
+        
+        if (currentItem && prevItem) {
+            currentItem.style.transition = 'transform 0.2s ease';
+            prevItem.style.transition = 'transform 0.2s ease';
+            currentItem.style.transform = 'translateY(-100%)';
+            prevItem.style.transform = 'translateY(100%)';
+            
+            setTimeout(() => {
+                currentItem.style.transition = '';
+                prevItem.style.transition = '';
+                currentItem.style.transform = '';
+                prevItem.style.transform = '';
+                
+                // Re-render to reflect new order
+                renderTemplateGroups(categoryKey, subKey);
+            }, 200);
+        }
+    }
+    
+    // Save to Supabase
+    await saveTemplateOrderAfterMove(categoryKey, subKey, groupIndex);
+}
+
+/**
+ * Move template down (fallback)
+ */
+window.moveTemplateDown = async function(categoryKey, subKey, groupIndex, tempIndex) {
+    const group = templatesData[categoryKey].subcategories[subKey].groups[groupIndex];
+    const templates = group.templates;
+    
+    if (tempIndex === templates.length - 1) return; // Already at bottom
+    
+    // Swap in array
+    [templates[tempIndex], templates[tempIndex + 1]] = [templates[tempIndex + 1], templates[tempIndex]];
+    
+    // Animate movement
+    const container = document.getElementById(`template-group-${categoryKey}-${subKey}-${groupIndex}`);
+    if (container) {
+        const items = container.querySelectorAll('.template-item');
+        const currentItem = items[tempIndex];
+        const nextItem = items[tempIndex + 1];
+        
+        if (currentItem && nextItem) {
+            currentItem.style.transition = 'transform 0.2s ease';
+            nextItem.style.transition = 'transform 0.2s ease';
+            currentItem.style.transform = 'translateY(100%)';
+            nextItem.style.transform = 'translateY(-100%)';
+            
+            setTimeout(() => {
+                currentItem.style.transition = '';
+                nextItem.style.transition = '';
+                currentItem.style.transform = '';
+                nextItem.style.transform = '';
+                
+                // Re-render to reflect new order
+                renderTemplateGroups(categoryKey, subKey);
+            }, 200);
+        }
+    }
+    
+    // Save to Supabase
+    await saveTemplateOrderAfterMove(categoryKey, subKey, groupIndex);
+}
+
+/**
+ * Save template order after manual move (fallback)
+ */
+async function saveTemplateOrderAfterMove(categoryKey, subKey, groupIndex) {
+    try {
+        const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+        const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+        const groupId = await window.supabaseData.getTemplateGroupId(subcategoryId, groupIndex);
+        
+        const group = templatesData[categoryKey].subcategories[subKey].groups[groupIndex];
+        const updatePromises = [];
+        
+        for (let index = 0; index < group.templates.length; index++) {
+            const template = group.templates[index];
+            const supabaseTemplateId = await window.supabaseData.getTemplateIdByKey(groupId, template.id);
+            if (supabaseTemplateId) {
+                updatePromises.push(window.supabaseData.updateTemplate(supabaseTemplateId, index));
+            }
+        }
+        
+        await Promise.all(updatePromises);
+        
+        // Reload data to reflect new order
+        templatesData = await window.supabaseData.loadAllDataFromSupabase();
+        
+    } catch (error) {
+        console.error('Error saving template order:', error);
+        showMessage('שגיאה בשמירת סדר המשפטים. נסה שוב.', 'error');
+    }
 }
 
 

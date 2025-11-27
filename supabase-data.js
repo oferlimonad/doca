@@ -327,6 +327,25 @@ async function createTemplate(groupId, templateKey, displayOrder = 0) {
     }
 }
 
+async function updateTemplate(templateId, displayOrder) {
+    try {
+        const supabase = getSupabase();
+        if (!supabase) throw new Error('Supabase client not available');
+        const { data, error } = await supabase
+            .from('templates')
+            .update({ display_order: displayOrder })
+            .eq('id', templateId)
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error('Error updating template order:', error);
+        throw error;
+    }
+}
+
 async function deleteTemplate(templateId) {
     try {
         const supabase = getSupabase();
@@ -501,6 +520,7 @@ if (typeof window !== 'undefined') {
         updateTemplateGroup,
         deleteTemplateGroup,
         createTemplate,
+        updateTemplate,
         deleteTemplate,
         saveTemplateElements,
         getCategoryIdByKey,

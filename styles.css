@@ -876,6 +876,26 @@ a, button, input, select, textarea {
     }
 }
 
+/* --- Drag and Drop Styles --- */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: var(--bg-tertiary);
+}
+
+.sortable-chosen {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.sortable-drag {
+    opacity: 0.8;
+}
+
+.template-item.sortable-ghost {
+    border-color: var(--accent-primary);
+}
+
 /* --- Global Footer --- */
 #globalFooter {
     margin-top: auto;
