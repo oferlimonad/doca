@@ -250,7 +250,7 @@ footer, #globalFooter {
     min-width: 0;
     display: flex;
     align-items: center;
-    gap: 0.25rem; /* Reduced by 50%: Gap between drag handle and content area */
+    gap: 0.125rem; /* Reduced by 50% from 0.25rem: Minimal gap between drag handle and content area */
     position: relative;
 }
 
@@ -598,29 +598,145 @@ select.dynamic-element option,
 }
 
 /* --- Hero Section Background --- */
+/* Full-width background that breaks out of parent padding and starts at top edge */
 .hero-medical-static {
     position: relative;
     overflow-x: hidden;
-    width: 100%;
-    background: var(--bg-secondary);
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-top: calc(-1rem - 0.5rem); /* Break out of appContainer padding (px-4 = 1rem) and wrapper padding (pt-6 = 1.5rem) */
+    margin-bottom: 0;
+    background: #F0F9FF; /* Very subtle sky-50 tint for visual separation */
+    min-height: 76.67vh; /* Increased by 15% from 66.67vh for more downward expansion */
+    display: flex;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 2rem;
+    border: none;
 }
 
+@media (min-width: 640px) {
+    .hero-medical-static {
+        margin-top: calc(-1.5rem - 0.75rem); /* Break out of appContainer padding (px-6 = 1.5rem) and wrapper padding (pt-8 = 2rem) */
+    }
+}
+
+@media (min-width: 768px) {
+    .hero-medical-static {
+        margin-top: calc(-2rem - 1rem); /* Break out of wrapper padding (p-8 = 2rem) */
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-medical-static {
+        margin-top: calc(-2rem - 3rem); /* Break out of wrapper padding (lg:p-12 = 3rem) */
+    }
+}
+
+@media (min-width: 1280px) {
+    .hero-medical-static {
+        margin-top: calc(-2rem - 4rem); /* Break out of wrapper padding (xl:p-16 = 4rem) */
+    }
+}
+
+/* Full-width background that spans entire viewport from top edge */
 .hero-medical-static::before {
     content: '';
     position: absolute;
     top: 0;
     bottom: 0;
-    background: var(--bg-secondary);
+    left: 0;
+    right: 0;
+    background: #F0F9FF; /* Very subtle sky-50 tint for visual separation */
     width: 100vw;
-    left: 50%;
-    margin-left: -50vw;
+    margin-left: calc(50% - 50vw);
     z-index: 0;
-    border-radius: inherit;
+    border: none;
 }
 
-.hero-medical-static > div {
+/* Content container - constrained to site max-width */
+.hero-content-wrapper {
     position: relative;
     z-index: 1;
+    max-width: 100rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding-top: calc(var(--space-4) + 2rem); /* Account for header height + content spacing */
+    padding-bottom: 0;
+    padding-left: 2.5rem; /* px-10 */
+    padding-right: 2.5rem;
+}
+
+/* Inner content container - no background, controls layout and shifts content left (RTL-aware) */
+.hero-inner-container {
+    background: transparent; /* No background color */
+    width: 100%;
+    margin-right: 0; /* Start from right in RTL */
+    margin-left: auto; /* Shift left (away from right edge) in RTL */
+    max-width: 100%;
+}
+
+@media (min-width: 640px) {
+    .hero-medical-static {
+        padding-bottom: 3rem;
+    }
+    
+    .hero-content-wrapper {
+        padding-top: calc(var(--space-6) + 3rem);
+        padding-left: 3rem; /* px-12 */
+        padding-right: 3rem;
+    }
+    
+    .hero-inner-container {
+        margin-left: 1.5rem; /* Shift left (away from right edge) in RTL */
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-medical-static {
+        padding-bottom: 4rem;
+    }
+    
+    .hero-content-wrapper {
+        padding-top: calc(var(--space-12) + 4rem);
+        padding-left: 4rem; /* px-16 */
+        padding-right: 4rem;
+    }
+    
+    .hero-inner-container {
+        margin-left: 3rem; /* Shift left (away from right edge) in RTL - increased for better balance */
+        max-width: calc(100% - 3rem); /* Prevent overflow */
+    }
+    
+    /* Shift content left (RTL-aware) - add left margin to move away from right edge */
+    .hero-text-content {
+        margin-left: 0; /* Reset since container now handles the shift */
+        padding-right: 0;
+    }
+}
+
+@media (min-width: 1280px) {
+    .hero-content-wrapper {
+        max-width: 115rem;
+    }
+    
+    .hero-inner-container {
+        margin-left: 4rem; /* More shift on larger screens for better balance */
+        max-width: calc(100% - 4rem);
+    }
+}
+
+@media (min-width: 1536px) {
+    .hero-content-wrapper {
+        max-width: 140rem;
+    }
+    
+    .hero-inner-container {
+        margin-left: 5rem; /* Even more shift on extra large screens for optimal balance */
+        max-width: calc(100% - 5rem);
+    }
 }
 
 /* --- Section Backgrounds - Full Width with Alternating Colors --- */
@@ -1378,4 +1494,46 @@ button[class*="bg-sky"]:hover {
     background: var(--accent-primary-hover);
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
+}
+
+/* --- Scroll Down Arrow Animation --- */
+@keyframes bounce-soft {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(12px);
+    }
+}
+
+.scroll-down-arrow {
+    animation: bounce-soft 2s ease-in-out infinite;
+    opacity: 1;
+    font-weight: 500;
+    filter: drop-shadow(0 2px 4px rgba(14, 165, 233, 0.2));
+}
+
+.scroll-down-arrow:hover {
+    opacity: 1;
+    animation-duration: 1.5s; /* Slightly faster on hover */
+    filter: drop-shadow(0 4px 8px rgba(14, 165, 233, 0.3));
+    transform: scale(1.1);
+}
+
+/* --- Logo Checkbox Style --- */
+.logo-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0EA5E9; /* sky-500 - matches primary button/accent color */
+    flex-shrink: 0;
+}
+
+.logo-checkbox svg {
+    display: block;
+}
+
+/* Ensure logo maintains static color - no hover effects */
+.logo-checkbox:hover {
+    color: #0EA5E9; /* Keep same color on hover */
 }

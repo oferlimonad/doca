@@ -2242,12 +2242,13 @@ function renderHomePage() {
 
     appContainer.innerHTML = `
         <!-- 1. Hero Section - Full Width Background, Constrained Content -->
-        <section class="hero-medical-static w-full py-16 sm:py-24 md:py-32 lg:py-48">
-            <div class="max-w-[100rem] xl:max-w-[115rem] 2xl:max-w-[140rem] mx-auto px-10 sm:px-12 lg:px-16">
-                <div class="lg:grid lg:grid-cols-12 lg:gap-8 xl:gap-12 items-center text-right">
-                    
-                    <!-- Hero Content -->
-                    <div class="lg:col-span-7 xl:col-span-8">
+        <section class="hero-medical-static">
+            <div class="hero-content-wrapper">
+                <div class="hero-inner-container">
+                    <div class="lg:grid lg:grid-cols-12 lg:gap-8 xl:gap-12 items-center text-right">
+                        
+                        <!-- Hero Content -->
+                        <div class="lg:col-span-7 xl:col-span-8 hero-text-content">
                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-4 sm:mb-6 leading-tight text-right">
                             בנייה, ניהול והעתקה מיידית של תבניות רפואיות
                         </h1>
@@ -2268,10 +2269,20 @@ function renderHomePage() {
                     
                     <!-- Hero Illustration/Icon -->
                     <div class="mt-12 lg:mt-0 lg:col-span-5 xl:col-span-4 flex justify-center lg:justify-center">
-                        <div class="text-slate-400 hover:text-sky-500 transition-colors duration-150 w-36 h-36 sm:w-44 sm:h-44 lg:w-52 lg:h-52 xl:w-64 xl:h-64">
+                        <div class="text-sky-500 w-36 h-36 sm:w-44 sm:h-44 lg:w-52 lg:h-52 xl:w-64 xl:h-64">
                             ${getIcon('document', 'w-full h-full')}
                         </div>
+                        </div>
                     </div>
+                </div>
+                
+                <!-- Scroll Down Affordance -->
+                <div class="flex justify-center mt-8 sm:mt-12 lg:mt-16">
+                    <a href="#section-features" 
+                       class="scroll-down-arrow inline-flex items-center justify-center text-sky-500 hover:text-sky-600 transition-all duration-200 cursor-pointer rounded-full p-2 hover:bg-sky-50"
+                       aria-label="גלול למטה">
+                        ${getIcon('chevron-down', 'w-8 h-8 sm:w-10 sm:h-10')}
+                    </a>
                 </div>
             </div>
         </section>
