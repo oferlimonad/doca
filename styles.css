@@ -1,65 +1,65 @@
 /* ============================================
-   PREMIUM LIGHT MODE - MEDICAL SAAS DESIGN
-   Clinical Modernity: Clean, Airy, Trustworthy
+   LINEAR-INSPIRED DESIGN SYSTEM
+   Ultra-modern, High-contrast, Spacious, Minimalistic
    Optimized for Hebrew (RTL) Typography
    ============================================ */
 
 /* --- Typography with Hebrew Support --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@300;400;500;600;700&display=swap&subset=hebrew');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@300;400;500;600;700;800&display=swap&subset=hebrew');
 
 :root {
-    /* Premium Light Mode Color Palette - Medical Grade */
-    /* Primary Colors - Trustworthy Medical Blue/Teal */
-    --primary: #0EA5E9;              /* Sky-500 - Professional medical blue */
-    --primary-hover: #0284C7;        /* Sky-600 - Darker for hover */
-    --primary-light: #E0F2FE;        /* Sky-100 - Light accent */
-    --secondary: #14B8A6;            /* Teal-500 - Calm green accent */
+    /* Linear-Inspired Color Palette - High Contrast, Clean */
+    /* Primary Colors - Dark Blue */
+    --primary: #1A1A7C;              /* Dark blue - slightly brighter */
+    --primary-hover: #15156C;       /* Slightly darker blue for hover */
+    --primary-light: #F0F4FF;        /* Very light blue tint */
+    --secondary: #14B8A6;            /* Teal accent */
     --secondary-hover: #0D9488;      /* Teal-600 */
     
-    /* Background Colors - Airy & Clean */
+    /* Background Colors - Linear Clean Whites */
     --bg-primary: #FFFFFF;           /* Pure white - Main background */
-    --bg-secondary: #F8FAFC;         /* Slate-50 - Page background */
-    --bg-tertiary: #F1F5F9;         /* Slate-100 - Surface hover */
+    --bg-secondary: #FAFBFC;         /* Linear off-white - Page background */
+    --bg-tertiary: #F7F8F9;          /* Linear hover background */
     --bg-card: #FFFFFF;              /* Pure white - Card backgrounds */
-    --bg-hover: #F1F5F9;             /* Slate-100 - Hover states */
-    --bg-input: #F8FAFC;             /* Slate-50 - Input backgrounds */
-    --bg-input-focus: #E0F2FE;       /* Sky-100 - Input focus */
+    --bg-hover: #F7F8F9;             /* Linear hover state */
+    --bg-input: #FFFFFF;             /* White input backgrounds */
+    --bg-input-focus: #F0F4FF;       /* Light blue focus */
     
-    /* Text Colors - High Contrast for Readability */
-    --text-primary: #0F172A;         /* Slate-900 - Primary text */
-    --text-secondary: #475569;       /* Slate-600 - Secondary text */
-    --text-tertiary: #64748B;        /* Slate-500 - Tertiary/muted text */
-    --text-disabled: #94A3B8;        /* Slate-400 - Disabled text */
+    /* Text Colors - Linear High Contrast */
+    --text-primary: #0D0D0D;         /* Near black - Maximum contrast */
+    --text-secondary: #6B7280;       /* Gray-500 - Secondary text */
+    --text-tertiary: #9CA3AF;        /* Gray-400 - Tertiary text */
+    --text-disabled: #D1D5DB;         /* Gray-300 - Disabled text */
     
     /* Accent Colors */
-    --accent-primary: #0EA5E9;       /* Primary brand color */
-    --accent-primary-hover: #0284C7; /* Primary hover */
-    --accent-secondary: #14B8A6;     /* Secondary accent */
+    --accent-primary: #1A1A7C;       /* Dark blue - slightly brighter */
+    --accent-primary-hover: #15156C; /* Slightly darker blue */
+    --accent-secondary: #14B8A6;     /* Teal accent */
     --accent-secondary-hover: #0D9488; /* Teal-600 */
     
     /* Semantic Colors */
     --success: #10B981;             /* Emerald-500 */
-    --success-bg: rgba(16, 185, 129, 0.1);
+    --success-bg: rgba(16, 185, 129, 0.08);
     --warning: #F59E0B;              /* Amber-500 */
-    --warning-bg: rgba(245, 158, 11, 0.1);
+    --warning-bg: rgba(245, 158, 11, 0.08);
     --error: #EF4444;                /* Red-500 */
-    --error-bg: rgba(239, 68, 68, 0.1);
+    --error-bg: rgba(239, 68, 68, 0.08);
     --info: var(--primary);
-    --info-bg: rgba(14, 165, 233, 0.1);
+    --info-bg: rgba(26, 26, 124, 0.08);
     
-    /* Borders - Subtle, Clean */
-    --border-primary: #E2E8F0;      /* Slate-200 - Main borders */
-    --border-secondary: #CBD5E1;    /* Slate-300 - Strong borders */
-    --border-hover: #94A3B8;        /* Slate-400 - Hover borders */
-    --border-focus: #0EA5E9;        /* Sky-500 - Focus borders */
+    /* Borders - Linear Subtle Borders */
+    --border-primary: #E5E7EB;      /* Gray-200 - Subtle borders */
+    --border-secondary: #D1D5DB;    /* Gray-300 - Stronger borders */
+    --border-hover: #9CA3AF;        /* Gray-400 - Hover borders */
+    --border-focus: #1A1A7C;        /* Dark blue - Focus borders */
     
-    /* Glassmorphism */
-    --glass-bg: rgba(255, 255, 255, 0.8);
-    --glass-border: rgba(226, 232, 240, 0.8);
-    --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
+    /* Glassmorphism - Linear Style */
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(229, 231, 235, 0.8);
+    --glass-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     
-    /* Spacing System - Generous for Airiness (8px base) */
+    /* Spacing System - Linear Generous Spacing (8px base) */
     --space-1: 0.25rem;   /* 4px */
     --space-2: 0.5rem;    /* 8px */
     --space-3: 0.75rem;   /* 12px */
@@ -73,23 +73,23 @@
     --space-20: 5rem;     /* 80px */
     --space-24: 6rem;     /* 96px */
     
-    /* Border Radius - Modern, Refined */
-    --radius-sm: 0.5rem;     /* 8px */
-    --radius-md: 0.75rem;    /* 12px */
-    --radius-lg: 1rem;      /* 16px */
-    --radius-xl: 1.25rem;    /* 20px */
-    --radius-2xl: 1.5rem;    /* 24px */
+    /* Border Radius - Linear Refined */
+    --radius-sm: 0.375rem;   /* 6px - Linear subtle */
+    --radius-md: 0.5rem;     /* 8px */
+    --radius-lg: 0.75rem;    /* 12px */
+    --radius-xl: 1rem;       /* 16px */
+    --radius-2xl: 1.25rem;   /* 20px */
     --radius-full: 9999px;
     
-    /* Shadows - Soft, Layered */
-    --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
-    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
-    --shadow-inner: inset 0 2px 4px 0 rgba(15, 23, 42, 0.05);
+    /* Shadows - Linear Subtle, Refined */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
     
-    /* Transitions - Smooth, Refined */
-    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    /* Transitions - Linear Smooth */
+    --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -109,48 +109,57 @@
     }
 }
 
+html {
+    scroll-behavior: smooth;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-secondary); /* Ensure consistent background */
+}
+
 body {
     font-family: 'Inter', 'IBM Plex Sans Hebrew', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-weight: 400;
-    font-size: 0.9375rem; /* 15px */
+    font-size: 0.9375rem; /* 15px - Linear base size */
     color: var(--text-primary);
     background-color: var(--bg-secondary);
-    line-height: 1.75; /* Increased for Hebrew diacritics */
-    letter-spacing: -0.01em;
+    line-height: 1.6; /* Linear-style line height */
+    letter-spacing: -0.011em; /* Linear tight letter spacing */
     direction: rtl;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
 }
 
-/* Typography Hierarchy - Medical Professional */
+/* Typography Hierarchy - Linear Style */
 h1, h2, h3, h4, h5, h6 {
-    letter-spacing: -0.02em;
+    letter-spacing: -0.02em; /* Linear tight spacing */
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.2; /* Linear tight line height */
     color: var(--text-primary);
 }
 
 h1 {
-    font-size: 1.875rem; /* 30px */
-    letter-spacing: -0.025em;
-    line-height: 1.3;
+    font-size: 2rem; /* 32px - Linear scale */
+    letter-spacing: -0.03em;
+    line-height: 1.15;
     font-weight: 700;
 }
 
 h2 {
     font-size: 1.5rem; /* 24px */
-    letter-spacing: -0.02em;
-    line-height: 1.35;
+    letter-spacing: -0.025em;
+    line-height: 1.25;
     font-weight: 600;
 }
 
 h3 {
     font-size: 1.25rem; /* 20px */
-    letter-spacing: -0.015em;
-    line-height: 1.4;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
     font-weight: 600;
 }
 
@@ -203,17 +212,18 @@ footer, #globalFooter {
     transform: translate(-50%, -50%) scale(1);
 }
 
-/* --- Checkboxes - Medical Style --- */
+/* --- Checkboxes - Linear Style --- */
 .template-item input[type="checkbox"] {
     margin-right: 0;
-    margin-left: 0;
-    width: 1.25rem;
-    height: 1.25rem;
+    margin-left: 0.4375rem; /* 7px - shift checkbox right (towards drag handle in RTL) */
+    width: 1.125rem;
+    height: 1.125rem;
     accent-color: var(--accent-primary);
     cursor: pointer;
     transition: all var(--transition-fast);
     flex-shrink: 0;
     border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border-primary);
 }
 
 .template-item input[type="checkbox"]:checked + label {
@@ -222,15 +232,36 @@ footer, #globalFooter {
 }
 
 .template-item input[type="checkbox"]:focus {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
-    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(10, 10, 92, 0.1);
 }
 
 /* --- Template Item Content Alignment --- */
-.template-group-header .chevron-icon {
+.template-group-header .plus-minus-icon {
     width: 1.25rem;
     height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: var(--accent-primary); /* Linear blue for icons */
+}
+
+.template-group-header .plus-icon-wrapper,
+.template-group-header .minus-icon-wrapper {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1), visibility 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    height: 100%;
+}
+
+.template-group-header .plus-icon-wrapper svg,
+.template-group-header .minus-icon-wrapper svg {
+    display: block;
 }
 
 /* Group header structure: chevron (1.25rem) + gap-2 (0.5rem) + title text */
@@ -238,7 +269,8 @@ footer, #globalFooter {
 .template-item {
     direction: rtl;
     padding-right: 0 !important; /* No right padding - drag handle sits flush against container edge */
-    padding-left: 0 !important; /* No left padding - CRUD buttons will have their own spacing */
+    /* Left padding matches card padding to align CRUD buttons with header */
+    padding-left: 1rem !important; /* Match card p-4 */
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
     width: 100%;
@@ -250,8 +282,20 @@ footer, #globalFooter {
     min-width: 0;
     display: flex;
     align-items: center;
-    gap: 0.125rem; /* Reduced by 50% from 0.25rem: Minimal gap between drag handle and content area */
+    gap: 0 !important; /* No gap - drag handle directly next to content area */
     position: relative;
+}
+
+@media (min-width: 640px) {
+    .template-item {
+        padding-left: 1.25rem !important; /* Match card sm:p-5 */
+    }
+}
+
+@media (min-width: 1024px) {
+    .template-item {
+        padding-left: 1.5rem !important; /* Match card lg:p-6 */
+    }
 }
 
 /* Drag handle container - flush against right edge (RTL) */
@@ -277,20 +321,21 @@ footer, #globalFooter {
 /* Group header: chevron (1.25rem) + gap-2 (0.5rem) + title text */
 /* Template items are inside the group container, so checkbox aligns with title start */
 .template-item-content {
-    margin-right: 0;
+    margin-right: -0.625rem; /* Shift 10px (0.625rem) to the right (RTL) */
     margin-left: 0;
     padding-right: 0;
     padding-left: 0;
     align-items: center;
     display: flex;
-    gap: 0.875rem; /* Gap between checkbox and label */
+    gap: 0.5rem; /* Gap between checkbox and label - increased by 5px (0.3125rem) from 0.1875rem */
     min-width: 0;
     flex: 1 1 auto;
     width: 100%;
     max-width: 100%;
     overflow: visible; /* Allow sentence text to flow naturally */
     /* Align checkbox with group title: chevron (1.25rem) + gap-2 (0.5rem) = 1.75rem from container inner edge */
-    padding-right: calc(1.25rem + 0.5rem) !important; /* chevron + gap */
+    /* Shifted 10px right (0.625rem) - adjust padding accordingly */
+    padding-right: calc(1.25rem + 0.5rem - 0.625rem) !important; /* chevron + gap - right shift */
 }
 
 @media (min-width: 640px) {
@@ -321,110 +366,121 @@ footer, #globalFooter {
     flex-wrap: wrap;
     align-items: center;
     gap: 0.25rem;
+    row-gap: calc(0.25rem + 0.3125rem); /* 0.25rem horizontal gap + 5px (0.3125rem) extra vertical spacing between wrapped lines */
     white-space: normal; /* Allow wrapping when needed */
     overflow: visible;
     width: 100%;
     min-width: 0; /* Allow shrinking if needed, but label has flex: 1 1 auto */
 }
 
-/* --- INLINE DYNAMIC ELEMENTS - Seamless Sentence Builder --- */
-/* Unified compact height with perfect vertical centering */
+/* --- INLINE DYNAMIC ELEMENTS - Linear Seamless Style --- */
 .dynamic-element {
-    padding: 0.125rem 0.375rem;
-    border: none;
-    border-bottom: 2px solid var(--border-primary);
-    border-radius: 0;
-    background: transparent;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    background: var(--bg-input);
     color: var(--text-primary);
-    font-size: 0.875rem; /* Uniform font size */
-    line-height: 1.5; /* Compact line height for vertical centering */
+    font-size: 0.875rem;
+    line-height: 1.5;
     display: inline-flex;
-    align-items: center; /* Perfect vertical centering */
+    align-items: center;
     justify-content: center;
-    height: 1.75rem; /* Unified compact height */
+    height: 2rem;
     vertical-align: middle;
-    transition: all var(--transition-base);
+    transition: all var(--transition-fast);
     font-family: inherit;
     min-width: 60px;
     box-sizing: border-box;
 }
 
-/* Input fields - seamless inline style with compact height */
+/* Input fields - Linear inline style */
 input.dynamic-element.template-input {
     background: var(--bg-input);
-    border-bottom: 2px solid var(--border-primary);
-    padding: 0.125rem 0.375rem;
+    border: 1px solid var(--border-primary);
+    padding: 0.25rem 0.5rem;
     border-radius: var(--radius-sm);
     margin: 0 0.125rem;
-    height: 1.75rem; /* Unified compact height */
+    height: 2rem;
     line-height: 1.5;
     display: inline-flex;
     align-items: center;
-    font-size: 0.875rem; /* Uniform font size */
+    font-size: 0.875rem;
     text-align: center;
+    color: var(--text-primary);
 }
 
 input.dynamic-element.template-input:focus {
     outline: none;
-    border-bottom-color: var(--border-focus);
-    background: var(--bg-input-focus);
-    box-shadow: 0 2px 4px rgba(14, 165, 233, 0.1);
+    border-color: var(--border-focus);
+    background: var(--bg-input);
+    box-shadow: 0 0 0 3px rgba(10, 10, 92, 0.1);
+    color: var(--text-primary);
 }
 
 input.dynamic-element.template-input:hover:not(:disabled) {
-    border-bottom-color: var(--border-secondary);
+    border-color: var(--border-secondary);
     background: var(--bg-input);
+    color: var(--text-primary);
 }
 
-/* Dropdown (select) - Badge-like appearance with centered vertical text and compact height */
+/* Dropdown (select) - Linear Style with RTL positioning */
+select,
 select.dynamic-element,
 .template-select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%230EA5E9' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%230A0A5C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: left 0.375rem center;
-    background-color: var(--primary-light);
-    border: none;
-    border-bottom: 2px solid var(--accent-primary);
-    padding: 0.125rem 1.5rem 0.125rem 0.375rem;
+    background-position: right 0.5rem center; /* Arrow on right edge for RTL */
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-primary);
+    padding: 0.375rem 1.75rem 0.375rem 0.625rem; /* Right padding for arrow, left padding for text */
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end; /* Text aligns to right (start in RTL) */
     vertical-align: middle;
-    line-height: 1.5; /* Compact line height */
-    height: 1.75rem; /* Unified compact height matching inputs */
+    line-height: 1.5;
+    height: 2rem;
     box-sizing: border-box;
     border-radius: var(--radius-sm);
-    color: var(--accent-primary);
-    font-weight: 500;
-    font-size: 0.875rem; /* Uniform font size */
+    color: var(--text-primary);
+    font-weight: 400;
+    font-size: 0.875rem;
     margin: 0 0.125rem;
     min-width: 80px;
+    text-align: right; /* RTL text alignment */
+    direction: rtl; /* RTL direction for Hebrew */
 }
 
 select.dynamic-element:focus,
 .template-select:focus {
     outline: none;
-    border-bottom-color: var(--accent-primary-hover);
-    background-color: var(--bg-input-focus);
-    box-shadow: 0 2px 4px rgba(14, 165, 233, 0.15);
+    border-color: var(--border-focus);
+    background-color: var(--bg-input);
+    box-shadow: 0 0 0 3px rgba(10, 10, 92, 0.1);
+    color: var(--text-primary);
 }
 
 select.dynamic-element:hover:not(:disabled),
 .template-select:hover:not(:disabled) {
-    border-bottom-color: var(--accent-primary-hover);
-    background-color: var(--primary-light);
+    border-color: var(--border-secondary);
+    background-color: var(--bg-input);
+    color: var(--text-primary);
 }
 
-/* RTL support for dropdown arrow */
+/* RTL support for dropdown arrow - ensure all selects have proper RTL positioning */
+[dir="rtl"] select,
 [dir="rtl"] select.dynamic-element,
 [dir="rtl"] .template-select {
-    background-position: right 0.375rem center;
-    padding-right: 0.375rem;
-    padding-left: 1.5rem;
+    /* Ensure RTL positioning is maintained */
+    background-position: right 0.5rem center !important; /* Arrow positioned on right edge */
+    padding-right: 1.75rem !important; /* Space for arrow on right */
+    padding-left: 0.5rem !important; /* Text padding on left */
+    text-align: right !important; /* RTL text alignment */
+    direction: rtl !important; /* RTL direction */
+    justify-content: flex-end !important; /* Text aligns to right (start in RTL) */
 }
 
 /* Dropdown options styling */
@@ -466,17 +522,17 @@ select.dynamic-element option,
     
     select.dynamic-element,
     .template-select {
-        padding: 0.125rem 1.5rem 0.125rem 0.5rem;
+        padding: 0.125rem 1.75rem 0.125rem 0.5rem; /* Consistent padding for arrow space */
         height: 1.75rem;
         font-size: 0.875rem;
-        background-position: left 0.5rem center;
+        background-position: right 0.5rem center; /* Arrow on right edge for RTL */
     }
     
     [dir="rtl"] select.dynamic-element,
     [dir="rtl"] .template-select {
-        background-position: right 0.5rem center;
-        padding-right: 0.5rem;
-        padding-left: 1.5rem;
+        background-position: right 0.5rem center; /* Arrow on right edge */
+        padding-right: 1.75rem; /* Space for arrow */
+        padding-left: 0.5rem; /* Text padding */
     }
 }
 
@@ -495,21 +551,21 @@ select.dynamic-element option,
     
     select.dynamic-element,
     .template-select {
-        padding: 0.125rem 1.5rem 0.125rem 0.625rem;
+        padding: 0.125rem 1.75rem 0.125rem 0.625rem; /* Consistent padding for arrow space */
         height: 1.75rem;
         font-size: 0.875rem;
-        background-position: left 0.625rem center;
+        background-position: right 0.625rem center; /* Arrow on right edge for RTL */
     }
     
     [dir="rtl"] select.dynamic-element,
     [dir="rtl"] .template-select {
-        background-position: right 0.625rem center;
-        padding-right: 0.625rem;
-        padding-left: 1.5rem;
+        background-position: right 0.625rem center; /* Arrow on right edge */
+        padding-right: 1.75rem; /* Space for arrow */
+        padding-left: 0.625rem; /* Text padding */
     }
 }
 
-/* --- CRUD Buttons - Minimalist Icon Buttons --- */
+/* --- CRUD Buttons - Linear Minimalist Style --- */
 .crud-btn {
     padding: 0.5rem;
     border-radius: var(--radius-md);
@@ -531,18 +587,17 @@ select.dynamic-element option,
 
 .crud-btn:hover {
     background-color: var(--bg-hover);
-    transform: translateY(-1px);
-    color: var(--accent-primary);
+    color: var(--text-primary);
 }
 
 .crud-btn:active {
-    transform: scale(0.95) translateY(0);
-    transition-duration: 80ms;
+    transform: scale(0.96);
+    transition-duration: 100ms;
 }
 
 .crud-btn-delete {
-    color: var(--text-tertiary);
-    opacity: 0.7;
+    color: var(--text-secondary); /* Darker for better visibility */
+    opacity: 0.8; /* Slightly more visible */
     transition: all var(--transition-fast);
 }
 
@@ -554,17 +609,17 @@ select.dynamic-element option,
 
 .crud-btn-delete:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3); /* Stronger focus ring */
 }
 
 .crud-btn-edit {
-    color: var(--text-tertiary);
-    opacity: 0.7;
+    color: var(--text-secondary); /* Darker for better visibility */
+    opacity: 0.8; /* Slightly more visible */
     transition: all var(--transition-fast);
 }
 
 .crud-btn-edit:hover {
-    color: var(--accent-primary);
+    color: var(--accent-primary-hover); /* Darker hover */
     opacity: 1;
     background-color: var(--info-bg);
 }
@@ -586,7 +641,7 @@ select.dynamic-element option,
 }
 
 .scrollable-content::-webkit-scrollbar-thumb {
-    background-color: var(--border-secondary);
+    background-color: var(--border-hover); /* Darker for better visibility */
     border-radius: var(--radius-sm);
     transition: background-color var(--transition-fast);
     border: 1px solid transparent;
@@ -594,53 +649,75 @@ select.dynamic-element option,
 }
 
 .scrollable-content::-webkit-scrollbar-thumb:hover {
-    background-color: var(--border-hover);
+    background-color: var(--text-tertiary); /* Even darker on hover */
 }
 
-/* --- Hero Section Background --- */
-/* Full-width background that breaks out of parent padding and starts at top edge */
+/* --- Hero Section - Modern Centered RTL Design --- */
+/* Full-width background that breaks out of ALL parent padding and starts at top edge of viewport */
 .hero-medical-static {
     position: relative;
     overflow-x: hidden;
     width: 100vw;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
-    margin-top: calc(-1rem - 0.5rem); /* Break out of appContainer padding (px-4 = 1rem) and wrapper padding (pt-6 = 1.5rem) */
+    /* Break out of flex-1 wrapper padding-top (pt-6 = 1.5rem) and padding (p-4 = 1rem) */
+    /* Navigation is sticky, so hero starts right after it - break out of all parent padding */
+    margin-top: calc(-1rem - 1.5rem) !important; /* Negative margin: p-4 + pt-6 */
     margin-bottom: 0;
-    background: #F0F9FF; /* Very subtle sky-50 tint for visual separation */
-    min-height: 76.67vh; /* Increased by 15% from 66.67vh for more downward expansion */
+    background: #FAFBFC; /* Linear off-white background */
+    min-height: 70vh; /* 70% of screen height */
     display: flex;
-    align-items: center;
-    padding-top: 0;
-    padding-bottom: 2rem;
+    align-items: center; /* Vertical centering - aligns with navigation center */
+    justify-content: center;
+    padding-top: 0 !important; /* Force no top padding */
+    padding-bottom: 0;
     border: none;
+    /* Adjust vertical alignment to match navigation bar center */
+    /* Navigation center is at: top (var(--space-4)) + nav height/2 (~2.25rem) */
+    /* Hero content center should align with this point */
 }
 
 @media (min-width: 640px) {
     .hero-medical-static {
-        margin-top: calc(-1.5rem - 0.75rem); /* Break out of appContainer padding (px-6 = 1.5rem) and wrapper padding (pt-8 = 2rem) */
+        /* Break out of flex-1 wrapper padding-top (pt-8 = 2rem) and padding (p-6 = 1.5rem) */
+        margin-top: calc(-1.5rem - 2rem) !important; /* Negative margin: p-6 + pt-8 */
     }
 }
 
 @media (min-width: 768px) {
     .hero-medical-static {
-        margin-top: calc(-2rem - 1rem); /* Break out of wrapper padding (p-8 = 2rem) */
+        /* Break out of flex-1 wrapper padding-top (pt-8 = 2rem) and padding (p-8 = 2rem) */
+        margin-top: calc(-2rem - 2rem) !important; /* Negative margin: p-8 + pt-8 */
     }
 }
 
 @media (min-width: 1024px) {
     .hero-medical-static {
-        margin-top: calc(-2rem - 3rem); /* Break out of wrapper padding (lg:p-12 = 3rem) */
+        /* Break out of flex-1 wrapper padding-top (pt-8 = 2rem) and padding (p-12 = 3rem) */
+        margin-top: calc(-3rem - 2rem) !important; /* Negative margin: p-12 + pt-8 */
     }
 }
 
 @media (min-width: 1280px) {
     .hero-medical-static {
-        margin-top: calc(-2rem - 4rem); /* Break out of wrapper padding (xl:p-16 = 4rem) */
+        /* Break out of flex-1 wrapper padding-top (pt-8 = 2rem) and padding (p-16 = 4rem) */
+        margin-top: calc(-4rem - 2rem) !important; /* Negative margin: p-16 + pt-8 */
     }
 }
 
-/* Full-width background that spans entire viewport from top edge */
+@media (min-width: 640px) {
+    .hero-medical-static {
+        min-height: 72vh; /* Slightly taller on larger screens */
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-medical-static {
+        min-height: 75vh; /* 75% on desktop for more presence */
+    }
+}
+
+/* Full-width background overlay - starts at absolute top of viewport */
 .hero-medical-static::before {
     content: '';
     position: absolute;
@@ -648,14 +725,17 @@ select.dynamic-element option,
     bottom: 0;
     left: 0;
     right: 0;
-    background: #F0F9FF; /* Very subtle sky-50 tint for visual separation */
+    background: #FAFBFC; /* Linear off-white background */
     width: 100vw;
     margin-left: calc(50% - 50vw);
+    margin-top: 0 !important; /* Ensure no top margin */
     z-index: 0;
     border: none;
+    /* Extend to cover any potential gaps */
+    height: 100%;
 }
 
-/* Content container - constrained to site max-width */
+/* Content container - centered horizontally, vertically centered to align with navigation */
 .hero-content-wrapper {
     position: relative;
     z-index: 1;
@@ -663,68 +743,34 @@ select.dynamic-element option,
     margin-left: auto;
     margin-right: auto;
     width: 100%;
-    padding-top: calc(var(--space-4) + 2rem); /* Account for header height + content spacing */
-    padding-bottom: 0;
-    padding-left: 2.5rem; /* px-10 */
-    padding-right: 2.5rem;
-}
-
-/* Inner content container - no background, controls layout and shifts content left (RTL-aware) */
-.hero-inner-container {
-    background: transparent; /* No background color */
-    width: 100%;
-    margin-right: 0; /* Start from right in RTL */
-    margin-left: auto; /* Shift left (away from right edge) in RTL */
-    max-width: 100%;
+    padding-top: 0 !important; /* No top padding - spacing moved to inner container */
+    padding-bottom: 4rem;
+    padding-left: 1rem; /* px-4 = 1rem */
+    padding-right: 1rem; /* px-4 = 1rem */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* Center horizontally */
+    min-height: 100%;
+    /* Align content center with navigation bar center */
+    /* Navigation is at top: var(--space-4), height ~4.5rem (py-3 + content), center at ~2.25rem from top */
+    /* Hero content center should align with nav center for visual harmony */
 }
 
 @media (min-width: 640px) {
-    .hero-medical-static {
-        padding-bottom: 3rem;
-    }
-    
     .hero-content-wrapper {
-        padding-top: calc(var(--space-6) + 3rem);
-        padding-left: 3rem; /* px-12 */
-        padding-right: 3rem;
-    }
-    
-    .hero-inner-container {
-        margin-left: 1.5rem; /* Shift left (away from right edge) in RTL */
+        padding-bottom: 5rem;
+        padding-left: 1.5rem; /* sm:px-6 = 1.5rem */
+        padding-right: 1.5rem; /* sm:px-6 = 1.5rem */
     }
 }
 
 @media (min-width: 1024px) {
-    .hero-medical-static {
-        padding-bottom: 4rem;
-    }
-    
     .hero-content-wrapper {
-        padding-top: calc(var(--space-12) + 4rem);
-        padding-left: 4rem; /* px-16 */
-        padding-right: 4rem;
-    }
-    
-    .hero-inner-container {
-        margin-left: 3rem; /* Shift left (away from right edge) in RTL - increased for better balance */
-        max-width: calc(100% - 3rem); /* Prevent overflow */
-    }
-    
-    /* Shift content left (RTL-aware) - add left margin to move away from right edge */
-    .hero-text-content {
-        margin-left: 0; /* Reset since container now handles the shift */
-        padding-right: 0;
-    }
-}
-
-@media (min-width: 1280px) {
-    .hero-content-wrapper {
+        padding-bottom: 6rem;
+        padding-left: 2rem; /* lg:px-8 = 2rem */
+        padding-right: 2rem; /* lg:px-8 = 2rem */
         max-width: 115rem;
-    }
-    
-    .hero-inner-container {
-        margin-left: 4rem; /* More shift on larger screens for better balance */
-        max-width: calc(100% - 4rem);
     }
 }
 
@@ -732,10 +778,233 @@ select.dynamic-element option,
     .hero-content-wrapper {
         max-width: 140rem;
     }
-    
-    .hero-inner-container {
-        margin-left: 5rem; /* Even more shift on extra large screens for optimal balance */
-        max-width: calc(100% - 5rem);
+}
+
+/* Inner content container - perfectly centered to match navigation alignment */
+.hero-inner-container {
+    background: transparent;
+    width: 100%;
+    max-width: 52rem; /* Slightly wider for better readability */
+    margin-right: auto;
+    margin-left: auto; /* Perfectly centered horizontally to match navigation */
+    text-align: center; /* Center text for RTL */
+}
+
+/* Hero Text Content - Centered with refined typography hierarchy, aligned with navigation center */
+.hero-text-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    /* Align hero content center with navigation center axis */
+    /* Navigation: top var(--space-4) + nav height/2 (~2.25rem) = nav center */
+    /* Hero content center should align with nav center, then add spacing for title start */
+    padding-top: calc(var(--space-4) + 2.25rem + 6.5rem); /* Nav top + nav center + spacing (104px) */
+    text-align: center; /* Center text for RTL */
+}
+
+@media (min-width: 640px) {
+    .hero-text-content {
+        /* Navigation center at ~2.75rem from top (py-4 + content) */
+        padding-top: calc(var(--space-4) + 2.75rem + 7.5rem); /* Nav top + nav center + spacing (120px) */
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-text-content {
+        /* Navigation center at ~2.75rem from top */
+        padding-top: calc(var(--space-4) + 2.75rem + 8.5rem); /* Nav top + nav center + spacing (136px) */
+    }
+}
+
+/* Hero Title - Increased by 18px total (8px + 10px), display full text */
+.hero-title {
+    font-size: 3.125rem; /* 2.5rem + 10px (0.625rem) = 50px */
+    line-height: 1.35; /* Increased line-height for better spacing */
+    font-weight: 800; /* Heavier weight for stronger presence */
+    color: var(--text-primary);
+    margin-top: 0 !important; /* Remove any default H1 margin */
+    margin-bottom: 1.75rem;
+    letter-spacing: -0.025em; /* Tighter letter spacing */
+    text-align: center; /* Center for RTL */
+    max-width: 30rem; /* Constrain width for readability */
+    margin-left: auto;
+    margin-right: auto;
+    word-break: normal;
+    overflow-wrap: break-word;
+    /* Display full text - allow natural line breaks */
+    display: block;
+}
+
+@media (min-width: 640px) {
+    .hero-title {
+        font-size: 3.375rem; /* 2.75rem + 10px (0.625rem) = 54px */
+        margin-bottom: 2rem;
+        max-width: 32rem; /* Slightly wider on larger screens */
+    }
+}
+
+@media (min-width: 768px) {
+    .hero-title {
+        font-size: 3.625rem; /* 3rem + 10px (0.625rem) = 58px */
+        max-width: 36rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-title {
+        font-size: 3.875rem; /* 3.25rem + 10px (0.625rem) = 62px */
+        margin-bottom: 2.25rem;
+        max-width: 40rem;
+    }
+}
+
+@media (min-width: 1280px) {
+    .hero-title {
+        font-size: 4.125rem; /* 3.5rem + 10px (0.625rem) = 66px */
+        max-width: 42rem;
+    }
+}
+
+/* Hero Subtitle - Clearer, refined typography */
+.hero-subtitle {
+    font-size: 1.25rem;
+    line-height: 1.75; /* More breathing room */
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+    max-width: 48rem; /* Wider for better readability */
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center !important; /* Center for RTL - ensure centered */
+    font-weight: 400;
+    opacity: 0.95; /* Slightly softer for hierarchy */
+    display: block;
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .hero-subtitle {
+        font-size: 1.375rem;
+        margin-bottom: 3.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 4rem;
+        line-height: 1.8;
+    }
+}
+
+/* Hero CTA Group - Centered premium button styling */
+.hero-cta-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center; /* Center buttons */
+    justify-content: center;
+}
+
+@media (min-width: 640px) {
+    .hero-cta-group {
+        flex-direction: row;
+        gap: 1.25rem;
+    }
+}
+
+.hero-cta-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--accent-primary);
+    color: white;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-fast);
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.hero-cta-primary:hover {
+    background: var(--accent-primary-hover);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.hero-cta-primary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+@media (min-width: 640px) {
+    .hero-cta-primary {
+        padding: 1.125rem 2.25rem;
+        font-size: 1.125rem;
+    }
+}
+
+.hero-cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-primary);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.hero-cta-secondary:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-secondary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.hero-cta-secondary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+@media (min-width: 640px) {
+    .hero-cta-secondary {
+        padding: 1.125rem 2.25rem;
+        font-size: 1.125rem;
+    }
+}
+
+
+/* Scroll Down Indicator - Below buttons, subtle and elegant */
+.hero-scroll-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+@media (min-width: 640px) {
+    .hero-scroll-indicator {
+        margin-top: 3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-scroll-indicator {
+        margin-top: 3.5rem;
     }
 }
 
@@ -801,19 +1070,19 @@ select.dynamic-element option,
     transition: all var(--transition-base);
     background: var(--bg-card);
     border: 1px solid var(--border-primary);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     padding: var(--space-6);
 }
 
 .nav-card:hover {
     background-color: var(--bg-card);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
     border-color: var(--border-secondary);
 }
 
-/* --- Template Items - Clean Transitions --- */
+/* --- Template Items - Linear Clean Style --- */
 .template-item {
     transition: all var(--transition-base);
     margin-bottom: var(--space-2);
@@ -823,6 +1092,7 @@ select.dynamic-element option,
     box-sizing: border-box;
     background: var(--bg-card);
     border: 1px solid var(--border-primary);
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
 }
 
@@ -853,9 +1123,10 @@ input[type="number"]:focus,
 textarea:focus,
 select:focus {
     outline: none;
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    border-color: var(--border-focus); /* Darker focus border */
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); /* Stronger focus ring */
     background: var(--bg-card);
+    color: var(--text-primary); /* Ensure text is visible */
 }
 
 /* --- Responsive Adjustments --- */
@@ -887,22 +1158,23 @@ a, button, input, select, textarea {
     margin-left: 0;
 }
 
-/* --- FLOATING GLASS NAVBAR --- */
+/* --- FLOATING GLASS NAVBAR - Linear Style --- */
 #mainNavigation {
     transition: all var(--transition-base);
-    margin-bottom: var(--space-6);
+    margin-bottom: 0 !important;
     background: var(--glass-bg) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-2xl);
-    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     margin-top: var(--space-4);
     margin-left: var(--space-4);
     margin-right: var(--space-4);
     position: sticky;
     top: var(--space-4);
     z-index: 50;
+    padding-bottom: 0 !important;
 }
 
 #mainNavigation .nav-link {
@@ -910,6 +1182,8 @@ a, button, input, select, textarea {
     text-decoration: none;
     color: var(--text-secondary);
     transition: all var(--transition-fast);
+    font-weight: 500;
+    border-radius: var(--radius-md);
 }
 
 #mainNavigation .nav-link:hover {
@@ -920,8 +1194,8 @@ a, button, input, select, textarea {
 
 #mainNavigation .nav-link.active {
     color: var(--accent-primary);
-    background-color: var(--info-bg);
-    font-weight: 500;
+    background-color: var(--bg-hover);
+    font-weight: 600;
 }
 
 #mainNavigation .nav-link.active::after {
@@ -931,7 +1205,7 @@ a, button, input, select, textarea {
     right: 0;
     left: 0;
     height: 2px;
-    background-color: var(--accent-primary);
+    background-color: var(--accent-primary-hover); /* Darker indicator */
     border-radius: 2px 2px 0 0;
 }
 
@@ -1006,7 +1280,8 @@ a, button, input, select, textarea {
     }
     
     .hero-medical-static {
-        padding: 2rem 0 !important;
+        padding-top: 0 !important; /* No top padding on mobile */
+        padding-bottom: 2rem !important;
     }
     
     .hero-medical-static h1 {
@@ -1239,16 +1514,31 @@ a, button, input, select, textarea {
     border-color: var(--accent-primary);
 }
 
-/* --- Collapsible Template Groups --- */
+/* --- Collapsible Template Groups - Linear Style --- */
 .template-group-header {
     user-select: none;
     transition: background-color var(--transition-fast);
     position: relative;
-    background: var(--bg-card);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
+    background: transparent; /* No background - card already has it */
+    border-radius: var(--radius-md);
+    /* No padding - card already has padding, we want buttons to align with template items */
+    /* But we need to match the template-item left padding for perfect alignment */
+    padding: 0;
+    padding-left: 1rem; /* Match card p-4 and template-item padding-left */
     margin-bottom: var(--space-2);
-    border: 1px solid var(--border-primary);
+    border: none; /* No border - card already has border */
+}
+
+@media (min-width: 640px) {
+    .template-group-header {
+        padding-left: 1.25rem; /* Match card sm:p-5 and template-item padding-left */
+    }
+}
+
+@media (min-width: 1024px) {
+    .template-group-header {
+        padding-left: 1.5rem; /* Match card lg:p-6 and template-item padding-left */
+    }
 }
 
 .template-group-header:hover {
@@ -1256,12 +1546,29 @@ a, button, input, select, textarea {
     border-color: var(--border-secondary);
 }
 
+/* Collapsible container hover effect when collapsed - matches template item hover style */
+/* Apply hover effect to entire container when collapsed (closed state) */
+.collapsible-collapsed:hover {
+    background-color: var(--bg-hover);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-secondary);
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+/* Fallback for browsers that support :has() but class wasn't added */
+.bg-white.rounded-2xl:has(> .template-group-content.collapsed):hover {
+    background-color: var(--bg-hover);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-secondary);
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
 .template-group-header .chevron-icon {
     transition: transform var(--transition-base);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-secondary);
+    color: var(--accent-primary);
 }
 
 .template-group-content {
@@ -1281,7 +1588,10 @@ a, button, input, select, textarea {
     /* Ensure template items align properly with group header */
     display: flex;
     flex-direction: column;
+    /* Remove top margin to align with header - header has mb-4 which creates space */
+    margin-top: 0 !important;
 }
+
 
 .template-group-content.collapsed {
     max-height: 0 !important;
@@ -1297,8 +1607,8 @@ a, button, input, select, textarea {
 #globalFooter {
     margin-top: auto;
     flex-shrink: 0;
-    background-color: var(--bg-card);
-    border-top: 1px solid var(--border-primary);
+    background-color: #1A1A7C; /* Dark blue background - slightly brighter */
+    border-top: 1px solid rgba(255, 255, 255, 0.3); /* More visible border for dark background */
 }
 
 #globalFooter {
@@ -1308,8 +1618,20 @@ a, button, input, select, textarea {
 #globalFooter h3 {
     margin-bottom: var(--space-5);
     font-weight: 600;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
+    font-size: 1rem; /* text-base - 16px */
+    color: #F8FAFC; /* Light color for dark background */
+}
+
+@media (min-width: 640px) {
+    #globalFooter h3 {
+        font-size: 1.125rem; /* sm:text-lg - 18px */
+    }
+}
+
+@media (min-width: 1024px) {
+    #globalFooter h3 {
+        font-size: 1.25rem; /* lg:text-xl - 20px */
+    }
 }
 
 #globalFooter ul {
@@ -1327,12 +1649,12 @@ a, button, input, select, textarea {
     display: block;
     text-decoration: none;
     transition: color var(--transition-fast);
-    color: var(--text-primary);
+    color: #E2E8F0; /* Light gray for dark background */
 }
 
 #globalFooter a:hover {
     text-decoration: none;
-    color: var(--accent-primary);
+    color: #FFFFFF; /* White on hover */
 }
 
 /* Additional mobile optimizations */
@@ -1435,7 +1757,8 @@ a, button, input, select, textarea {
     background: var(--bg-card);
     border: 1px solid var(--border-primary);
     border-radius: var(--radius-2xl);
-    box-shadow: var(--shadow-lg);
+    /* Shadow is defined by Tailwind classes in HTML: shadow-sm hover:shadow-md - same as template groups */
+    /* box-shadow removed to match template group containers */
 }
 
 #previewPanel > div {
@@ -1482,6 +1805,7 @@ button:active {
 
 button.primary,
 button[class*="bg-\[#0284C7\]"],
+button[class*="bg-\[#1A1A7C\]"],
 button[class*="bg-sky"] {
     background: var(--accent-primary);
     color: white;
@@ -1490,6 +1814,7 @@ button[class*="bg-sky"] {
 
 button.primary:hover,
 button[class*="bg-\[#0284C7\]"]:hover,
+button[class*="bg-\[#1A1A7C\]"]:hover,
 button[class*="bg-sky"]:hover {
     background: var(--accent-primary-hover);
     box-shadow: var(--shadow-md);
@@ -1502,22 +1827,53 @@ button[class*="bg-sky"]:hover {
         transform: translateY(0);
     }
     50% {
-        transform: translateY(12px);
+        transform: translateY(6px);
     }
 }
 
 .scroll-down-arrow {
-    animation: bounce-soft 2s ease-in-out infinite;
-    opacity: 1;
-    font-weight: 500;
-    filter: drop-shadow(0 2px 4px rgba(14, 165, 233, 0.2));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-primary);
+    opacity: 0.85;
+    animation: bounce-soft 2.5s ease-in-out infinite;
+    transition: all var(--transition-base);
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 0.875rem;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.12), 0 1px 3px rgba(15, 23, 42, 0.08);
+    width: 3rem;
+    height: 3rem;
+    text-decoration: none;
 }
 
 .scroll-down-arrow:hover {
+    color: var(--accent-primary-hover);
     opacity: 1;
-    animation-duration: 1.5s; /* Slightly faster on hover */
-    filter: drop-shadow(0 4px 8px rgba(14, 165, 233, 0.3));
-    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2), 0 2px 6px rgba(15, 23, 42, 0.1);
+    transform: translateY(2px);
+    animation-duration: 2s; /* Slightly faster on hover */
+}
+
+.scroll-down-arrow:active {
+    transform: translateY(4px) scale(0.95);
+}
+
+.scroll-down-arrow:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+}
+
+@media (min-width: 640px) {
+    .scroll-down-arrow {
+        width: 3.5rem;
+        height: 3.5rem;
+        padding: 1rem;
+    }
 }
 
 /* --- Logo Checkbox Style --- */
@@ -1525,7 +1881,7 @@ button[class*="bg-sky"]:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #0EA5E9; /* sky-500 - matches primary button/accent color */
+    color: #1A1A7C; /* Dark blue - matches primary button/accent color */
     flex-shrink: 0;
 }
 
@@ -1535,5 +1891,6 @@ button[class*="bg-sky"]:hover {
 
 /* Ensure logo maintains static color - no hover effects */
 .logo-checkbox:hover {
-    color: #0EA5E9; /* Keep same color on hover */
+    color: #1A1A7C; /* Keep same color on hover */
 }
+
