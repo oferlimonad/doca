@@ -800,21 +800,24 @@ select.dynamic-element option,
     /* Align hero content center with navigation center axis */
     /* Navigation: top var(--space-4) + nav height/2 (~2.25rem) = nav center */
     /* Hero content center should align with nav center, then add spacing for title start */
-    padding-top: calc(var(--space-4) + 2.25rem + 6.5rem); /* Nav top + nav center + spacing (104px) */
+    /* Moved up by 30px (1.875rem) - reduced padding-top */
+    padding-top: calc(var(--space-4) + 2.25rem + 6.5rem - 1.875rem); /* Nav top + nav center + spacing (104px) - 30px */
     text-align: center; /* Center text for RTL */
 }
 
 @media (min-width: 640px) {
     .hero-text-content {
         /* Navigation center at ~2.75rem from top (py-4 + content) */
-        padding-top: calc(var(--space-4) + 2.75rem + 7.5rem); /* Nav top + nav center + spacing (120px) */
+        /* Moved up by 30px (1.875rem) - reduced padding-top */
+        padding-top: calc(var(--space-4) + 2.75rem + 7.5rem - 1.875rem); /* Nav top + nav center + spacing (120px) - 30px */
     }
 }
 
 @media (min-width: 1024px) {
     .hero-text-content {
         /* Navigation center at ~2.75rem from top */
-        padding-top: calc(var(--space-4) + 2.75rem + 8.5rem); /* Nav top + nav center + spacing (136px) */
+        /* Moved up by 30px (1.875rem) - reduced padding-top */
+        padding-top: calc(var(--space-4) + 2.75rem + 8.5rem - 1.875rem); /* Nav top + nav center + spacing (136px) - 30px */
     }
 }
 
