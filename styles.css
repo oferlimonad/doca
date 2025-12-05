@@ -393,6 +393,23 @@ footer, #globalFooter {
     box-sizing: border-box;
 }
 
+/* Ensure GPACS template elements maintain LTR direction */
+/* Inputs and selects with dir="ltr" attribute should not be reversed */
+.dynamic-element[dir="ltr"],
+.dynamic-element[dir="ltr"] input,
+.dynamic-element[dir="ltr"] select {
+    direction: ltr;
+    text-align: center;
+    unicode-bidi: embed;
+}
+
+/* Ensure LTR-wrapped spans in GPACS templates maintain direction */
+span[dir="ltr"] {
+    direction: ltr;
+    unicode-bidi: embed;
+    display: inline-block;
+}
+
 /* Input fields - Linear inline style */
 input.dynamic-element.template-input {
     background: var(--bg-input);
@@ -1526,8 +1543,9 @@ a, button, input, select, textarea {
     border-radius: var(--radius-md);
     /* No padding - card already has padding, we want buttons to align with template items */
     /* But we need to match the template-item left padding for perfect alignment */
-    padding: 0;
+    padding: 0.5rem 0; /* Reduced vertical padding for cleaner look */
     padding-left: 1rem; /* Match card p-4 and template-item padding-left */
+    padding-right: 0;
     margin-bottom: var(--space-2);
     border: none; /* No border - card already has border */
 }
@@ -1535,12 +1553,16 @@ a, button, input, select, textarea {
 @media (min-width: 640px) {
     .template-group-header {
         padding-left: 1.25rem; /* Match card sm:p-5 and template-item padding-left */
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
     }
 }
 
 @media (min-width: 1024px) {
     .template-group-header {
         padding-left: 1.5rem; /* Match card lg:p-6 and template-item padding-left */
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
     }
 }
 

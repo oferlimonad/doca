@@ -187,14 +187,14 @@ const predefinedTemplates = [
         name: 'GPACS בהריון',
         description: '[CS] [A] [P] [G] – נוסחת GPACS בהריון',
         elements: [
-            { type: 'input', width: 2, placeholder: 'CS' },
             { type: 'text', value: 'CS' },
-            { type: 'input', width: 2, placeholder: 'A' },
+            { type: 'input', width: 2, placeholder: 'CS' },
             { type: 'text', value: 'A' },
-            { type: 'input', width: 2, placeholder: 'P' },
+            { type: 'input', width: 2, placeholder: 'A' },
             { type: 'text', value: 'P' },
-            { type: 'input', width: 2, placeholder: 'G' },
-            { type: 'text', value: 'G' }
+            { type: 'input', width: 2, placeholder: 'P' },
+            { type: 'text', value: 'G' },
+            { type: 'input', width: 2, placeholder: 'G' }
         ]
     }
     // ניתן להוסיף כאן תבניות נוספות בעתיד
@@ -473,16 +473,23 @@ function renderBreadcrumb(currentCategory = null, currentSubcategory = null) {
 
 /**
  * פונקציית עזר: יצירת HTML עבור אלמנט דינמי יחיד בתצוגת העורך.
+ * @param {Object} element - האלמנט לרנדור
+ * @param {string} tempId - מזהה התבנית
+ * @param {number} elementIndex - אינדקס האלמנט
+ * @param {boolean} isGPACS - האם זה תבנית GPACS (דורשת LTR לכל אלמנט)
  */
-function createElementHtml(element, tempId, elementIndex) {
+function createElementHtml(element, tempId, elementIndex, isGPACS = false) {
     const uniqueElementId = `${tempId}_el_${elementIndex}`;
+    // For GPACS templates, wrap each element in dir="ltr" to preserve order
+    const ltrWrapper = isGPACS ? '<span dir="ltr" style="display: inline-block;">' : '';
+    const ltrWrapperClose = isGPACS ? '</span>' : '';
     
     switch (element.type) {
         case 'text':
             // טקסט קבוע - מוצג כספאן רגיל
             // הסר רווחים מיותרים מהתחלה וסוף כדי למנוע רווחים כפולים (הרווחים יתווספו ב-join)
             const trimmedText = (element.value || '').trim();
-            return `<span class="whitespace-pre-wrap">${escapeHtml(trimmedText)}</span>`;
+            return `${ltrWrapper}<span class="whitespace-pre-wrap">${escapeHtml(trimmedText)}</span>${ltrWrapperClose}`;
         case 'input':
             // שדה קלט - מוצג כ-input עם רוחב מותאם
             // הרוחב מחושב כדי להיות יחסי למספר התווים + מרווח
@@ -491,12 +498,13 @@ function createElementHtml(element, tempId, elementIndex) {
             const widthChars = element.width || 8;
             const safePlaceholder = escapeAttr(element.placeholder || '');
             const safeValue = escapeAttr(element.value || '');
-            return `<input type="text" id="${uniqueElementId}" 
+            const dirAttr = isGPACS ? ' dir="ltr"' : '';
+            return `${ltrWrapper}<input type="text" id="${uniqueElementId}" 
                         data-temp-id="${tempId}" data-index="${elementIndex}" data-type="input"
                         class="dynamic-element text-center template-input" 
                         style="width: ${widthChars * 0.75 + 1.5}rem; min-width: 50px;" 
                         placeholder="${safePlaceholder}" 
-                        value="${safeValue}" />`;
+                        value="${safeValue}"${dirAttr} />${ltrWrapperClose}`;
         case 'select':
             // רשימה נפתחת - מוצגת כ-select
             // הסר mx-1 כי הרווחים יתווספו ב-join
@@ -504,11 +512,12 @@ function createElementHtml(element, tempId, elementIndex) {
             const optionsHtml = (element.options || []).map(opt => 
                 `<option value="${escapeAttr(opt)}" ${element.value === opt ? 'selected' : ''}>${escapeHtml(opt)}</option>`
             ).join('');
-            return `<select id="${uniqueElementId}" 
+            const selectDirAttr = isGPACS ? ' dir="ltr"' : '';
+            return `${ltrWrapper}<select id="${uniqueElementId}" 
                         data-temp-id="${tempId}" data-index="${elementIndex}" data-type="select"
-                        class="dynamic-element template-select">
+                        class="dynamic-element template-select"${selectDirAttr}>
                         ${optionsHtml}
-                    </select>`;
+                    </select>${ltrWrapperClose}`;
         default:
             return '';
     }
@@ -520,24 +529,40 @@ function createElementHtml(element, tempId, elementIndex) {
 function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
     const safeGroupTitle = escapeAttr(group.title);
     const templatesHtml = group.templates.map((temp, tempIndex) => {
-        // רנדור המשפט הדינמי: מחבר את כל האלמנטים לשורה אחת עם רווח יחיד בין כל אלמנט
-        const sentenceHtml = temp.elements.map((el, elIdx) => 
-            createElementHtml(el, temp.id, elIdx)
-        ).join(' '); // רווח יחיד בין כל אלמנט
-
-        // Check if this is GPACS template - needs LTR direction to preserve medical notation order
-        // GPACS formula must display as [CS][A][P][G] in standard medical notation order
-        // Detect GPACS by checking for the pattern: input with placeholder 'CS' followed by text 'CS', etc.
+        // Check if this is GPACS template - needs special RTL rendering order
+        // GPACS formula must display in RTL as: CS [input] "CS", A [input] "A", P [input] "P", G [input] "G"
+        // From right to left (RTL): CS [input] "CS" (rightmost) → A [input] "A" → P [input] "P" → G [input] "G" (leftmost)
+        // Template definition: [CS text, CS input, A text, A input, P text, P input, G text, G input]
+        // In RTL, array order [text, input] displays visually as [input, text] (right to left)
+        // So [CS text, CS input] displays as CS input, CS text visually (rightmost) ✓
+        // This gives us the correct order: CS [input] "CS", A [input] "A", P [input] "P", G [input] "G"
+        // No reversal needed - the template is already in the correct order for RTL display
+        // Detect GPACS by checking for the pattern: text 'CS' followed by input with placeholder 'CS', etc.
         const isGPACS = temp.elements && temp.elements.length >= 8 &&
-            temp.elements[0].type === 'input' && temp.elements[0].placeholder === 'CS' &&
-            temp.elements[1].type === 'text' && temp.elements[1].value === 'CS' &&
-            temp.elements[2].type === 'input' && temp.elements[2].placeholder === 'A' &&
-            temp.elements[3].type === 'text' && temp.elements[3].value === 'A' &&
-            temp.elements[4].type === 'input' && temp.elements[4].placeholder === 'P' &&
-            temp.elements[5].type === 'text' && temp.elements[5].value === 'P' &&
-            temp.elements[6].type === 'input' && temp.elements[6].placeholder === 'G' &&
-            temp.elements[7].type === 'text' && temp.elements[7].value === 'G';
-        const directionStyle = isGPACS ? 'direction: ltr;' : '';
+            temp.elements[0].type === 'text' && temp.elements[0].value === 'CS' &&
+            temp.elements[1].type === 'input' && temp.elements[1].placeholder === 'CS' &&
+            temp.elements[2].type === 'text' && temp.elements[2].value === 'A' &&
+            temp.elements[3].type === 'input' && temp.elements[3].placeholder === 'A' &&
+            temp.elements[4].type === 'text' && temp.elements[4].value === 'P' &&
+            temp.elements[5].type === 'input' && temp.elements[5].placeholder === 'P' &&
+            temp.elements[6].type === 'text' && temp.elements[6].value === 'G' &&
+            temp.elements[7].type === 'input' && temp.elements[7].placeholder === 'G';
+        
+        // רנדור המשפט הדינמי: מחבר את כל האלמנטים לשורה אחת עם רווח יחיד בין כל אלמנט
+        // For GPACS: No reversal needed - template is already in correct order for RTL
+        // Template: [CS text, CS input, A text, A input, P text, P input, G text, G input]
+        // In RTL, this displays from right to left as: CS input, CS text, A input, A text, P input, P text, G input, G text
+        // Which gives us visually: CS [input] "CS", A [input] "A", P [input] "P", G [input] "G" ✓
+        let elementsToRender = temp.elements;
+        // No special handling needed - RTL will automatically reverse each pair [text, input] to [input, text] visually
+        
+        // Pass isGPACS flag to createElementHtml so each element gets proper LTR wrapping
+        const sentenceHtml = elementsToRender.map((el, elIdx) => {
+            return createElementHtml(el, temp.id, elIdx, isGPACS);
+        }).join(' '); // רווח יחיד בין כל אלמנט
+        
+        // For GPACS, keep container RTL but individual elements are LTR-wrapped
+        const directionStyle = '';
 
         return `
             <div class="template-item flex items-center rounded-xl transition-all duration-150 group border border-slate-200 hover:border-slate-300" 
@@ -601,7 +626,7 @@ function generateTemplateGroupHtml(group, categoryKey, subKey, groupIndex) {
     
     return `
         <div class="bg-white p-4 sm:p-5 lg:p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-            <div id="${groupHeaderId}" class="template-group-header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 border-b border-slate-200 pb-3 mb-4 cursor-pointer group-header-clickable" 
+            <div id="${groupHeaderId}" class="template-group-header flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0 border-b border-slate-200 cursor-pointer group-header-clickable" 
                  onclick="toggleTemplateGroup('${categoryKey}', '${subKey}', ${groupIndex})"
                  data-category-key="${categoryKey}" 
                  data-sub-key="${subKey}" 
@@ -693,6 +718,13 @@ function renderTemplateEditorPage(categoryKey, subKey) {
                                 בחירת משפטים דינמיים (תחת "${safeSubName}")
                             </h2>
                             <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                                <!-- כפתור הוספת משפט קיים -->
+                                <button class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-[#1A1A7C] opacity-80 hover:opacity-100 transition-all duration-150"
+                                        onclick="handleAddExistingSentence('${categoryKey}', '${subKey}')"
+                                        title="הוסף משפט קיים"
+                                        aria-label="הוסף משפט קיים">
+                                    ${getIcon('clipboard', 'w-4 h-4 sm:w-5 sm:h-5')}
+                                </button>
                                 <!-- כפתור הוספת תבנית מוגדרת מראש -->
                                 <button class="p-1.5 sm:p-2 rounded-full hover:bg-slate-100 text-slate-500 hover:text-[#1A1A7C] opacity-80 hover:opacity-100 transition-all duration-150"
                                         onclick="handlePredefinedTemplateSelect('${categoryKey}', '${subKey}')"
@@ -781,7 +813,7 @@ function renderTemplateGroups(categoryKey, subKey) {
     // Initialize drag-and-drop for all template groups
     initializeDragAndDrop(categoryKey, subKey);
     
-    // Initialize collapsible groups (all expanded by default)
+    // Initialize collapsible groups (all collapsed by default)
     initializeCollapsibleGroups(categoryKey, subKey);
 }
 
@@ -1455,49 +1487,125 @@ function getTemplateDataFromDom(templateId) {
     });
     
     // Optimize text span queries: get all spans once
-    const allSpans = Array.from(contentContainer.querySelectorAll('span.whitespace-pre-wrap'));
+    // For GPACS, we need to get spans in DOM order (they're wrapped in dir="ltr" spans)
+    const isGPACSTemplate = originalTemplate.elements && originalTemplate.elements.length >= 8 &&
+        originalTemplate.elements[0].type === 'text' && originalTemplate.elements[0].value === 'CS' &&
+        originalTemplate.elements[1].type === 'input' && originalTemplate.elements[1].placeholder === 'CS';
+    
     const textSpanMap = new Map();
     
-    // Map text spans to their element indices (assumes order matches)
-    let spanIndex = 0;
-    for (let i = 0; i < originalTemplate.elements.length; i++) {
-        if (originalTemplate.elements[i].type === 'text') {
-            if (spanIndex < allSpans.length) {
-                textSpanMap.set(i, allSpans[spanIndex]);
-                spanIndex++;
+    if (isGPACSTemplate) {
+        // For GPACS: Get all LTR-wrapped spans and find text spans inside them
+        const ltrSpans = Array.from(contentContainer.querySelectorAll('span[dir="ltr"]'));
+        let elementIndex = 0;
+        ltrSpans.forEach(ltrSpan => {
+            const textSpan = ltrSpan.querySelector('span.whitespace-pre-wrap');
+            if (textSpan && originalTemplate.elements[elementIndex] && originalTemplate.elements[elementIndex].type === 'text') {
+                textSpanMap.set(elementIndex, textSpan);
+            }
+            elementIndex++;
+        });
+    } else {
+        // For non-GPACS: Map text spans to their element indices (assumes order matches)
+        const allSpans = Array.from(contentContainer.querySelectorAll('span.whitespace-pre-wrap'));
+        let spanIndex = 0;
+        for (let i = 0; i < originalTemplate.elements.length; i++) {
+            if (originalTemplate.elements[i].type === 'text') {
+                if (spanIndex < allSpans.length) {
+                    textSpanMap.set(i, allSpans[spanIndex]);
+                    spanIndex++;
+                }
             }
         }
     }
     
-    // עובר על האלמנטים המקוריים בסדר הנכון (0, 1, 2, ...) ובונה את המשפט
-    // זה מבטיח שסדר הערכים (מספריים וטקסט) תואם בדיוק לסדר המקורי
-    // מוסיף רווח יחיד בין כל אלמנט
-    for (let elementIndex = 0; elementIndex < originalTemplate.elements.length; elementIndex++) {
-        const element = originalTemplate.elements[elementIndex];
+    // Check if this is GPACS template - needs to read in visual RTL order
+    const isGPACS = originalTemplate.elements && originalTemplate.elements.length >= 8 &&
+        originalTemplate.elements[0].type === 'text' && originalTemplate.elements[0].value === 'CS' &&
+        originalTemplate.elements[1].type === 'input' && originalTemplate.elements[1].placeholder === 'CS' &&
+        originalTemplate.elements[2].type === 'text' && originalTemplate.elements[2].value === 'A' &&
+        originalTemplate.elements[3].type === 'input' && originalTemplate.elements[3].placeholder === 'A' &&
+        originalTemplate.elements[4].type === 'text' && originalTemplate.elements[4].value === 'P' &&
+        originalTemplate.elements[5].type === 'input' && originalTemplate.elements[5].placeholder === 'P' &&
+        originalTemplate.elements[6].type === 'text' && originalTemplate.elements[6].value === 'G' &&
+        originalTemplate.elements[7].type === 'input' && originalTemplate.elements[7].placeholder === 'G';
+    
+    // RTL directional control marks
+    const RLE = '\u202B'; // Right-to-Left Embedding
+    const PDF = '\u202C'; // Pop Directional Formatting
+    
+    if (isGPACS) {
+        // For GPACS: Read elements in the exact same visual order as they appear in the editor
+        // Template: [CS text, CS input, A text, A input, P text, P input, G text, G input]
+        // In RTL editor, the visual order (right to left) is: G [input] G, P [input] P, A [input] A, CS [input] CS
+        // We need to read pairs in REVERSE order (G → P → A → CS) to match the visual appearance
+        // Each pair should be read as [input, text] to match visual order
+        const numPairs = originalTemplate.elements.length / 2;
         
-        // הוסף רווח לפני כל אלמנט (חוץ מהראשון)
-        if (elementIndex > 0) {
-            fullSentence += ' ';
-        }
-        
-        if (element.type === 'text') {
-            // טקסט סטטי - קרא מה-SPANs לפי המיקום המקורי
-            const textSpan = textSpanMap.get(elementIndex);
-            if (textSpan) {
-                // הסר רווחים מיותרים מהתחלה וסוף הטקסט כדי למנוע רווחים כפולים
-                fullSentence += textSpan.textContent.trim();
+        // Read pairs in reverse order (from G to CS) to match RTL visual order
+        for (let pairIdx = numPairs - 1; pairIdx >= 0; pairIdx--) {
+            const textIndex = pairIdx * 2;
+            const inputIndex = textIndex + 1;
+            
+            // Add space before each pair (except first)
+            if (pairIdx < numPairs - 1) {
+                fullSentence += ' ';
             }
-        } else if (element.type === 'input' || element.type === 'select') {
-            // אלמנט דינמי - קרא מה-DOM לפי data-index המדויק
-            const domElement = elementMap.get(elementIndex);
-            if (domElement) {
-                // קרא את הערך ישירות - ללא שינוי או הפיכה
-                let value = domElement.value || '';
-                if (element.type === 'input' && !value) {
-                    value = `(${domElement.placeholder || 'ריק'})`;
+            
+            // Read input first (as it appears visually in RTL - input comes before text in visual order)
+            const inputDomElement = elementMap.get(inputIndex);
+            if (inputDomElement) {
+                let value = inputDomElement.value || '';
+                if (!value) {
+                    value = `(${inputDomElement.placeholder || 'ריק'})`;
                 }
-                // הסר רווחים מיותרים מהתחלה וסוף כדי למנוע רווחים כפולים
-                fullSentence += value.trim();
+                // Wrap input value with RTL directional marks to preserve order
+                fullSentence += RLE + value.trim() + PDF;
+            }
+            
+            // Add space between input and text
+            fullSentence += ' ';
+            
+            // Then read text (as it appears visually in RTL)
+            const textSpan = textSpanMap.get(textIndex);
+            if (textSpan) {
+                // Wrap text label with RTL directional marks to preserve order
+                fullSentence += RLE + textSpan.textContent.trim() + PDF;
+            }
+        }
+    } else {
+        // עובר על האלמנטים המקוריים בסדר הנכון (0, 1, 2, ...) ובונה את המשפט
+        // זה מבטיח שסדר הערכים (מספריים וטקסט) תואם בדיוק לסדר המקורי
+        // מוסיף רווח יחיד בין כל אלמנט
+        // Wrap each fragment with RTL directional marks to preserve order
+        for (let elementIndex = 0; elementIndex < originalTemplate.elements.length; elementIndex++) {
+            const element = originalTemplate.elements[elementIndex];
+            
+            // הוסף רווח לפני כל אלמנט (חוץ מהראשון)
+            if (elementIndex > 0) {
+                fullSentence += ' ';
+            }
+            
+            if (element.type === 'text') {
+                // טקסט סטטי - קרא מה-SPANs לפי המיקום המקורי
+                const textSpan = textSpanMap.get(elementIndex);
+                if (textSpan) {
+                    // Wrap text with RTL directional marks to preserve order
+                    const textValue = textSpan.textContent.trim();
+                    fullSentence += RLE + textValue + PDF;
+                }
+            } else if (element.type === 'input' || element.type === 'select') {
+                // אלמנט דינמי - קרא מה-DOM לפי data-index המדויק
+                const domElement = elementMap.get(elementIndex);
+                if (domElement) {
+                    // קרא את הערך ישירות - ללא שינוי או הפיכה
+                    let value = domElement.value || '';
+                    if (element.type === 'input' && !value) {
+                        value = `(${domElement.placeholder || 'ריק'})`;
+                    }
+                    // Wrap input value with RTL directional marks to preserve order
+                    fullSentence += RLE + value.trim() + PDF;
+                }
             }
         }
     }
@@ -1559,9 +1667,15 @@ function updatePreview(isFromDynamicElement = false, immediate = false) {
     const text = generateTextToCopy();
     
     if (text) {
-        previewContent.textContent = text;
         previewContent.classList.remove('text-slate-400');
         previewContent.classList.add('text-slate-600');
+        
+        // Apply RTL directionality to preview container to maintain exact order
+        // Use unicode-bidi: embed to respect RLE/PDF marks in the text
+        previewContent.textContent = text;
+        previewContent.style.direction = 'rtl';
+        previewContent.style.unicodeBidi = 'embed';
+        
         // Enable icon - remove opacity, change color
         previewCopyIcon.classList.remove('text-slate-400', 'opacity-30');
         previewCopyIcon.classList.add('text-[#15156C]', 'opacity-100');
@@ -1577,6 +1691,9 @@ function updatePreview(isFromDynamicElement = false, immediate = false) {
         previewContent.textContent = 'לא נבחר טקסט לתצוגה מקדימה...';
         previewContent.classList.remove('text-slate-600');
         previewContent.classList.add('text-slate-400');
+        // Reset direction styles when no content
+        previewContent.style.unicodeBidi = '';
+        previewContent.style.direction = '';
         // Disable icon visually - add opacity, change color
         previewCopyIcon.classList.remove('text-[#15156C]', 'opacity-100');
         previewCopyIcon.classList.add('text-slate-400', 'opacity-30');
@@ -2045,6 +2162,150 @@ function handlePredefinedTemplateSelect(categoryKey, subKey) {
             showMessage('שגיאה בהוספת התבנית. נסה שוב.', 'error');
         }
     }, 'הוסף תבנית');
+}
+
+/**
+ * פונקציה להוספת משפט קיים מקבוצה אחרת
+ */
+window.handleAddExistingSentence = function(categoryKey, subKey) {
+    const subcategory = templatesData[categoryKey].subcategories[subKey];
+    
+    // אם אין קבוצות, צריך ליצור קבוצה קודם
+    if (!subcategory.groups || subcategory.groups.length === 0) {
+        showMessage('יש ליצור קבוצת תבניות קודם. לחץ על "הוסף קבוצת תבניות".', 'warning');
+        return;
+    }
+    
+    // בדיקה אם יש לפחות קבוצה אחת עם משפטים
+    const groupsWithTemplates = subcategory.groups.filter(group => 
+        group.templates && group.templates.length > 0
+    );
+    
+    if (groupsWithTemplates.length === 0) {
+        showMessage('אין משפטים קיימים להעתקה. יש ליצור משפטים קודם.', 'warning');
+        return;
+    }
+    
+    // יצירת HTML לרשימת קבוצות
+    const groupsListHtml = subcategory.groups.map((group, groupIndex) => {
+        if (!group.templates || group.templates.length === 0) {
+            return '';
+        }
+        
+        const templatesListHtml = group.templates.map((template, templateIndex) => {
+            // יצירת תצוגה מקדימה של המשפט
+            const previewText = template.elements.map(el => {
+                if (el.type === 'text') return el.value || '';
+                if (el.type === 'input') return `[${el.placeholder || 'קלט'}]`;
+                if (el.type === 'select') return `[${el.options?.[0] || 'בחר'}]`;
+                return '';
+            }).join(' ');
+            
+            return `
+                <div class="border border-slate-200 rounded-lg p-3 hover:border-[#1A1A7C] hover:bg-slate-50 hover:shadow-sm transition-all duration-150 cursor-pointer mb-2 existing-sentence-card" 
+                     onclick="selectExistingSentence('${categoryKey}', '${subKey}', ${groupIndex}, ${templateIndex}, event)"
+                     data-group-index="${groupIndex}"
+                     data-template-index="${templateIndex}">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex-1">
+                            <div class="text-xs text-slate-600 bg-slate-50 p-2 rounded border border-slate-200 font-mono text-right">
+                                ${escapeHtml(previewText)}
+                            </div>
+                        </div>
+                        <div class="text-[#1A1A7C] flex-shrink-0">
+                            ${getIcon('arrow-left', 'w-4 h-4')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        return `
+            <div class="mb-4">
+                <h4 class="text-sm font-semibold text-slate-700 mb-2">${escapeHtml(group.title)}</h4>
+                <div class="space-y-2">
+                    ${templatesListHtml}
+                </div>
+            </div>
+        `;
+    }).filter(html => html !== '').join('');
+    
+    const contentHtml = `
+        <div class="mb-4">
+            <p class="text-sm text-slate-600 mb-4">בחר משפט קיים להעתקה לקבוצה:</p>
+            <div class="max-h-96 overflow-y-auto scrollable-content">
+                ${groupsListHtml}
+            </div>
+        </div>
+        <div class="mt-4">
+            <label for="existingSentenceGroupSelect" class="block text-sm sm:text-base font-medium text-slate-700 mb-2">בחר קבוצה להוספת המשפט:</label>
+            <select id="existingSentenceGroupSelect" class="dynamic-element template-select w-full">
+                ${subcategory.groups.map((group, idx) => 
+                    `<option value="${idx}">${escapeHtml(group.title)}</option>`
+                ).join('')}
+            </select>
+        </div>
+    `;
+    
+    // שמירת הקשר למודל
+    window.currentExistingSentenceGroupIndex = null;
+    window.currentExistingSentenceTemplateIndex = null;
+    
+    openModal('הוספת משפט קיים', contentHtml, async () => {
+        const targetGroupIndex = parseInt(document.getElementById('existingSentenceGroupSelect').value);
+        if (window.currentExistingSentenceGroupIndex === null || window.currentExistingSentenceTemplateIndex === null) {
+            showMessage('יש לבחור משפט מהרשימה.', 'warning');
+            return;
+        }
+        
+        try {
+            const sourceGroup = subcategory.groups[window.currentExistingSentenceGroupIndex];
+            const sourceTemplate = sourceGroup.templates[window.currentExistingSentenceTemplateIndex];
+            const targetGroup = subcategory.groups[targetGroupIndex];
+            
+            const categoryId = await window.supabaseData.getCategoryIdByKey(categoryKey);
+            const subcategoryId = await window.supabaseData.getSubcategoryIdByKey(categoryId, subKey);
+            const targetGroupId = await window.supabaseData.getTemplateGroupId(subcategoryId, targetGroupIndex);
+            
+            if (!targetGroupId) {
+                showMessage('קבוצה לא נמצאה במסד הנתונים.', 'error');
+                return;
+            }
+            
+            const templateKey = generateUniqueKey('temp');
+            const templateData = await window.supabaseData.createTemplate(targetGroupId, templateKey, targetGroup.templates.length);
+            
+            // יצירת עותק עמוק של האלמנטים ושמירה בסדר RTL
+            const elementsCopy = JSON.parse(JSON.stringify(sourceTemplate.elements));
+            await window.supabaseData.saveTemplateElements(templateData.id, elementsCopy);
+            
+            templatesData = await window.supabaseData.loadAllDataFromSupabase();
+            showMessage(`משפט הועתק בהצלחה לקבוצה "${targetGroup.title}".`, 'success');
+            renderTemplateGroups(categoryKey, subKey); // Update only the dynamic template groups, not the whole page
+        } catch (error) {
+            console.error('Error adding existing sentence:', error);
+            showMessage('שגיאה בהוספת המשפט. נסה שוב.', 'error');
+        }
+    }, 'הוסף משפט');
+}
+
+/**
+ * פונקציה לבחירת משפט קיים מהרשימה
+ */
+window.selectExistingSentence = function(categoryKey, subKey, groupIndex, templateIndex, event) {
+    window.currentExistingSentenceGroupIndex = groupIndex;
+    window.currentExistingSentenceTemplateIndex = templateIndex;
+    
+    // עדכון ויזואלי - הסרת בחירה קודמת והוספת בחירה חדשה
+    document.querySelectorAll('.existing-sentence-card').forEach(card => {
+        card.classList.remove('border-[#1A1A7C]', 'bg-[#1A1A7C]', 'bg-opacity-5');
+        card.classList.add('border-slate-200');
+    });
+    
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.remove('border-slate-200');
+        event.currentTarget.classList.add('border-[#1A1A7C]', 'bg-[#1A1A7C]', 'bg-opacity-5');
+    }
 }
 
 /**
